@@ -1,6 +1,6 @@
 # Backend specific ignores
 
-# Environment
+Environment
 .env
 .env.local
 .env.development.local

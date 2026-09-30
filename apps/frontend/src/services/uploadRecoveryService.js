@@ -215,6 +215,10 @@ class UploadRecoveryService {
    * Check if FormData contains images
    */
   hasImages(formData) {
+    if (!formData) {
+      return false
+    }
+    
     if (formData instanceof FormData) {
       return formData.has('images')
     } else if (formData.images) {

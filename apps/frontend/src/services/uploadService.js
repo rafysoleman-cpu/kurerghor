@@ -5,9 +5,9 @@ class UploadService {
     this.activeUploads = new Map()
     this.uploadProgress = new Map()
     this.lastProgressTime = new Map()
-    this.stuckDetectionThreshold = 5000 // 5 seconds without progress (was 30s)
-    this.baseTimeout = 15000 // 15 seconds base timeout (was 5min)
-    this.maxTimeout = 30000 // 30 seconds maximum timeout (was 10min)
+    this.stuckDetectionThreshold = 30000 // 30 seconds without progress (was 5s)
+    this.baseTimeout = 60000 // 60 seconds base timeout (was 15s)
+    this.maxTimeout = 300000 // 5 minutes maximum timeout (was 30s)
   }
 
   /**
@@ -111,6 +111,9 @@ class UploadService {
     const endpoint = customEndpoint || '/vendors/products'
     return api.post(endpoint, productData, {
       timeout,
+      headers: {
+        'Content-Type': 'multipart/form-data' // Important for FormData uploads
+      },
       onUploadProgress: (progressEvent) => {
         const progress = Math.round((progressEvent.loaded * 100) / progressEvent.total)
         this.updateProgress(uploadId, progress)
@@ -170,7 +173,7 @@ class UploadService {
           isStuck: timeSinceProgress > this.stuckDetectionThreshold
         }
       }))
-    }, 1000) // Check every 1 second (was 5s)
+    }, 5000) // Check every 5 seconds (was 1s)
     
     return monitor
   }

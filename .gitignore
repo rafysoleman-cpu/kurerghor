@@ -11,7 +11,7 @@ build/
 .next/
 out/
 
-# Environment variables
+Environment variables
 .env
 .env.local
 .env.development.local

@@ -8,7 +8,6 @@ const UploadRetryPopup = ({
   error, 
   uploadData, 
   onRetry,
-  uploadProgress,
   isRetrying 
 }) => {
   const navigate = useNavigate()
@@ -136,7 +135,7 @@ const UploadRetryPopup = ({
         <div className="flex items-center justify-between p-6 border-b border-gray-200">
           <div className="flex items-center space-x-3">
             <div className={`p-2 rounded-lg bg-gray-50 ${errorDetails.color}`}>
-              <ErrorIcon className="w-5 h-5" />
+              <AlertTriangle className="w-5 h-5" />
             </div>
             <div>
               <h3 className="text-lg font-semibold text-gray-900">Upload Failed</h3>
@@ -179,24 +178,7 @@ const UploadRetryPopup = ({
             )}
           </div>
 
-          {/* Upload Progress (if available) */}
-          {uploadProgress !== undefined && (
-            <div className="mb-6">
-              <div className="flex items-center justify-between text-sm text-gray-600 mb-2">
-                <span>Upload Progress</span>
-                <span>{uploadProgress}%</span>
-              </div>
-              <div className="w-full bg-gray-200 rounded-full h-2">
-                <div 
-                  className="bg-blue-500 h-2 rounded-full transition-all duration-300"
-                  style={{ width: `${uploadProgress}%` }}
-                />
-              </div>
-              <p className="text-xs text-gray-500 mt-1">
-                Upload stopped at {uploadProgress}% completion
-              </p>
-            </div>
-          )}
+
 
           {/* Recovery Options */}
           <div className="space-y-3">

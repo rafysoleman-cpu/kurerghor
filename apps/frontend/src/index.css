@@ -279,7 +279,21 @@
     @apply inline-flex items-center px-4 py-2 rounded-full bg-white border border-gray-200 hover:border-primary-300 hover:bg-primary-50 transition-all duration-200 cursor-pointer;
   }
 
-  /* Shimmer effect */
+  /* Global shimmer animation for progress bars - used by EnterpriseUploadProgressBar */
+  @keyframes shimmer {
+    0% {
+      transform: translateX(-100%);
+    }
+    100% {
+      transform: translateX(100%);
+    }
+  }
+
+  .animate-shimmer {
+    animation: shimmer 2s infinite;
+  }
+
+  /* Shimmer effect - reuses the global shimmer animation */
   .shimmer {
     @apply relative overflow-hidden;
   }

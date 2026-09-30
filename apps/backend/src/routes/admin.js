@@ -1,13 +1,8 @@
 import express from 'express';
-
 import User from '../models/User.js';
-
 import Product from '../models/Product.js';
-
 import Order from '../models/Order.js';
-
 import Category from '../models/Category.js';
-
 import Coupon from '../models/Coupon.js';
 
 import VendorRequest from '../models/VendorRequest.js';
@@ -730,6 +725,39 @@ router.put('/products/:productId/status', async (req, res, next) => {
 
 
 
+
+// @desc    Delete product (admin)
+// @route   DELETE /api/v1/admin/products/:id
+// @access  Private (Admin)
+router.delete('/products/:id', async (req, res, next) => {
+  try {
+    const { id } = req.params;
+
+    const product = await Product.findById(id);
+
+    if (!product) {
+      return res.status(404).json({
+        success: false,
+        error: 'Product not found'
+      });
+    }
+
+    // Soft delete
+    product.status = 'deleted';
+    await product.save();
+
+    // Clear cache
+    await deleteCachePattern('products:*');
+    await deleteCachePattern(`product:${id}`);
+
+    res.json({
+      success: true,
+      message: 'Product deleted successfully'
+    });
+  } catch (error) {
+    next(error);
+  }
+});
 // @desc    Get all orders (admin view)
 
 // @route   GET /api/v1/admin/orders
@@ -2227,7 +2255,7 @@ router.patch('/vendors/:id/toggle-status', async (req, res, next) => {
 router.post('/products', protect, authorize('admin'), handleMultipleImageUpload, validate(createProductSchema), async (req, res, next) => {
   // Generate unique upload ID for progress tracking (moved outside try block)
   const uploadId = `upload_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`
-  
+
   try {
     // Start upload progress tracking
     const userId = 'user123'; // Use the same user ID as frontend WebSocket connection

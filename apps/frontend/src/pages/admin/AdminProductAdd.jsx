@@ -14,15 +14,19 @@ import {
 } from 'lucide-react'
 import { useMutation, useQuery, useQueryClient } from 'react-query'
 import { adminAPI } from '../../services/api'
+import uploadService from '../../services/uploadService'
 import uploadRecoveryService from '../../services/uploadRecoveryService'
 import LoadingSpinner from '../../components/LoadingSpinner'
 import UploadRetryPopup from '../../components/UploadRetryPopup'
+import EnterpriseUploadProgressBar from '../../components/EnterpriseUploadProgressBar'
 import toast from 'react-hot-toast'
+import { useSocket } from '../../contexts/SocketContext'
 
 const AdminProductAdd = () => {
   const navigate = useNavigate()
   const location = useLocation()
   const queryClient = useQueryClient()
+  const { socket, connected } = useSocket()
   const [isDragging, setIsDragging] = useState(false)
   const [activeSection, setActiveSection] = useState('basic')
   
@@ -34,8 +38,14 @@ const AdminProductAdd = () => {
     showRetryPopup: false,
     lastError: null,
     uploadData: null,
-    isRetrying: false
+    isRetrying: false,
+    progressData: null,
+    uploadStartTime: null
   })
+  
+  // Add a ref to track submission state for immediate protection
+  const isSubmittingRef = useRef(false)
+  const isNavigatingAwayRef = useRef(false)
   const sectionRefs = {
     basic: useRef(null),
     pricing: useRef(null),
@@ -58,8 +68,8 @@ const AdminProductAdd = () => {
     trackQuantity: true,
     allowBackorder: false,
     status: 'active',
-    vendor: '',
-    category: '',
+    vendorId: '',
+    categoryId: '',
     tags: '',
     seoTitle: '',
     seoDescription: '',
@@ -76,10 +86,16 @@ const AdminProductAdd = () => {
   const [errors, setErrors] = useState({})
   const [tagInput, setTagInput] = useState('')
 
-  const { data: categoriesData } = useQuery(
+  const { data: categoriesData, error: categoriesError, isLoading: categoriesLoading } = useQuery(
     'adminCategoriesForProduct',
     () => adminAPI.getCategories({ page: 1, limit: 100 }),
-    { staleTime: 5 * 1000 } // Reduced to 5 seconds for more responsive updates
+    { 
+      staleTime: 5 * 1000, // Reduced to 5 seconds for more responsive updates
+      onError: (error) => {
+        console.error('❌ Categories API Error:', error)
+        toast.error('Failed to load categories')
+      }
+    }
   )
 
   const { data: vendorsData } = useQuery(
@@ -88,11 +104,26 @@ const AdminProductAdd = () => {
     { staleTime: 5 * 1000 } // Reduced to 5 seconds for more responsive updates
   )
 
-  const categories = Array.isArray(categoriesData?.data?.data?.categories) ? categoriesData.data.data.categories : []
+  const categories = Array.isArray(categoriesData?.data?.data) ? categoriesData.data.data : 
+                  Array.isArray(categoriesData?.data?.categories) ? categoriesData.data.categories :
+                  Array.isArray(categoriesData?.data?.data?.categories) ? categoriesData.data.data.categories :
+                  Array.isArray(categoriesData?.categories) ? categoriesData.categories :
+                  Array.isArray(categoriesData?.success?.data?.categories) ? categoriesData.success.data.categories :
+                  Array.isArray(categoriesData?.success?.categories) ? categoriesData.success.categories :
+                  // Fallback categories if API fails
+                  [
+                    { _id: 'electronics', name: 'Electronics' },
+                    { _id: 'clothing', name: 'Clothing' },
+                    { _id: 'books', name: 'Books' },
+                    { _id: 'home', name: 'Home & Garden' },
+                    { _id: 'sports', name: 'Sports & Outdoors' }
+                  ]
+
 const vendors = Array.isArray(vendorsData?.data?.data?.vendors) ? vendorsData.data.data.vendors : 
                Array.isArray(vendorsData?.success?.data?.vendors) ? vendorsData.success.data.vendors : []
 
 // Refresh categories and vendors when window gets focus (user navigates back to this page)
+// Also refresh periodically to get live updates from other pages
 useEffect(() => {
   const handleFocus = () => {
     queryClient.invalidateQueries('adminCategoriesForProduct')
@@ -101,21 +132,18 @@ useEffect(() => {
     queryClient.refetchQueries('adminVendorsForProduct')
   }
 
-  window.addEventListener('focus', handleFocus)
-  return () => window.removeEventListener('focus', handleFocus)
-}, [queryClient])
+  // Also refresh categories every 10 seconds to get live updates
+  const intervalId = setInterval(() => {
+    queryClient.invalidateQueries('adminCategoriesForProduct')
+    queryClient.refetchQueries('adminCategoriesForProduct')
+  }, 10000) // 10 seconds
 
-  // Enhanced upload handlers
-  const handleUploadError = (error) => {
-    console.error('❌ Upload error:', error)
-    
-    setUploadState(prev => ({
-      ...prev,
-      showRetryPopup: true,
-      lastError: error,
-      isUploading: false
-    }))
+  window.addEventListener('focus', handleFocus)
+  return () => {
+    window.removeEventListener('focus', handleFocus)
+    clearInterval(intervalId)
   }
+}, [queryClient])
 
   const handleCloseRetryPopup = () => {
     setUploadState(prev => ({
@@ -125,19 +153,58 @@ useEffect(() => {
     }))
   }
 
+  // Enhanced upload handlers
+  const handleUploadError = (error) => {
+    console.error('❌ Upload error:', error)
+    
+    // Don't show retry popup if we're navigating away (success occurred)
+    if (isNavigatingAwayRef.current) {
+      console.log('🚫 Skipping retry popup - navigating away after success')
+      setUploadState(prev => ({
+        ...prev,
+        isUploading: false,
+        uploadProgress: 0
+      }))
+      return
+    }
+    
+    // Only show retry popup if we're not already in a success state
+    setUploadState(prev => {
+      // Don't show retry popup if we're already in a success state
+      if (prev.showRetryPopup === false && !prev.lastError) {
+        return {
+          ...prev,
+          isUploading: false,
+          uploadProgress: 0
+        }
+      }
+      return {
+        ...prev,
+        showRetryPopup: true,
+        lastError: error,
+        isUploading: false
+      }
+    })
+  }
+
   const handleRetryUpload = async () => {
     if (!uploadState.uploadData) return
+    
+    // Reset navigating away flag when retrying
+    isNavigatingAwayRef.current = false
     
     setUploadState(prev => ({
       ...prev,
       isRetrying: true,
+      isUploading: true, // FIX: Set isUploading to true so socket listener works
       showRetryPopup: false
     }))
     
     try {
       await createProductMutation.mutateAsync(uploadState.uploadData)
     } catch (error) {
-      handleUploadError(error)
+      // Error is handled by the mutation's onError callback
+      console.error('❌ Retry upload failed:', error)
     } finally {
       setUploadState(prev => ({
         ...prev,
@@ -146,38 +213,106 @@ useEffect(() => {
     }
   }
 
-  // Listen for upload progress events
+  // Listen for upload progress events via WebSocket
   useEffect(() => {
-    const handleProgress = (event) => {
-      if (event.detail.uploadId === uploadState.uploadId) {
+    if (!socket || !connected || !uploadState.isUploading) {
+      return
+    }
+
+    console.log('👂 Adding socket listener for upload:progress...')
+    
+    const handleUploadProgress = (data) => {
+      console.log('📈 Upload progress via WebSocket:', data)
+      
+      // Accept progress if we're currently uploading (uploadId may differ between frontend/backend)
+      if (uploadState.isUploading) {
         setUploadState(prev => ({
           ...prev,
-          uploadProgress: event.detail.progress
+          uploadProgress: data.progress || 0,
+          // Update uploadId to match backend if provided
+          uploadId: data.uploadId || prev.uploadId,
+          // Store additional progress data for display
+          progressData: {
+            status: data.status,
+            message: data.message,
+            currentImage: data.currentImage,
+            totalImages: data.totalImages,
+            productName: data.productName
+          }
         }))
       }
     }
 
-    window.addEventListener('productUploadProgress', handleProgress)
-    return () => window.removeEventListener('productUploadProgress', handleProgress)
-  }, [uploadState.uploadId])
+    socket.on('upload:progress', handleUploadProgress)
+    
+    return () => {
+      console.log('🧹 Cleaning up WebSocket listener...')
+      if (socket && typeof socket.off === 'function') {
+        socket.off('upload:progress', handleUploadProgress)
+      }
+    }
+  }, [socket, connected, uploadState.isUploading])
 
   const createProductMutation = useMutation(
     adminAPI.createProduct,
     {
       onSuccess: (data) => {
         console.log('✅ Admin product created successfully:', data)
-        toast.success('Product created successfully!')
-        navigate('/admin/products')
+        // Mark that we're navigating away to prevent retry popup
+        isNavigatingAwayRef.current = true
+        // Clear any error state and retry popup on success
+        setUploadState(prev => ({
+          ...prev,
+          showRetryPopup: false,
+          lastError: null,
+          isUploading: false,
+          uploadProgress: 0,
+          uploadStartTime: null
+        }))
+        // Don't navigate here since we already navigated in handleSubmit
+        // The AdminProducts page will handle the success via WebSocket
       },
       onError: (error) => {
         console.error('❌ Admin product creation failed:', error)
-        handleUploadError(error)
+        
+        // Don't show retry popup if we're navigating away (another upload succeeded)
+        if (isNavigatingAwayRef.current) {
+          console.log('🚫 Skipping retry popup in onError - navigating away after success')
+          setUploadState(prev => ({
+            ...prev,
+            isUploading: false,
+            uploadProgress: 0,
+            uploadStartTime: null
+          }))
+          return
+        }
+        
+        // Only show retry popup if we're not already successful
+        // This prevents the popup from showing if another upload succeeded
+        setUploadState(prev => {
+          // Don't show retry popup if we're already in a success state
+          if (prev.showRetryPopup === false && !prev.lastError) {
+            return {
+              ...prev,
+              isUploading: false,
+              uploadProgress: 0,
+              uploadStartTime: null
+            }
+          }
+          return {
+            ...prev,
+            showRetryPopup: true,
+            lastError: error,
+            isUploading: false
+          }
+        })
       },
       onSettled: () => {
         setUploadState(prev => ({
           ...prev,
           isUploading: false,
-          uploadProgress: 0
+          uploadProgress: 0,
+          uploadStartTime: null
         }))
       }
     }
@@ -405,6 +540,18 @@ useEffect(() => {
   const handleSubmit = async (e) => {
     e.preventDefault()
     
+    // Prevent double submission using ref for immediate protection
+    if (isSubmittingRef.current || uploadState.isUploading) {
+      console.log('⚠️ Form submission already in progress, ignoring duplicate click')
+      return
+    }
+    
+    // Reset navigation flag for new submission
+    isNavigatingAwayRef.current = false
+    
+    // Set submission ref
+    isSubmittingRef.current = true
+    
     // Check if force fail is enabled (for testing)
     const forceFail = e.nativeEvent?.shiftKey || false
     if (forceFail) {
@@ -412,8 +559,19 @@ useEffect(() => {
     }
     
     try {
-      const formDataToSubmit = prepareFormData()
       const uploadId = uploadService.generateUploadId()
+      const formDataToSubmit = prepareFormData(uploadId)
+      
+      // Store upload data in sessionStorage for AdminProducts page
+      const uploadInfo = {
+        uploadId,
+        productName: formDataToSubmit.get('name') || 'Product',
+        imageCount: formDataToSubmit.getAll('images')?.length || 0,
+        startTime: Date.now(),
+        status: 'started'
+      }
+      sessionStorage.setItem('productUploadData', JSON.stringify(uploadInfo))
+      sessionStorage.setItem('productUploadProgress', '0')
       
       setUploadState(prev => ({
         ...prev,
@@ -422,22 +580,29 @@ useEffect(() => {
         uploadProgress: 0,
         showRetryPopup: false,
         lastError: null,
-        uploadData: formDataToSubmit
+        uploadData: formDataToSubmit,
+        uploadStartTime: Date.now()
       }))
       
       // Save form data for recovery before upload
       uploadRecoveryService.saveUploadData(formDataToSubmit, uploadId)
       
-      await createProductMutation.mutateAsync(formDataToSubmit, { forceFail })
+      // Navigate immediately to products page - upload continues in background
+      navigate('/admin/products')
+      
+      // Start the upload in background
+      createProductMutation.mutateAsync(formDataToSubmit)
     } catch (error) {
       console.error('❌ Upload submission failed:', error)
+    } finally {
+      // Reset submission ref
+      isSubmittingRef.current = false
     }
   }
 
   // Prepare form data for submission
-  const prepareFormData = () => {
+  const prepareFormData = (uploadId) => {
     // Store form data for potential retry
-    const uploadId = `upload_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`
     sessionStorage.setItem(`retry_${uploadId}`, JSON.stringify(formData))
     if (previewImages.length > 0) {
       sessionStorage.setItem(`previews_${uploadId}`, JSON.stringify(previewImages))
@@ -536,54 +701,32 @@ useEffect(() => {
       formDataToSubmit.append(`images`, image)
     })
 
-    createProductMutation.mutate(formDataToSubmit)
+    return formDataToSubmit
   }
-
-  if (uploadState.isUploading) return <LoadingSpinner />
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50/30 to-indigo-50/40 relative">
-      {/* Upload Progress Overlay */}
-      {uploadState.isUploading && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm">
-          <div className="bg-white rounded-2xl p-8 max-w-md mx-4 shadow-2xl border border-gray-200/50">
-            <div className="text-center space-y-6">
-              <div className="flex justify-center">
-                <div className="relative w-16 h-16">
-                  <div className="absolute inset-0 rounded-full border-4 border-blue-200"></div>
-                  <div 
-                    className="absolute inset-0 rounded-full border-4 border-blue-500 border-t-transparent border-r-transparent animate-spin"
-                    style={{
-                      transform: `rotate(${uploadState.uploadProgress * 3.6}deg)`
-                    }}
-                  ></div>
-                  <div className="absolute inset-2 flex items-center justify-center">
-                    <span className="text-sm font-bold text-blue-600">{uploadState.uploadProgress}%</span>
-                  </div>
-                </div>
-              </div>
-              
-              <div className="space-y-2">
-                <h3 className="text-lg font-semibold text-gray-900">Creating Product</h3>
-                <p className="text-sm text-gray-600">
-                  {uploadState.uploadProgress < 90 ? 'Uploading images and processing data...' : 'Finalizing product creation...'}
-                </p>
-              </div>
-              
-              <div className="w-full bg-gray-200 rounded-full h-2 overflow-hidden">
-                <div 
-                  className="h-full bg-gradient-to-r from-blue-500 to-indigo-500 rounded-full transition-all duration-300 ease-out"
-                  style={{ width: `${uploadState.uploadProgress}%` }}
-                ></div>
-              </div>
-              
-              <div className="text-xs text-gray-500">
-                Please don't close this window while uploading...
-              </div>
-            </div>
-          </div>
-        </div>
-      )}
+      {/* Enterprise Upload Progress Bar */}
+      <EnterpriseUploadProgressBar
+        isUploading={uploadState.isUploading}
+        uploadProgress={uploadState.uploadProgress}
+        uploadData={uploadState.uploadData ? {
+          productName: uploadState.uploadData.get('name') || 'Product',
+          imageCount: uploadState.uploadData.getAll('images')?.length || 0,
+          startTime: uploadState.uploadStartTime || Date.now()
+        } : null}
+        currentImageIndex={uploadState.progressData?.currentImage || 0}
+        totalImages={uploadState.progressData?.totalImages || 0}
+        onDismiss={() => {
+          setUploadState(prev => ({
+            ...prev,
+            isUploading: false,
+            uploadProgress: 0,
+            uploadData: null,
+            uploadStartTime: null
+          }))
+        }}
+      />
 
       {/* Header */}
       <div className="sticky top-0 z-40 bg-white/80 backdrop-blur-xl border-b border-gray-200/50 shadow-sm">
@@ -604,6 +747,11 @@ useEffect(() => {
                 <div className="w-1.5 h-1.5 sm:w-2 sm:h-2 bg-green-500 rounded-full animate-pulse mr-1 sm:mr-2"></div>
                 <span className="text-xs sm:text-sm font-medium text-gray-700">Auto-save</span>
               </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
       {/* Progress Indicator */}
       <div className="sticky top-14 sm:top-16 z-30 bg-white/60 backdrop-blur-md border-b border-gray-200/30">
         <div className="max-w-7xl mx-auto px-2 sm:px-3 lg:px-8">
@@ -988,11 +1136,15 @@ useEffect(() => {
                     required
                   >
                     <option value="">Select a category</option>
-                    {categories.map((category) => (
-                      <option key={category._id} value={category._id}>
-                        {category.name}
-                      </option>
-                    ))}
+                    {categories.length === 0 ? (
+                      <option value="" disabled>Loading categories...</option>
+                    ) : (
+                      categories.map((category) => (
+                        <option key={category._id} value={category._id}>
+                          {category.name}
+                        </option>
+                      ))
+                    )}
                   </select>
                   <div className="absolute inset-y-0 right-0 flex items-center px-3 pointer-events-none">
                     <svg className="w-4 h-4 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -1460,8 +1612,44 @@ useEffect(() => {
               </div>
             </div>
           </div>
+        </div>
 
+        {/* Form Actions */}
+        <div className="bg-white rounded-lg border border-gray-200 p-6">
+          <div className="flex items-center justify-between">
+            <div className="text-xs text-gray-500">
+              <p>💡 Hold Shift + Click "Create" to force fail for testing</p>
+            </div>
+            <div className="flex items-center space-x-4">
+              <button
+                type="button"
+                onClick={() => navigate('/admin/products')}
+                className="btn-secondary"
+              >
+                Cancel
+              </button>
+              <button
+                type="submit"
+                disabled={uploadState.isUploading || isSubmittingRef.current}
+                className="btn-primary flex items-center space-x-2 disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                {uploadState.isUploading ? (
+                  <>
+                    <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                    <span>Creating...</span>
+                  </>
+                ) : (
+                  <>
+                    <Plus className="w-4 h-4" />
+                    <span>Create</span>
+                  </>
+                )}
+              </button>
+            </div>
+          </div>
+        </div>
       </form>
+      </div>
       
       {/* Upload Retry Popup */}
       <UploadRetryPopup
@@ -1470,10 +1658,8 @@ useEffect(() => {
         error={uploadState.lastError}
         uploadData={uploadState.uploadData}
         onRetry={handleRetryUpload}
-        uploadProgress={uploadState.uploadProgress}
         isRetrying={uploadState.isRetrying}
       />
-      </div>
     </div>
   )
 }

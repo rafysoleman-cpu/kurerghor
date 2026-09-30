@@ -3,7 +3,7 @@ import axios from 'axios'
 // Create axios instance
 const api = axios.create({
   baseURL: import.meta.env.VITE_API_URL || 'http://localhost:5000/api/v1',
-  timeout: 60000, // Extended to 60s for large file uploads
+  timeout: 300000, // Extended to 5 minutes for large file uploads
   headers: {
     'Content-Type': 'application/json'
   },
@@ -209,8 +209,6 @@ export const vendorAPI = {
   getEarnings: (params) => api.get('/vendors/earnings', { params }),
   updateProfile: (profileData) => api.put('/vendors/profile', profileData)
 }
-
-import uploadService from './uploadService.js'
 
 export const adminAPI = {
   getDashboard: () => api.get('/admin/dashboard'),

@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { useNavigate, useLocation } from 'react-router-dom'
 import { 
   ArrowLeft,
@@ -17,10 +17,12 @@ import uploadService from '../../services/uploadService'
 import uploadRecoveryService from '../../services/uploadRecoveryService'
 import LoadingSpinner from '../../components/LoadingSpinner'
 import UploadRetryPopup from '../../components/UploadRetryPopup'
+import EnterpriseUploadProgressBar from '../../components/EnterpriseUploadProgressBar'
 
 const VendorProductAdd = () => {
   const navigate = useNavigate()
   const location = useLocation()
+  const isSubmittingRef = useRef(false) // Add ref for submission protection
   const [formData, setFormData] = useState({
     name: '',
     slug: '',
@@ -58,7 +60,10 @@ const VendorProductAdd = () => {
     showRetryPopup: false,
     lastError: null,
     uploadData: null,
-    isRetrying: false
+    isRetrying: false,
+    currentImageIndex: 0,
+    totalImages: 0,
+    uploadStartTime: null
   })
 
   const { data: categoriesData } = useQuery(
@@ -77,7 +82,8 @@ const VendorProductAdd = () => {
         console.log('✅ Product created successfully:', data)
         // Clear any recovery data on success
         uploadRecoveryService.clearAllRecoveryData()
-        navigate('/vendor/products')
+        // Don't navigate here since we already navigated in handleSubmit
+        // The vendor products page will handle the success via custom event or reload
       },
       onError: (error) => {
         console.error('❌ Product upload failed:', error)
@@ -88,7 +94,8 @@ const VendorProductAdd = () => {
           ...prev,
           isUploading: false,
           uploadProgress: 0,
-          uploadId: null
+          uploadId: null,
+          uploadStartTime: null
         }))
       }
     }
@@ -110,9 +117,14 @@ const VendorProductAdd = () => {
   // Listen for upload progress events
   useEffect(() => {
     const handleProgress = (event) => {
-      const { progress, uploadId } = event.detail
+      const { progress, uploadId, currentImage, totalImages } = event.detail
       if (uploadId === uploadState.uploadId) {
-        setUploadState(prev => ({ ...prev, uploadProgress: progress }))
+        setUploadState(prev => ({ 
+          ...prev, 
+          uploadProgress: progress,
+          currentImageIndex: currentImage || prev.currentImageIndex,
+          totalImages: totalImages || prev.totalImages
+        }))
       }
     }
 
@@ -203,13 +215,22 @@ const VendorProductAdd = () => {
 
   // Handle upload retry
   const handleRetryUpload = async () => {
-    setUploadState(prev => ({ ...prev, isRetrying, showRetryPopup: false }))
+    setUploadState(prev => ({ 
+      ...prev, 
+      isRetrying: true, 
+      isUploading: true, // FIX: Set isUploading to true so socket listener works
+      showRetryPopup: false 
+    }))
     
     try {
       const formDataToSubmit = uploadState.uploadData.formData
       const uploadId = uploadService.generateUploadId()
       
-      setUploadState(prev => ({ ...prev, uploadId, isUploading: true }))
+      setUploadState(prev => ({ 
+        ...prev, 
+        uploadId, 
+        uploadStartTime: Date.now()
+      }))
       
       await createProductMutation.mutateAsync(formDataToSubmit)
     } catch (error) {
@@ -335,6 +356,15 @@ const VendorProductAdd = () => {
   const handleSubmit = async (e) => {
     e.preventDefault()
     
+    // Prevent double submission using ref for immediate protection
+    if (isSubmittingRef.current || uploadState.isUploading) {
+      console.log('⚠️ Form submission already in progress, ignoring duplicate click')
+      return
+    }
+    
+    // Set submission ref
+    isSubmittingRef.current = true
+    
     // Check if force fail is enabled (for testing)
     const forceFail = e.nativeEvent?.shiftKey || false
     if (forceFail) {
@@ -345,80 +375,69 @@ const VendorProductAdd = () => {
       const formDataToSubmit = prepareFormData()
       const uploadId = uploadService.generateUploadId()
       
+      // Store upload data in sessionStorage for potential background tracking
+      const uploadInfo = {
+        uploadId,
+        productName: formData.name || 'Product',
+        imageCount: formData.images?.length || 0,
+        startTime: Date.now(),
+        status: 'started'
+      }
+      sessionStorage.setItem('vendorProductUploadData', JSON.stringify(uploadInfo))
+      sessionStorage.setItem('vendorProductUploadProgress', '0')
+      
       setUploadState(prev => ({
         ...prev,
         isUploading: true,
         uploadId,
         uploadProgress: 0,
         showRetryPopup: false,
-        lastError: null
+        lastError: null,
+        uploadStartTime: Date.now()
       }))
       
       // Save form data for recovery before upload
       uploadRecoveryService.saveUploadData(formDataToSubmit, uploadId)
       
-      await createProductMutation.mutateAsync(formDataToSubmit, { forceFail })
+      // Navigate immediately to vendor products page - upload continues in background
+      navigate('/vendor/products')
+      
+      // Start the upload in background
+      createProductMutation.mutateAsync(formDataToSubmit, { forceFail })
     } catch (error) {
       console.error('❌ Upload submission failed:', error)
+    } finally {
+      // Reset submission ref
+      isSubmittingRef.current = false
     }
-  }
-
-  // Show loading spinner during upload
-  if (uploadState.isUploading && !uploadState.showRetryPopup) {
-    return (
-      <div className="container mx-auto px-4 py-8">
-        <div className="max-w-2xl mx-auto">
-          <div className="bg-white rounded-lg border border-gray-200 p-8 text-center">
-            <div className="mb-6">
-              <div className="inline-flex items-center justify-center w-16 h-16 bg-blue-100 rounded-full mb-4">
-                <Upload className="w-8 h-8 text-blue-600 animate-pulse" />
-              </div>
-              <h2 className="text-2xl font-semibold text-gray-900 mb-2">
-                {uploadState.isRetrying ? 'Retrying Upload...' : 'Uploading Product...'}
-              </h2>
-              <p className="text-gray-600 mb-6">
-                Please wait while we upload your product and images.
-              </p>
-            </div>
-            
-            {/* Progress Bar */}
-            <div className="mb-6">
-              <div className="flex items-center justify-between text-sm text-gray-600 mb-2">
-                <span>Upload Progress</span>
-                <span>{uploadState.uploadProgress}%</span>
-              </div>
-              <div className="w-full bg-gray-200 rounded-full h-3">
-                <div 
-                  className="bg-blue-500 h-3 rounded-full transition-all duration-300"
-                  style={{ width: `${uploadState.uploadProgress}%` }}
-                />
-              </div>
-              <p className="text-xs text-gray-500 mt-2">
-                {uploadState.uploadProgress < 30 && 'Preparing upload...'}
-                {uploadState.uploadProgress >= 30 && uploadState.uploadProgress < 80 && 'Uploading images...'}
-                {uploadState.uploadProgress >= 80 && uploadState.uploadProgress < 95 && 'Processing product...'}
-                {uploadState.uploadProgress >= 95 && 'Finalizing...'}
-              </p>
-            </div>
-            
-            {/* Upload Tips */}
-            <div className="text-left bg-blue-50 rounded-lg p-4">
-              <h4 className="text-sm font-medium text-blue-900 mb-2">Upload Tips:</h4>
-              <ul className="text-sm text-blue-700 space-y-1">
-                <li>• Keep this tab open until upload completes</li>
-                <li>• Large files may take longer to upload</li>
-                <li>• Upload will continue even on slow connections</li>
-                <li>• You'll be notified if any issues occur</li>
-              </ul>
-            </div>
-          </div>
-        </div>
-      </div>
-    )
   }
 
   return (
     <>
+      {/* Enterprise Upload Progress Bar */}
+      <EnterpriseUploadProgressBar
+        isUploading={uploadState.isUploading}
+        uploadProgress={uploadState.uploadProgress}
+        uploadData={uploadState.isUploading ? {
+          productName: formData.name || 'Product',
+          imageCount: formData.images?.length || 0,
+          startTime: uploadState.uploadStartTime || Date.now()
+        } : null}
+        currentImageIndex={uploadState.currentImageIndex}
+        totalImages={uploadState.totalImages}
+        onDismiss={() => {
+          setUploadState(prev => ({
+            ...prev,
+            isUploading: false,
+            uploadProgress: 0,
+            uploadData: null,
+            currentImageIndex: 0,
+            totalImages: 0,
+            uploadStartTime: null
+          }))
+        }}
+      />
+
       <div className="container mx-auto px-4 py-8">
       <div className="mb-8">
         <button
@@ -893,8 +912,8 @@ const VendorProductAdd = () => {
                 </button>
                 <button
                   type="submit"
-                  disabled={uploadState.isUploading}
-                  className="btn-primary flex items-center space-x-2"
+                  disabled={uploadState.isUploading || isSubmittingRef.current}
+                  className="btn-primary flex items-center space-x-2 disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   {uploadState.isUploading ? (
                     <>
@@ -922,7 +941,6 @@ const VendorProductAdd = () => {
       error={uploadState.lastError}
       uploadData={uploadState.uploadData}
       onRetry={handleRetryUpload}
-      uploadProgress={uploadState.uploadProgress}
       isRetrying={uploadState.isRetrying}
     />
     </>

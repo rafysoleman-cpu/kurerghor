@@ -17,9 +17,16 @@ import { useQuery, useQueryClient } from 'react-query'
 import { adminAPI } from '../../services/api'
 import LoadingSpinner from '../../components/LoadingSpinner'
 import Pagination from '../../components/Pagination'
+import EnterpriseUploadProgressBar from '../../components/EnterpriseUploadProgressBar'
+import DeleteConfirmationModal from '../../components/DeleteConfirmationModal'
 import { useSocket } from '../../contexts/SocketContext'
+import toast from 'react-hot-toast'
 
 const AdminProducts = () => {
+  // TEST FLAG - Set to true to see progress bar for testing, set to false for normal operation
+  const SHOW_BAR_FOR_TESTING = false
+  // const SHOW_BAR_FOR_TESTING = true
+  
   const navigate = useNavigate()
   const [currentPage, setCurrentPage] = useState(1)
   const [searchQuery, setSearchQuery] = useState('')
@@ -33,6 +40,8 @@ const AdminProducts = () => {
   const [earlyWebSocketEvents, setEarlyWebSocketEvents] = useState([]) // Buffer for early events
   const [currentImageIndex, setCurrentImageIndex] = useState(0) // Track current image being uploaded
   const [totalImages, setTotalImages] = useState(0) // Track total images
+  const [deleteModal, setDeleteModal] = useState({ isOpen: false, productId: null, productName: '' })
+  const [deletingProductId, setDeletingProductId] = useState(null) // Track which product is being deleted
   const queryClient = useQueryClient()
   const { socket, connected } = useSocket()
 
@@ -72,6 +81,11 @@ const AdminProducts = () => {
   console.log('Products API Response:', productsData)
   console.log('Extracted Products:', products)
   console.log('Pagination:', pagination)
+
+  // Scroll to top on component mount
+  useEffect(() => {
+    window.scrollTo(0, 0)
+  }, [])
 
   // WebSocket integration for real-time upload progress
   useEffect(() => {
@@ -146,18 +160,17 @@ const AdminProducts = () => {
                 setUploadProgress(event.progress || 0);
                 sessionStorage.setItem('productUploadProgress', (event.progress || 0).toString());
               } else if (event.status === 'completed') {
-                setTimeout(() => {
-                  setIsUploading(false);
-                  setUploadProgress(0);
-                  setUploadData(null);
-                  setCurrentImageIndex(0);
-                  setTotalImages(0);
-                  sessionStorage.removeItem('productUploadData');
-                  sessionStorage.removeItem('productUploadProgress');
-                  sessionStorage.removeItem('productUploadError');
-                  queryClient.invalidateQueries('adminProducts');
-                  queryClient.refetchQueries('adminProducts');
-                }, 1500);
+                setIsUploading(false);
+                setUploadProgress(0);
+                setUploadData(null);
+                setCurrentImageIndex(0);
+                setTotalImages(0);
+                sessionStorage.removeItem('productUploadData');
+                sessionStorage.removeItem('productUploadProgress');
+                sessionStorage.removeItem('productUploadError');
+                toast.success('Product created successfully!');
+                queryClient.invalidateQueries('adminProducts');
+                queryClient.refetchQueries('adminProducts');
               } else if (event.status === 'error') {
                 setErrorData({
                   error: event.message || 'Upload failed',
@@ -196,18 +209,19 @@ const AdminProducts = () => {
           // Handle completion
           if (data.status === 'completed') {
             console.log('✅ Upload completed via WebSocket')
-            setTimeout(() => {
-              setIsUploading(false)
-              setUploadProgress(0)
-              setUploadData(null)
-              // Clear sessionStorage
-              sessionStorage.removeItem('productUploadData')
-              sessionStorage.removeItem('productUploadProgress')
-              sessionStorage.removeItem('productUploadError')
-              // Refresh products list
-              queryClient.invalidateQueries('adminProducts')
-              queryClient.refetchQueries('adminProducts')
-            }, 1500) // Show completion for 1.5 seconds before clearing
+            // Hide progress bar immediately
+            setIsUploading(false)
+            setUploadProgress(0)
+            setUploadData(null)
+            // Clear sessionStorage
+            sessionStorage.removeItem('productUploadData')
+            sessionStorage.removeItem('productUploadProgress')
+            sessionStorage.removeItem('productUploadError')
+            // Show success toast
+            toast.success('Product created successfully!')
+            // Refresh products list
+            queryClient.invalidateQueries('adminProducts')
+            queryClient.refetchQueries('adminProducts')
           }
           
           // Handle errors
@@ -264,12 +278,14 @@ const AdminProducts = () => {
   // Handle upload progress and errors from sessionStorage
   useEffect(() => {
     let interval = null
-    let progressInterval = null
     
-    // Clear any existing error data on component mount
-    sessionStorage.removeItem('productUploadData')
-    sessionStorage.removeItem('productUploadProgress')
-    sessionStorage.removeItem('productUploadError')
+    // Don't clear sessionStorage on mount - check if there's active upload data
+    const existingUploadData = sessionStorage.getItem('productUploadData')
+    if (!existingUploadData) {
+      // Only clear if there's no active upload
+      sessionStorage.removeItem('productUploadProgress')
+      sessionStorage.removeItem('productUploadError')
+    }
     
     const checkUploadProgress = () => {
       try {
@@ -297,6 +313,11 @@ const AdminProducts = () => {
               setUploadData(uploadInfo)
               setIsUploading(true)
               
+              // Set initial progress from sessionStorage
+              if (progress) {
+                setUploadProgress(parseInt(progress))
+              }
+              
               // Process any buffered WebSocket events
               if (earlyWebSocketEvents.length > 0) {
                 console.log('🔄 Processing buffered WebSocket events:', earlyWebSocketEvents.length);
@@ -308,16 +329,15 @@ const AdminProducts = () => {
                   } else if (event.stage === 'uploading') {
                     setUploadProgress(event.progress || 0)
                   } else if (event.stage === 'completed') {
-                    setTimeout(() => {
-                      setIsUploading(false)
-                      setUploadProgress(0)
-                      setUploadData(null)
-                      sessionStorage.removeItem('productUploadData')
-                      sessionStorage.removeItem('productUploadProgress')
-                      sessionStorage.removeItem('productUploadError')
-                      queryClient.invalidateQueries('adminProducts')
-                      queryClient.refetchQueries('adminProducts')
-                    }, 1500)
+                    setIsUploading(false)
+                    setUploadProgress(0)
+                    setUploadData(null)
+                    sessionStorage.removeItem('productUploadData')
+                    sessionStorage.removeItem('productUploadProgress')
+                    sessionStorage.removeItem('productUploadError')
+                    toast.success('Product created successfully!')
+                    queryClient.invalidateQueries('adminProducts')
+                    queryClient.refetchQueries('adminProducts')
                   } else if (event.stage === 'error') {
                     setErrorData({
                       error: event.error || 'Upload failed',
@@ -413,31 +433,6 @@ const AdminProducts = () => {
       }
     }
 
-    // Simulate progress for better UX
-    const simulateProgress = () => {
-      if (isUploading && uploadData) {
-        const elapsed = Date.now() - uploadData.startTime
-        let simulatedProgress = 5 // Start from 5%
-        
-        if (elapsed < 2000) {
-          simulatedProgress = 5 + Math.floor((elapsed / 2000) * 15) // 5-20% in 2s
-        } else if (elapsed < 8000) {
-          simulatedProgress = 20 + Math.floor(((elapsed - 2000) / 6000) * 60) // 20-80% in 6s
-        } else if (elapsed < 12000) {
-          simulatedProgress = 80 + Math.floor(((elapsed - 8000) / 4000) * 15) // 80-95% in 4s
-        } else {
-          simulatedProgress = 95 // Hold at 95%
-        }
-        
-        // Only update if we don't have real progress or if simulated is higher
-        const currentProgress = parseInt(sessionStorage.getItem('productUploadProgress') || '0')
-        if (simulatedProgress > currentProgress) {
-          setUploadProgress(simulatedProgress)
-          sessionStorage.setItem('productUploadProgress', simulatedProgress.toString())
-        }
-      }
-    }
-
     // Handle window focus to recheck upload progress
     const handleWindowFocus = () => {
       console.log('🔄 Window focused, checking upload progress...')
@@ -456,7 +451,6 @@ const AdminProducts = () => {
     const hasUploadData = sessionStorage.getItem('productUploadData') || sessionStorage.getItem('productUploadError')
     if (hasUploadData) {
       interval = setInterval(checkUploadProgress, 500)
-      progressInterval = setInterval(simulateProgress, 1000) // Update progress every second
     }
     
     // Add window focus listener
@@ -465,9 +459,6 @@ const AdminProducts = () => {
     return () => {
       if (interval) {
         clearInterval(interval)
-      }
-      if (progressInterval) {
-        clearInterval(progressInterval)
       }
       window.removeEventListener('focus', handleWindowFocus)
     }
@@ -505,6 +496,34 @@ const AdminProducts = () => {
     }
   }
 
+  const handleDeleteProduct = (productId, productName) => {
+    setDeleteModal({ isOpen: true, productId, productName })
+  }
+
+  const closeDeleteModal = () => {
+    setDeleteModal({ isOpen: false, productId: null, productName: '' })
+  }
+
+  const confirmDeleteProduct = async () => {
+    const { productId } = deleteModal
+    setDeletingProductId(productId)
+
+    try {
+      await adminAPI.deleteProduct(productId)
+      toast.success('Product deleted successfully')
+      closeDeleteModal()
+      // Refresh the products list
+      queryClient.invalidateQueries('adminProducts')
+      queryClient.refetchQueries('adminProducts')
+    } catch (error) {
+      console.error('Error deleting product:', error)
+      toast.error(error.response?.data?.error || 'Failed to delete product')
+      closeDeleteModal()
+    } finally {
+      setDeletingProductId(null)
+    }
+  }
+
   const vendors = vendorsData?.data?.vendors || []
 
   const statusOptions = [
@@ -529,361 +548,26 @@ const AdminProducts = () => {
 
   return (
     <div className="container mx-auto px-4 py-8 relative">
-      {/* Enterprise Shimmer Animation */}
-      <style jsx>{`
-        @keyframes shimmer {
-          0% { transform: translateX(-100%); }
-          100% { transform: translateX(100%); }
-        }
-        .animate-shimmer {
-          animation: shimmer 2s infinite;
-        }
-      `}</style>
-      
       {/* Enterprise Upload Progress Bar */}
-      {isUploading && uploadData && (
-        <div className="fixed top-0 left-0 right-0 z-[60] border-b border-blue-500/20 shadow-2xl">
-          {/* Ambient Glow Effect */}
-          <div className="absolute inset-0 bg-gradient-to-r from-blue-500/5 via-purple-500/5 to-blue-500/5 animate-pulse"></div>
-          
-          <div className="relative w-full px-2 sm:px-3 md:px-4 lg:px-6 py-2 sm:py-3 md:py-4">
-            {/* Mobile Layout - Premium Stacked */}
-            <div className="block sm:hidden space-y-3">
-              {/* Premium Header with Glow */}
-              <div className="flex items-center justify-between bg-gradient-to-r from-slate-800/50 to-blue-800/50 rounded-xl p-3 border border-blue-500/20 shadow-lg">
-                <div className="flex items-center space-x-3">
-                  {/* Advanced Spinner with Glow */}
-                  <div className="relative w-8 h-8">
-                    {/* Outer Glow Ring */}
-                    <div className="absolute inset-0 rounded-full bg-blue-500/20 blur-lg animate-pulse"></div>
-                    {/* Progress Ring */}
-                    <svg className="absolute inset-0 w-8 h-8 transform -rotate-90">
-                      <circle cx="16" cy="16" r="12" stroke="rgba(59, 130, 246, 0.2)" strokeWidth="2" fill="none" />
-                      <circle cx="16" cy="16" r="12" stroke="url(#gradient)" strokeWidth="2" fill="none" 
-                        strokeDasharray={`${2 * Math.PI * 12}`} 
-                        strokeDashoffset={`${2 * Math.PI * 12 * (1 - uploadProgress / 100)}`}
-                        className="transition-all duration-500 ease-out" />
-                      <defs>
-                        <linearGradient id="gradient" x1="0%" y1="0%" x2="100%" y2="100%">
-                          <stop offset="0%" stopColor="#3B82F6" />
-                          <stop offset="50%" stopColor="#8B5CF6" />
-                          <stop offset="100%" stopColor="#3B82F6" />
-                        </linearGradient>
-                      </defs>
-                    </svg>
-                    {/* Center Percentage */}
-                    <div className="absolute inset-0 flex items-center justify-center">
-                      <span className="text-xs font-bold text-white drop-shadow-lg">{uploadProgress}%</span>
-                    </div>
-                  </div>
-                  
-                  <div className="flex-1 min-w-0">
-                    <h3 className="text-xs font-bold text-white truncate mb-1 drop-shadow">Creating "{uploadData.productName}"</h3>
-                    <div className="flex items-center space-x-2">
-                      <div className="w-2 h-2 bg-green-400 rounded-full animate-pulse shadow-lg shadow-green-400/50"></div>
-                      <p className="text-xs text-blue-200 font-medium">
-                        {uploadProgress < 30 
-                          ? 'Initializing secure connection...'
-                          : uploadProgress < 80
-                          ? `Processing ${uploadData.imageCount} file${uploadData.imageCount !== 1 ? 's' : ''}...`
-                          : uploadProgress < 95
-                          ? 'Optimizing data...'
-                          : 'Finalizing creation...'
-                        }
-                      </p>
-                    </div>
-                  </div>
-                </div>
-                
-                {/* Status Badge */}
-                <div className="bg-gradient-to-r from-blue-500/20 to-purple-500/20 border border-blue-400/30 rounded-lg px-3 py-1">
-                  <div className="flex items-center space-x-2">
-                    <span className="text-xs font-semibold text-blue-300">
-                      {uploadProgress < 30 
-                        ? 'STARTING'
-                        : uploadProgress < 80
-                        ? 'UPLOADING'
-                        : uploadProgress < 95
-                        ? 'PROCESSING'
-                        : 'FINALIZING'
-                      }
-                    </span>
-                    {uploadProgress === 100 && (
-                      <button
-                        onClick={() => {
-                          console.log('🔘 Manual dismiss clicked (mobile)');
-                          setIsUploading(false)
-                          setUploadProgress(0)
-                          setUploadData(null)
-                          sessionStorage.removeItem('productUploadData')
-                          sessionStorage.removeItem('productUploadProgress')
-                          sessionStorage.removeItem('productUploadError')
-                          queryClient.invalidateQueries('adminProducts')
-                          queryClient.refetchQueries('adminProducts')
-                        }}
-                        className="text-blue-400 hover:text-blue-300 transition-colors"
-                        title="Dismiss progress bar"
-                      >
-                        ✕
-                      </button>
-                    )}
-                  </div>
-                </div>
-              </div>
-              
-              {/* Compact Progress Bar */}
-              <div className="space-y-2">
-                <div className="relative">
-                  {/* Glow Background */}
-                  <div className="absolute inset-0 bg-gradient-to-r from-blue-500/20 to-purple-500/20 rounded-full blur-lg"></div>
-                  {/* Progress Bar */}
-                  <div className="relative bg-slate-700/50 rounded-full h-2 overflow-hidden border border-blue-500/30 shadow-inner">
-                    <div 
-                      className="h-full bg-gradient-to-r from-blue-500 via-purple-500 to-blue-500 rounded-full transition-all duration-700 ease-out relative shadow-lg shadow-blue-500/50"
-                      style={{ width: `${uploadProgress}%` }}
-                    >
-                      {/* Animated Shimmer */}
-                      <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/30 to-transparent animate-shimmer"></div>
-                      {/* Pulsing Overlay */}
-                      <div className="absolute inset-0 bg-white/10 animate-pulse"></div>
-                    </div>
-                  </div>
-                </div>
-                <div className="flex items-center justify-between text-xs">
-                  <span className="text-blue-300 font-medium">
-                    {uploadProgress < 30 
-                      ? 'Establishing connection...'
-                      : uploadProgress < 80
-                      ? 'Transferring files...'
-                      : uploadProgress < 95
-                      ? 'Processing data...'
-                      : 'Completing operation...'
-                    }
-                  </span>
-                  <div className="flex items-center space-x-2">
-                    <span className="text-gray-400">
-                      {uploadProgress < 30 
-                        ? `${Math.floor(uploadProgress / 30 * 2)}s remaining`
-                        : uploadProgress < 80
-                        ? `${Math.floor((80 - uploadProgress) / 50 * 4)}s remaining`
-                        : uploadProgress < 95
-                        ? `${Math.floor((95 - uploadProgress) / 15 * 2)}s remaining`
-                        : 'Almost complete...'
-                      }
-                    </span>
-                    {uploadProgress === 100 && (
-                      <button
-                        onClick={() => {
-                          console.log('🔘 Manual dismiss clicked');
-                          setIsUploading(false)
-                          setUploadProgress(0)
-                          setUploadData(null)
-                          sessionStorage.removeItem('productUploadData')
-                          sessionStorage.removeItem('productUploadProgress')
-                          sessionStorage.removeItem('productUploadError')
-                          queryClient.invalidateQueries('adminProducts')
-                          queryClient.refetchQueries('adminProducts')
-                        }}
-                        className="text-blue-400 hover:text-blue-300 transition-colors"
-                        title="Dismiss progress bar"
-                      >
-                        ✕
-                      </button>
-                    )}
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            {/* Tablet Layout - Premium Compact */}
-            <div className="hidden sm:block md:hidden">
-              <div className="bg-gradient-to-r from-slate-800/50 to-blue-800/50 rounded-xl p-4 border border-blue-500/20 shadow-xl">
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center space-x-4">
-                    {/* Premium Spinner */}
-                    <div className="relative w-9 h-9">
-                      <div className="absolute inset-0 rounded-full bg-blue-500/20 blur-lg animate-pulse"></div>
-                      <svg className="absolute inset-0 w-9 h-9 transform -rotate-90">
-                        <circle cx="18" cy="18" r="14" stroke="rgba(59, 130, 246, 0.2)" strokeWidth="2" fill="none" />
-                        <circle cx="18" cy="18" r="14" stroke="url(#gradient)" strokeWidth="2" fill="none" 
-                          strokeDasharray={`${2 * Math.PI * 14}`} 
-                          strokeDashoffset={`${2 * Math.PI * 14 * (1 - uploadProgress / 100)}`}
-                          className="transition-all duration-500 ease-out" />
-                      </svg>
-                      <div className="absolute inset-0 flex items-center justify-center">
-                        <span className="text-xs font-bold text-white drop-shadow-lg">{uploadProgress}%</span>
-                      </div>
-                    </div>
-                    
-                    <div className="flex-1 min-w-0">
-                      <h3 className="text-sm font-bold text-white truncate mb-1 drop-shadow">Creating "{uploadData.productName}"</h3>
-                      <div className="flex items-center space-x-2">
-                        <div className="w-2 h-2 bg-green-400 rounded-full animate-pulse shadow-lg shadow-green-400/50"></div>
-                        <p className="text-xs text-blue-200">
-                          {uploadProgress < 30 
-                            ? 'Initializing secure connection...'
-                            : uploadProgress < 80
-                            ? `Processing ${uploadData.imageCount} file${uploadData.imageCount !== 1 ? 's' : ''}...`
-                            : uploadProgress < 95
-                            ? 'Optimizing data...'
-                            : 'Finalizing creation...'
-                          }
-                        </p>
-                      </div>
-                    </div>
-                  </div>
-                  
-                  <div className="flex items-center space-x-3">
-                    <div className="w-36 bg-slate-700/50 rounded-full h-2 overflow-hidden border border-blue-500/30">
-                      <div 
-                        className="h-full bg-gradient-to-r from-blue-500 via-purple-500 to-blue-500 rounded-full transition-all duration-500 ease-out relative shadow-lg shadow-blue-500/50"
-                        style={{ width: `${uploadProgress}%` }}
-                      >
-                        <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/30 to-transparent animate-shimmer"></div>
-                      </div>
-                    </div>
-                    <div className="flex items-center space-x-2">
-                      <div className="bg-gradient-to-r from-blue-500/20 to-purple-500/20 border border-blue-400/30 rounded-lg px-2 py-1">
-                        <span className="text-xs font-semibold text-blue-300">
-                          {uploadProgress < 30 ? 'STARTING' : uploadProgress < 80 ? 'UPLOADING' : uploadProgress < 95 ? 'PROCESSING' : 'FINALIZING'}
-                        </span>
-                      </div>
-                      {uploadProgress === 100 && (
-                        <button
-                          onClick={() => {
-                            console.log('🔘 Manual dismiss clicked (tablet)');
-                            setIsUploading(false)
-                            setUploadProgress(0)
-                            setUploadData(null)
-                            sessionStorage.removeItem('productUploadData')
-                            sessionStorage.removeItem('productUploadProgress')
-                            sessionStorage.removeItem('productUploadError')
-                            queryClient.invalidateQueries('adminProducts')
-                            queryClient.refetchQueries('adminProducts')
-                          }}
-                          className="text-blue-400 hover:text-blue-300 transition-colors text-lg"
-                          title="Dismiss progress bar"
-                        >
-                          ✕
-                        </button>
-                      )}
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            {/* Desktop Layout - Enterprise Full */}
-            <div className="hidden md:block">
-              <div className="bg-gradient-to-r from-slate-800/50 via-blue-800/50 to-slate-800/50 rounded-2xl p-5 border border-blue-500/20 shadow-2xl backdrop-blur-sm">
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center space-x-6">
-                    {/* Enterprise Spinner */}
-                    <div className="relative w-10 h-10">
-                      <div className="absolute inset-0 rounded-full bg-gradient-to-r from-blue-500/30 to-purple-500/30 blur-xl animate-pulse"></div>
-                      <svg className="absolute inset-0 w-10 h-10 transform -rotate-90">
-                        <circle cx="20" cy="20" r="16" stroke="rgba(59, 130, 246, 0.2)" strokeWidth="3" fill="none" />
-                        <circle cx="20" cy="20" r="16" stroke="url(#gradient)" strokeWidth="3" fill="none" 
-                          strokeDasharray={`${2 * Math.PI * 16}`} 
-                          strokeDashoffset={`${2 * Math.PI * 16 * (1 - uploadProgress / 100)}`}
-                          className="transition-all duration-700 ease-out filter drop-shadow-lg" />
-                      </svg>
-                      <div className="absolute inset-0 flex items-center justify-center">
-                        <span className="text-sm font-bold text-white drop-shadow-lg">{uploadProgress}%</span>
-                      </div>
-                    </div>
-                    
-                    <div className="flex-1 min-w-0">
-                      <div className="flex items-center space-x-3 mb-2">
-                        <h3 className="text-base font-bold text-white truncate drop-shadow">Creating "{uploadData.productName}"</h3>
-                        <div className="flex items-center space-x-2">
-                          <div className="w-2 h-2 bg-green-400 rounded-full animate-pulse shadow-xl shadow-green-400/50"></div>
-                          <span className="text-sm font-semibold text-green-400">ACTIVE</span>
-                        </div>
-                      </div>
-                      <div className="flex items-center space-x-4">
-                        <p className="text-sm text-blue-200 font-medium">
-                          {uploadProgress < 15 && currentImageIndex === 0
-                            ? 'Initializing secure connection and preparing upload...'
-                            : uploadProgress < 90
-                            ? `Uploading image ${currentImageIndex} of ${totalImages} with enterprise-grade encryption...`
-                            : uploadProgress < 95
-                            ? 'Optimizing data and validating integrity...'
-                            : 'Finalizing creation and deploying to production...'
-                          }
-                        </p>
-                      </div>
-                    </div>
-                  </div>
-                  
-                  <div className="flex items-center space-x-6">
-                    <div className="text-right">
-                      <div className="relative w-48 bg-slate-700/50 rounded-full h-2 overflow-hidden border border-blue-500/30 shadow-inner">
-                        <div 
-                          className="h-full bg-gradient-to-r from-blue-500 via-purple-500 to-blue-500 rounded-full transition-all duration-700 ease-out relative shadow-xl shadow-blue-500/50"
-                          style={{ width: `${uploadProgress}%` }}
-                        >
-                          <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/40 to-transparent animate-shimmer"></div>
-                          <div className="absolute inset-0 bg-white/10 animate-pulse"></div>
-                        </div>
-                      </div>
-                      <div className="flex items-center justify-between mt-2 text-xs">
-                        <span className="text-blue-300 font-medium">
-                          {uploadProgress < 30 
-                            ? 'Establishing connection...'
-                            : uploadProgress < 80
-                            ? 'Transferring files...'
-                            : uploadProgress < 95
-                            ? 'Processing data...'
-                            : 'Completing operation...'
-                          }
-                        </span>
-                        <div className="flex items-center space-x-2">
-                          <span className="text-gray-400">
-                            {uploadProgress < 30 
-                              ? `${Math.floor(uploadProgress / 30 * 2)}s remaining`
-                              : uploadProgress < 80
-                              ? `${Math.floor((80 - uploadProgress) / 50 * 4)}s remaining`
-                              : uploadProgress < 95
-                              ? `${Math.floor((95 - uploadProgress) / 15 * 2)}s remaining`
-                              : 'Almost complete...'
-                            }
-                          </span>
-                          {uploadProgress === 100 && (
-                            <button
-                              onClick={() => {
-                                console.log('🔘 Manual dismiss clicked (desktop)');
-                                setIsUploading(false)
-                                setUploadProgress(0)
-                                setUploadData(null)
-                                sessionStorage.removeItem('productUploadData')
-                                sessionStorage.removeItem('productUploadProgress')
-                                sessionStorage.removeItem('productUploadError')
-                                queryClient.invalidateQueries('adminProducts')
-                                queryClient.refetchQueries('adminProducts')
-                              }}
-                              className="text-blue-400 hover:text-blue-300 transition-colors text-lg font-bold"
-                              title="Dismiss progress bar"
-                            >
-                              ✕
-                            </button>
-                          )}
-                        </div>
-                      </div>
-                    </div>
-                    
-                    <div className="bg-gradient-to-r from-blue-500/20 to-purple-500/20 border border-blue-400/30 rounded-xl px-4 py-2 shadow-lg">
-                      <span className="text-sm font-bold text-blue-300">
-                        {uploadProgress < 30 ? 'INITIALIZING' : uploadProgress < 80 ? 'UPLOADING' : uploadProgress < 95 ? 'PROCESSING' : 'FINALIZING'}
-                      </span>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      )}
+      <div className="relative">
+        <EnterpriseUploadProgressBar
+          isUploading={SHOW_BAR_FOR_TESTING || isUploading}
+          uploadProgress={SHOW_BAR_FOR_TESTING ? 50 : uploadProgress}
+          uploadData={SHOW_BAR_FOR_TESTING ? { productName: 'Test Product', imageCount: 5 } : uploadData}
+          currentImageIndex={SHOW_BAR_FOR_TESTING ? 2 : currentImageIndex}
+          totalImages={SHOW_BAR_FOR_TESTING ? 5 : totalImages}
+          onDismiss={() => {
+            setIsUploading(false)
+            setUploadProgress(0)
+            setUploadData(null)
+            sessionStorage.removeItem('productUploadData')
+            sessionStorage.removeItem('productUploadProgress')
+            sessionStorage.removeItem('productUploadError')
+            queryClient.invalidateQueries('adminProducts')
+            queryClient.refetchQueries('adminProducts')
+          }}
+        />
+      </div>
 
       {/* Error Retry Overlay */}
       {showError && errorData && (
@@ -1078,10 +762,16 @@ const AdminProducts = () => {
                           >
                             <Edit className="w-4 h-4" />
                           </Link>
-                          
-                          <button className="text-error-600 hover:text-error-900">
-                            <Trash2 className="w-4 h-4" />
-                          </button>
+
+                          {product.status !== 'deleted' && (
+                            <button
+                              onClick={() => handleDeleteProduct(product._id, product.name)}
+                              disabled={deletingProductId === product._id}
+                              className={`text-error-600 hover:text-error-900 ${deletingProductId === product._id ? 'opacity-50 cursor-not-allowed' : ''}`}
+                            >
+                              <Trash2 className="w-4 h-4" />
+                            </button>
+                          )}
                         </div>
                       </td>
                     </tr>
@@ -1128,6 +818,15 @@ const AdminProducts = () => {
           </div>
         </div>
       )}
+
+      {/* Delete Confirmation Modal */}
+      <DeleteConfirmationModal
+        isOpen={deleteModal.isOpen}
+        onClose={closeDeleteModal}
+        onConfirm={confirmDeleteProduct}
+        itemName={deleteModal.productName}
+        isDeleting={deletingProductId === deleteModal.productId}
+      />
     </div>
   )
 }
