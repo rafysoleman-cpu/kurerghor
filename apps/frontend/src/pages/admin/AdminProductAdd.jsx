@@ -59,11 +59,10 @@ const AdminProductAdd = () => {
     name: '',
     slug: '',
     sku: '',
+    barcode: '',
     description: '',
     price: '',
     costPrice: '',
-    regularPrice: '',
-    salePrice: '',
     quantity: '',
     trackQuantity: true,
     allowBackorder: false,
@@ -1176,7 +1175,7 @@ useEffect(() => {
                     <option value="">Select a vendor</option>
                     {vendors.map((vendor) => (
                       <option key={vendor._id} value={vendor._id}>
-                        {vendor.storeName || vendor.name || vendor.email}
+                        {vendor.vendorRequest?.shopName || vendor.name || vendor.email}
                       </option>
                     ))}
                   </select>
@@ -1203,9 +1202,9 @@ useEffect(() => {
                   className="block w-full px-4 py-3 rounded-xl border border-gray-200/50 bg-gray-50/50 text-gray-900 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 transition-all duration-200 group-hover:bg-gray-50 appearance-none cursor-pointer"
                   required
                 >
+                  <option value="draft">Draft</option>
                   <option value="active">Active</option>
-                  <option value="inactive">Inactive</option>
-                  <option value="pending">Pending Review</option>
+                  <option value="archived">Archived</option>
                 </select>
                 <div className="absolute inset-y-0 right-0 flex items-center px-3 pointer-events-none">
                   <svg className="w-4 h-4 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">

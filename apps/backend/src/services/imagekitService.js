@@ -97,6 +97,49 @@ export class ImageKitService extends UploadService {
   }
 
   /**
+   * Resolve a file path to an ImageKit file ID
+   * ImageKit delete only accepts a fileId, so legacy records that stored just a URL
+   * need a path lookup before the file can be removed
+   * @param {string} filePath - Path relative to the ImageKit folder root
+   * @returns {Promise<string|null>} - ImageKit file ID, or null when not found
+   */
+  async findFileIdByPath(filePath) {
+    if (!filePath) return null;
+
+    const target = filePath.replace(/^\/+/, '');
+    const directory = target.includes('/') ? target.slice(0, target.lastIndexOf('/') + 1) : '';
+    const fileName = target.slice(directory.length);
+
+    try {
+      const response = await this.requestFileList(directory);
+      const files = Array.isArray(response) ? response : response?.files ?? response?.data ?? [];
+
+      const match = files.find((file) => {
+        const candidate = (file?.filePath ?? file?.name ?? '').replace(/^\/+/, '');
+        return candidate === target || (fileName && candidate.endsWith(`/${fileName}`));
+      });
+
+      return match?.fileId ?? null;
+    } catch (error) {
+      console.warn(`ImageKit file lookup unavailable for "${target}":`, error.message);
+      return null;
+    }
+  }
+
+  /**
+   * List files in a folder across the SDK shapes this service may run against
+   * @param {string} directory - Folder path with a trailing slash
+   * @returns {Promise<unknown>} - Raw list response
+   */
+  async requestFileList(directory) {
+    if (typeof this.imagekit.files?.list === 'function') {
+      return this.imagekit.files.list({ path: directory, limit: 100 });
+    }
+
+    return this.imagekit.get('/files', { path: directory, limit: 100 });
+  }
+
+  /**
    * Get file metadata from ImageKit
    * @param {string} fileId - ImageKit file ID
    * @returns {Promise<Object>} - File metadata

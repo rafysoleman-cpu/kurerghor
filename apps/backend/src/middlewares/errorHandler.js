@@ -1,5 +1,12 @@
-import mongoose from 'mongoose';
 import { envConfig } from '../config/env.js';
+import {
+  isDuplicateKeyError,
+  isValidationError,
+  describeDuplicateKeyError,
+  getDuplicateFields,
+  describeValidationError,
+  describeCastError
+} from '../utils/mongoErrors.js';
 
 const errorHandler = (err, req, res, next) => {
   let error = { ...err };
@@ -21,32 +28,33 @@ const errorHandler = (err, req, res, next) => {
 
   // Mongoose bad ObjectId
   if (err.name === 'CastError') {
-    const message = 'Resource not found';
-    error = { message, statusCode: 404 };
+    error = { message: describeCastError(err) ?? 'Resource not found', statusCode: 404 };
   }
 
   // Mongoose duplicate key
-  if (err.code === 11000) {
-    const field = Object.keys(err.keyPattern)[0];
-    let message = 'Duplicate field value entered';
-    
-    if (field === 'slug') {
-      message = 'Product with this URL slug already exists. Please use a different product name or slug.';
-    } else if (field === 'sku') {
-      message = 'Product with this SKU already exists. Please use a different SKU.';
-    } else if (field === 'email') {
-      message = 'An account with this email already exists.';
-    } else {
-      message = `A record with this ${field} already exists.`;
-    }
-    
-    error = { message, statusCode: 400 };
+  if (isDuplicateKeyError(err)) {
+    const message = describeDuplicateKeyError(err, 'product');
+    const fields = getDuplicateFields(err);
+
+    error = {
+      message,
+      statusCode: 400,
+      // Lets the client attach the message to the offending field
+      details: fields.map((field) => ({ field, message }))
+    };
   }
 
   // Mongoose validation error
-  if (err.name === 'ValidationError') {
-    const message = Object.values(err.errors).map(val => val.message);
-    error = { message, statusCode: 400 };
+  if (isValidationError(err)) {
+    const message = describeValidationError(err);
+    error = {
+      message,
+      statusCode: 400,
+      details: Object.values(err.errors).map((issue) => ({
+        field: issue.path,
+        message: issue.message
+      }))
+    };
   }
 
   // JWT errors
@@ -122,10 +130,14 @@ const errorHandler = (err, req, res, next) => {
     method: req.method
   };
 
-  // Add stack trace in development
+  if (error.details) {
+    response.details = error.details;
+  }
+
+  // Add stack trace in development without clobbering the field details
   if (envConfig.isDevelopment) {
     response.stack = err.stack;
-    response.details = {
+    response.debug = {
       env: envConfig.nodeEnv,
       errorName: err.name,
       errorCode: err.code

@@ -43,7 +43,15 @@ const productSchema = new mongoose.Schema({
   sku: {
     type: String,
     required: false,
-    unique: true
+    unique: true,
+    sparse: true
+  },
+  barcode: {
+    type: String,
+    required: false,
+    unique: true,
+    sparse: true,
+    trim: true
   },
   price: {
     type: Number,
@@ -61,6 +69,7 @@ const productSchema = new mongoose.Schema({
   images: [{
     url: String,
     alt: String,
+    fileId: String,
     isMain: {
       type: Boolean,
       default: false

@@ -659,7 +659,7 @@ const AdminProducts = () => {
             <option value="">All Vendors</option>
             {vendors.map((vendor) => (
               <option key={vendor._id} value={vendor._id}>
-                {vendor.storeName || vendor.owner?.name || 'Unknown Vendor'}
+                {vendor.vendorRequest?.shopName || vendor.name || vendor.email || 'Unknown Vendor'}
               </option>
             ))}
           </select>
@@ -725,7 +725,7 @@ const AdminProducts = () => {
                       
                       <td className="px-6 py-4 whitespace-nowrap">
                         <div className="text-sm text-gray-900">
-                          {product.vendor?.storeName || 'N/A'}
+                          {product.vendor?.vendorRequest?.shopName || product.vendor?.name || 'N/A'}
                         </div>
                         <div className="text-sm text-gray-500">
                           {product.vendor?.owner?.name || ''}

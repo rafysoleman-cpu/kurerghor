@@ -1,5 +1,38 @@
 import Joi from 'joi';
 
+const OBJECT_ID = /^[0-9a-fA-F]{24}$/;
+
+const JSON_BODY_FIELDS = [
+  'dimensions',
+  'tags',
+  'weight',
+  'inventory',
+  'seo',
+  'subcategories',
+  'imagesJson',
+  'uploadedImages',
+  'video',
+  'variants',
+  'flashSale',
+  'shipping',
+  'tax'
+];
+
+const PRODUCT_STATUSES = ['draft', 'active', 'archived', 'deleted'];
+const PRODUCT_VISIBILITIES = ['public', 'private', 'hidden'];
+
+const imageSchema = Joi.object({
+  url: Joi.string().uri().required(),
+  alt: Joi.string().allow('').optional(),
+  fileId: Joi.string().allow('').optional(),
+  isMain: Joi.boolean().optional()
+});
+
+const moneySchema = Joi.alternatives().try(
+  Joi.number().min(0),
+  Joi.string().allow('')
+).optional();
+
 // Validation middleware
 export const validate = (schema) => {
   return (req, res, next) => {
@@ -7,29 +40,20 @@ export const validate = (schema) => {
     
     // Handle FormData - parse JSON strings only for specific fields
     if (req.headers['content-type'] && req.headers['content-type'].includes('multipart/form-data')) {
-      console.log('🔍 Processing FormData with keys:', Object.keys(req.body));
       data = {};
       Object.keys(req.body).forEach(key => {
-        // Only try to parse as JSON for fields that should be objects/arrays
-        const jsonFields = ['dimensions', 'tags', 'weight', 'inventory', 'seo'];
-        if (jsonFields.includes(key)) {
+        if (JSON_BODY_FIELDS.includes(key)) {
           try {
-            // Handle empty tags string
             if (key === 'tags' && (req.body[key] === '' || req.body[key] === '""' || req.body[key] === '[]')) {
-              data[key] = []; // Convert empty tags to empty array
-              console.log(`✅ Converted empty ${key} to empty array:`, data[key]);
+              data[key] = [];
             } else {
               data[key] = JSON.parse(req.body[key]);
-              console.log(`✅ Parsed ${key}:`, data[key]);
             }
           } catch {
-            // If JSON parsing fails and it's tags, convert empty string to array
             if (key === 'tags' && (req.body[key] === '' || req.body[key] === '""')) {
-              data[key] = []; // Convert empty tags to empty array
-              console.log(`✅ Converted empty ${key} to empty array:`, data[key]);
+              data[key] = [];
             } else {
               data[key] = req.body[key];
-              console.log(`📝 Kept ${key} as string:`, data[key]);
             }
           }
         } else if (key === 'category') {
@@ -38,31 +62,30 @@ export const validate = (schema) => {
             // Take the last non-empty value from the array
             const categoryValue = req.body[key].filter(cat => cat !== '').pop() || '';
             data[key] = categoryValue;
-            console.log(`📝 Converted category array to string:`, data[key]);
           } else {
             data[key] = req.body[key];
-            console.log(`📝 Kept category as string:`, data[key]);
           }
         } else {
           // Keep all other fields as strings
           data[key] = req.body[key];
-          console.log(`📝 Kept ${key} as string:`, data[key]);
         }
       });
     }
     
-    console.log('🔍 Validating data:', data);
-    const { error } = schema.validate(data);
+    const { error } = schema.validate(data, { abortEarly: false, convert: true });
     if (error) {
-      console.log('❌ Validation error:', error.details[0].message);
-      const message = error.details[0].message;
+      const details = error.details.map(detail => ({
+        field: detail.path.join('.'),
+        message: detail.message
+      }));
+
       return res.status(400).json({
         success: false,
-        error: message
+        error: details[0]?.message || 'Validation failed',
+        details
       });
     }
     
-    console.log('✅ Validation passed');
     // Update req.body with parsed data for downstream middleware
     req.body = data;
     next();
@@ -109,43 +132,26 @@ export const createProductSchema = Joi.object({
   slug: Joi.string().optional().min(1).max(100),
   description: Joi.string().optional().allow('').max(2000),
   shortDescription: Joi.string().optional().max(200),
-  category: Joi.string().required().pattern(/^[0-9a-fA-F]{24}$/),
-  subcategories: Joi.array().items(Joi.string().pattern(/^[0-9a-fA-F]{24}$/)).optional(),
+  category: Joi.string().required().pattern(OBJECT_ID),
+  subcategories: Joi.array().items(Joi.string().pattern(OBJECT_ID)).optional(),
   brand: Joi.string().optional(),
   sku: Joi.string().optional(),
-  price: Joi.number().required().min(0),
-  regularPrice: Joi.alternatives().try(
-    Joi.number().optional().min(0),
-    Joi.string().allow('').optional()
-  ),
-  salePrice: Joi.alternatives().try(
-    Joi.number().optional().min(0),
-    Joi.string().allow('').optional()
-  ),
-  compareAtPrice: Joi.alternatives().try(
-    Joi.number().optional().min(0),
-    Joi.string().allow('').optional()
-  ),
-  costPrice: Joi.alternatives().try(
-    Joi.number().optional().min(0),
-    Joi.string().allow('').optional()
-  ),
   barcode: Joi.string().optional().allow(''),
-  images: Joi.array().items(Joi.object({
-    url: Joi.string().uri().required(),
-    alt: Joi.string().optional(),
-    isMain: Joi.boolean().optional()
-  })).optional(),
+  price: Joi.number().required().min(0),
+  compareAtPrice: moneySchema,
+  costPrice: moneySchema,
+  images: Joi.array().items(imageSchema).optional(),
   video: Joi.object({
-    url: Joi.string().uri().required(),
-    thumbnail: Joi.string().uri().optional()
+    // An empty url is how the client clears a previously stored video
+    url: Joi.string().uri().allow('').required(),
+    thumbnail: Joi.string().uri().allow('').optional()
   }).optional(),
   variants: Joi.array().items(Joi.object({
     name: Joi.string().required(),
     options: Joi.array().items(Joi.string()).required(),
     price: Joi.number().required().min(0),
-    sku: Joi.string().required(),
-    image: Joi.string().uri().optional(),
+    sku: Joi.string().optional().allow(''),
+    image: Joi.string().uri().allow('').optional(),
     inventory: Joi.number().required().min(0)
   })).optional(),
   inventory: Joi.object({
@@ -170,10 +176,10 @@ export const createProductSchema = Joi.object({
     description: Joi.string().optional().allow(''),
     keywords: Joi.array().items(Joi.string()).optional()
   }).optional(),
-  status: Joi.string().valid('draft', 'active', 'archived').optional(),
-  visibility: Joi.string().valid('public', 'private', 'hidden').optional(),
+  status: Joi.string().valid(...PRODUCT_STATUSES).optional(),
+  visibility: Joi.string().valid(...PRODUCT_VISIBILITIES).optional(),
   featured: Joi.boolean().optional(),
-  vendor: Joi.string().optional().allow('').pattern(/^[0-9a-fA-F]{24}$/),
+  vendor: Joi.string().optional().allow('').pattern(OBJECT_ID),
   shipping: Joi.object({
     freeShipping: Joi.boolean().optional(),
     shippingCost: Joi.number().optional().min(0),
@@ -184,51 +190,102 @@ export const createProductSchema = Joi.object({
       height: Joi.number().required().min(0)
     }).optional()
   }).optional(),
-  uploadId: Joi.string().optional(), // For WebSocket room targeting
+  flashSale: Joi.object({
+    enabled: Joi.boolean().optional(),
+    discountPercentage: Joi.number().min(0).max(100).allow(null, '').optional(),
+    startDate: Joi.date().allow(null, '').optional(),
+    endDate: Joi.date().allow(null, '').optional(),
+    maxQuantity: Joi.number().min(0).allow(null, '').optional()
+  }).optional(),
+  tax: Joi.object({
+    taxable: Joi.boolean().optional(),
+    taxRate: Joi.number().min(0).allow(null, '').optional()
+  }).optional(),
+  uploadId: Joi.string().optional()
 });
 
 export const updateProductSchema = Joi.object({
   name: Joi.string().optional().min(1).max(100),
+  slug: Joi.string().optional().min(1).max(120),
   description: Joi.string().optional().allow('').max(2000),
-  shortDescription: Joi.string().optional().max(200),
-  category: Joi.string().optional().pattern(/^[0-9a-fA-F]{24}$/),
-  subcategories: Joi.array().items(Joi.string().pattern(/^[0-9a-fA-F]{24}$/)).optional(),
-  brand: Joi.string().optional(),
+  shortDescription: Joi.string().optional().allow('').max(200),
+  brand: Joi.string().optional().allow(''),
+  sku: Joi.string().optional().allow('').max(64),
+  barcode: Joi.string().optional().allow('').max(64),
+  category: Joi.string().optional().pattern(OBJECT_ID),
+  subcategories: Joi.array().items(Joi.string().pattern(OBJECT_ID)).optional(),
+  vendor: Joi.string().optional().allow('').pattern(OBJECT_ID),
   price: Joi.number().optional().min(0),
-  regularPrice: Joi.alternatives().try(
-    Joi.number().optional().min(0),
-    Joi.string().allow('').optional()
-  ),
-  salePrice: Joi.alternatives().try(
-    Joi.number().optional().min(0),
-    Joi.string().allow('').optional()
-  ),
-  compareAtPrice: Joi.alternatives().try(
-    Joi.number().optional().min(0),
-    Joi.string().allow('').optional()
-  ),
-  costPrice: Joi.alternatives().try(
-    Joi.number().optional().min(0),
-    Joi.string().allow('').optional()
-  ),
-  images: Joi.array().items(Joi.object({
-    url: Joi.string().uri().required(),
-    alt: Joi.string().optional(),
-    isMain: Joi.boolean().optional()
+  compareAtPrice: moneySchema,
+  costPrice: moneySchema,
+  // Retained metadata for existing images travels as JSON because the multipart
+  // field name `images` is reserved for newly uploaded files
+  imagesJson: Joi.array().items(imageSchema).max(10).optional(),
+  uploadedImages: Joi.array().items(imageSchema).max(10).optional(),
+  video: Joi.object({
+    // An empty url is how the client clears a previously stored video
+    url: Joi.string().uri().allow('').required(),
+    thumbnail: Joi.string().uri().allow('').optional()
+  }).optional(),
+  variants: Joi.array().items(Joi.object({
+    name: Joi.string().required(),
+    options: Joi.array().items(Joi.string()).required(),
+    price: Joi.number().required().min(0),
+    sku: Joi.string().optional().allow(''),
+    image: Joi.string().uri().allow('').optional(),
+    inventory: Joi.number().required().min(0)
   })).optional(),
   inventory: Joi.object({
-    quantity: Joi.number().optional().min(0),
+    quantity: Joi.number().min(0),
     trackQuantity: Joi.boolean().optional(),
     allowBackorder: Joi.boolean().optional(),
     lowStockThreshold: Joi.number().optional().min(0)
   }).optional(),
+  weight: Joi.object({
+    value: Joi.number().required().min(0),
+    unit: Joi.string().valid('kg', 'g', 'lb', 'oz').optional()
+  }).optional(),
+  dimensions: Joi.object({
+    length: Joi.number().required().min(0),
+    width: Joi.number().required().min(0),
+    height: Joi.number().required().min(0),
+    unit: Joi.string().valid('cm', 'in').optional()
+  }).optional(),
   tags: Joi.array().items(Joi.string()).optional(),
-  status: Joi.string().valid('draft', 'active', 'archived').optional(),
-  visibility: Joi.string().valid('public', 'private', 'hidden').optional(),
-  featured: Joi.boolean().optional()
+  seo: Joi.object({
+    title: Joi.string().optional().allow(''),
+    description: Joi.string().optional().allow(''),
+    keywords: Joi.array().items(Joi.string()).optional()
+  }).optional(),
+  status: Joi.string().valid(...PRODUCT_STATUSES).optional(),
+  visibility: Joi.string().valid(...PRODUCT_VISIBILITIES).optional(),
+  featured: Joi.boolean().optional(),
+  shipping: Joi.object({
+    freeShipping: Joi.boolean().optional(),
+    shippingCost: Joi.number().optional().min(0).allow(''),
+    shippingWeight: Joi.number().optional().min(0).allow(''),
+    shippingDimensions: Joi.object({
+      length: Joi.number().required().min(0),
+      width: Joi.number().required().min(0),
+      height: Joi.number().required().min(0)
+    }).optional()
+  }).optional(),
+  flashSale: Joi.object({
+    enabled: Joi.boolean().optional(),
+    discountPercentage: Joi.number().min(0).max(100).allow(null, '').optional(),
+    startDate: Joi.date().allow(null, '').optional(),
+    endDate: Joi.date().allow(null, '').optional(),
+    maxQuantity: Joi.number().min(0).allow(null, '').optional()
+  }).optional(),
+  tax: Joi.object({
+    taxable: Joi.boolean().optional(),
+    taxRate: Joi.number().min(0).allow(null, '').optional()
+  }).optional(),
+  uploadId: Joi.string().optional(),
+  // Consumed by the vendor update route when captioning newly uploaded images
+  imageAlt: Joi.string().optional().allow('')
 });
 
-// Category validation schemas
 export const createCategorySchema = Joi.object({
   name: Joi.string().required().min(1).max(50),
   description: Joi.string().optional().max(500),

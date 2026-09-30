@@ -25,6 +25,16 @@ export class UploadService {
   }
 
   /**
+   * Resolve a storable path to the provider's file identifier
+   * Providers whose identifier is the path itself (S3 keys, local disk) need no lookup
+   * @param {string} filePath - Path of the file relative to the provider root
+   * @returns {Promise<string|null>} - Provider file identifier, or null when unresolvable
+   */
+  async findFileIdByPath(filePath) {
+    return filePath || null;
+  }
+
+  /**
    * Get file metadata
    * @param {string} fileId - ID or path of the file
    * @returns {Promise<Object>} - File metadata

@@ -15,9 +15,15 @@ import { handleCategoryImageUpload } from '../middlewares/categoryUpload.js';
 
 import { handleMultipleImageUpload } from '../middlewares/uploadMiddleware.js';
 
-import { validate, createProductSchema } from '../utils/validation.js';
+import { validate, createProductSchema, updateProductSchema } from '../utils/validation.js';
 
-import { getDefaultUploadService } from '../services/uploadService.js';
+import { getDefaultUploadService } from '../services/uploadService.js';                                                             
+
+import { destroyProductImages, uploadProductImages } from '../services/productImageService.js';                                
+
+import { buildProductUpdate } from '../utils/productPayload.js';                                      
+
+import { invalidateProductCaches } from '../utils/cacheInvalidation.js';                                                      
 
 import { ImageKitService } from '../services/imagekitService.js';
 
@@ -26,6 +32,8 @@ import { emitVendorUpdate, emitUploadProgress } from '../sockets/socketHandler.j
 
 
 const router = express.Router();
+
+const OBJECT_ID_PATTERN = /^[0-9a-fA-F]{24}$/;
 
 
 
@@ -599,7 +607,7 @@ router.get('/products', async (req, res, next) => {
 
     const products = await Product.find(query)
 
-      .populate('vendor', 'name email')
+      .populate('vendor', 'name email vendorRequest.shopName')
 
       .populate('category', 'name')
 
@@ -701,9 +709,9 @@ router.put('/products/:productId/status', async (req, res, next) => {
 
 
 
-    // Clear cache
+    // Clear every cache that can hold a copy of this product
 
-    await deleteCachePattern('products:*');
+    await invalidateProductCaches(productId);
 
 
 
@@ -726,6 +734,150 @@ router.put('/products/:productId/status', async (req, res, next) => {
 
 
 
+// @desc    Get single product for editing (admin)
+// @route   GET /api/v1/admin/products/:id
+// @access  Private (Admin)
+router.get('/products/:id', async (req, res, next) => {
+  try {
+    const { id } = req.params;
+
+    if (!OBJECT_ID_PATTERN.test(id)) {
+      return res.status(400).json({
+        success: false,
+        error: 'Invalid product id'
+      });
+    }
+
+    const product = await Product.findById(id)
+
+      .populate('vendor', 'name email vendorRequest.shopName')
+
+      .populate('category', 'name slug')
+
+      .populate('subcategories', 'name slug');
+
+    if (!product) {
+      return res.status(404).json({
+        success: false,
+        error: 'Product not found'
+      });
+    }
+
+    res.json({
+      success: true,
+      data: product
+    });
+  } catch (error) {
+    next(error);
+  }
+});
+
+
+
+// @desc    Update product (admin)
+// @route   PUT /api/v1/admin/products/:id
+// @access  Private (Admin)
+router.put('/products/:id', handleMultipleImageUpload, validate(updateProductSchema), async (req, res, next) => {
+  let newImages = [];
+
+  try {
+    const { id } = req.params;
+
+    if (!OBJECT_ID_PATTERN.test(id)) {
+      return res.status(400).json({
+        success: false,
+        error: 'Invalid product id'
+      });
+    }
+
+    const product = await Product.findById(id);
+
+    if (!product) {
+      return res.status(400).json({
+        success: false,
+        error: 'Product not found'
+      });
+    }
+
+    const previousImages = Array.isArray(product.images) ? [...product.images] : [];
+    const previousVideoUrl = product.video?.url || null;
+
+    if (req.files && req.files.length > 0) {
+      newImages = await uploadProductImages(req.files, {
+        folder: 'products',
+        altText: req.body.name
+      });
+    }
+
+    const update = buildProductUpdate({ ...req.body, uploadedImages: newImages }, product);
+
+    if (!Object.keys(update).length) {
+      return res.status(400).json({
+        success: false,
+        error: 'No valid fields provided to update'
+      });
+    }
+
+    product.set(update);
+
+    await product.save({ validateBeforeSave: true });
+
+    // Storage is only touched after the database write succeeds, so a rejected
+    // update can never destroy files that the stored product still references
+    const retainedUrls = new Set((product.images || []).map((image) => image.url));
+    const removedImages = previousImages.filter(
+      (image) => image?.url && !retainedUrls.has(image.url)
+    );
+
+    if (removedImages.length > 0) {
+      const results = await destroyProductImages(removedImages);
+      const failed = results.filter((result) => !result.deleted);
+
+      if (failed.length > 0) {
+        console.warn(
+          `${failed.length} removed product image(s) could not be deleted from storage:`,
+          failed.map((result) => result.url).join(', ')
+        );
+      }
+    }
+
+    if (previousVideoUrl && update.video?.url === null) {
+      const [videoResult] = await destroyProductImages([{ url: previousVideoUrl }]);
+
+      if (!videoResult.deleted) {
+        console.warn(`Replaced product video could not be deleted from storage: ${previousVideoUrl}`);
+      }
+    }
+
+    await invalidateProductCaches(id);
+
+    const populated = await Product.findById(id)
+
+      .populate('vendor', 'name email vendorRequest.shopName')
+
+      .populate('category', 'name slug')
+
+      .populate('subcategories', 'name slug');
+
+    res.json({
+      success: true,
+      message: 'Product updated successfully',
+      data: populated
+    });
+  } catch (error) {
+    // Never leave freshly uploaded objects behind when the update itself failed
+    if (newImages.length > 0) {
+      await destroyProductImages(newImages).catch((cleanupError) => {
+        console.error('Failed to clean up rolled back product images:', cleanupError.message);
+      });
+    }
+
+    next(error);
+  }
+});
+
+
+
 // @desc    Delete product (admin)
 // @route   DELETE /api/v1/admin/products/:id
 // @access  Private (Admin)
@@ -742,13 +894,12 @@ router.delete('/products/:id', async (req, res, next) => {
       });
     }
 
-    // Soft delete
+    // Soft delete keeps the stored images so the product can be restored
     product.status = 'deleted';
     await product.save();
 
-    // Clear cache
-    await deleteCachePattern('products:*');
-    await deleteCachePattern(`product:${id}`);
+    // Clear every cache that can hold a copy of this product
+    await invalidateProductCaches(id);
 
     res.json({
       success: true,
@@ -2276,7 +2427,8 @@ router.post('/products', protect, authorize('admin'), handleMultipleImageUpload,
 
     const productData = {
       ...req.body,
-      vendor: req.user._id,
+      // Admins can create products for any vendor; fall back to themselves
+      vendor: req.body.vendor || req.user._id,
       uploadId
     }
 
@@ -2317,8 +2469,8 @@ router.post('/products', protect, authorize('admin'), handleMultipleImageUpload,
 
           uploadedImages.push({
             url: uploadResult.url,
-            publicId: uploadResult.publicId,
-            altText: req.body.name || file.originalname
+            ...(uploadResult.fileId ? { fileId: uploadResult.fileId } : {}),
+            alt: req.body.name || file.originalname
           })
 
           // Small delay to prevent overwhelming the client
@@ -2343,8 +2495,8 @@ router.post('/products', protect, authorize('admin'), handleMultipleImageUpload,
 
     const product = await Product.create(productData)
 
-    // Clear product cache
-    await deleteCachePattern('products:*');
+    // Clear every cache that can hold a copy of this product
+    await invalidateProductCaches(product._id);
 
     // Success notification
     emitUploadProgress(userId, {
