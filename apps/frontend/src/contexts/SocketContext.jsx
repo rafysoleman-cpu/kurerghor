@@ -30,10 +30,11 @@ export const SocketProvider = ({ children }) => {
     const socketInstance = io(socketUrl, {
       withCredentials: true,
       transports: ['websocket', 'polling'], // Allow fallback to polling
-      timeout: 20000,
+      timeout: 60000, // Increased to match backend pingTimeout
       reconnection: true,
-      reconnectionAttempts: 5,
+      reconnectionAttempts: Infinity, // Keep trying to reconnect
       reconnectionDelay: 1000,
+      reconnectionDelayMax: 5000,
       // Temporarily remove auth for debugging
       // auth: token ? { token, userId: 'user123' } : { userId: 'guest123' }
       auth: { userId: 'user123' } // Temporary user ID for room management

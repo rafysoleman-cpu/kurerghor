@@ -16,8 +16,10 @@ export const initializeSocket = (server) => {
       methods: ['GET', 'POST']
     },
     transports: ['websocket', 'polling'], // Allow fallback to polling
-    pingTimeout: 60000,
-    pingInterval: 25000
+    pingTimeout: 120000, // Increased to 2 minutes to prevent premature disconnections
+    pingInterval: 15000, // Send heartbeats more frequently (every 15 seconds)
+    upgradeTimeout: 10000, // Time to wait for transport upgrade
+    maxHttpBufferSize: 1e6 // 1MB
   });
 
   console.log('🔗 Socket.IO server created with CORS:', envConfig.allowedOrigins);

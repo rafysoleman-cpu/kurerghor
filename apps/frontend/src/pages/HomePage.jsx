@@ -11,16 +11,16 @@ import {
   ShoppingBag
 } from 'lucide-react'
 import { useQuery } from 'react-query'
-import { productAPI, categoryAPI } from '../services/api'
+import { productAPI } from '../services/api'
 import { 
   isDemoMode, 
   getDemoFeaturedProducts, 
   getDemoFlashSaleProducts, 
-  getDemoCategories,
   getDemoProducts,
   demoHeroSlides,
   demoReviews
 } from '../demo/services/index.js'
+import { useCategories } from '../hooks/useCategories'
 import HeroSlider from '../components/HeroSlider'
 import ProductCard from '../components/ProductCard'
 import CategoryPill from '../components/CategoryPill'
@@ -53,15 +53,8 @@ const HomePage = () => {
     }
   )
 
-  // Fetch categories
-  const { data: categories, isLoading: categoriesLoading } = useQuery(
-    'categories',
-    () => demoMode ? getDemoCategories() : categoryAPI.getCategories(),
-    { 
-      staleTime: 30 * 60 * 1000,
-      enabled: true
-    }
-  )
+  // Fetch categories (shared cache, normalised to an array)
+  const { data: categories = [], isLoading: categoriesLoading } = useCategories()
 
   // Fetch top rated products
   const { data: topRatedProducts, isLoading: topRatedLoading } = useQuery(
@@ -163,12 +156,12 @@ const HomePage = () => {
         </div>
         
         <div className="flex space-x-4 overflow-x-auto pb-4 scrollbar-hide">
-          {Array.isArray(categories?.data) ? categories.data.map((category) => (
+          {categories.map((category) => (
             <CategoryPill 
               key={category._id}
               category={category}
             />
-          )) : null}
+          ))}
         </div>
       </section>
 

@@ -1,250 +1,226 @@
-import { useState, useEffect } from 'react'
-import { Link, useLocation, useNavigate } from 'react-router-dom'
-import { X, Home, ShoppingBag, Package, User, Heart, Store, Settings, ChevronRight, Shield } from 'lucide-react'
+import { useEffect, useRef } from 'react'
+import { Link, useLocation } from 'react-router-dom'
+import { X, LogOut, LogIn, UserPlus } from 'lucide-react'
 import { useAuthStore } from '../store/authStore'
+import { useLogout } from '../hooks/useLogout'
+import { MAIN_NAV, buildAccountNav } from '../config/navigation'
+import { getInitials } from '../utils/initials'
+import NavLinkItem from './header/NavLinkItem'
+import CategoriesMenu from './header/CategoriesMenu'
 
+/**
+ * Mobile slide-in drawer.
+ *
+ * Layout (enterprise IA): identity card at the top, then the navigation
+ * sections, with the session action (Logout, or Sign In / Register) pinned to
+ * the bottom. Search is intentionally absent — it lives in the header's second
+ * row so it is reachable without opening the drawer.
+ *
+ * Every row comes from config/navigation.jsx and the shared NavLinkItem, the
+ * same data the desktop header uses, so the two surfaces cannot drift.
+ */
 const MobileMenu = ({ isOpen, onClose }) => {
-  const location = useLocation()
-  const navigate = useNavigate()
-  const { isAuthenticated, user, logout, vendorRequestStatus, fetchVendorRequestStatus } = useAuthStore()
+  const panelRef = useRef(null)
+  const closeButtonRef = useRef(null)
+  const { pathname, search } = useLocation()
+  const { user, vendorRequestStatus, fetchVendorRequestStatus } = useAuthStore()
+  const logout = useLogout()
 
+  const handleNavigate = () => onClose()
+
+  // Keep the role-aware account row current while the drawer is open.
   useEffect(() => {
-    const fetchStatus = async () => {
-      if (isAuthenticated && user?.role !== 'vendor') {
-        await fetchVendorRequestStatus()
+    if (!isOpen || !user) return
+    if (user.role === 'vendor' || user.role === 'admin') return
+    fetchVendorRequestStatus()
+  }, [isOpen, user, fetchVendorRequestStatus])
+
+  // Move focus into the drawer when it opens.
+  useEffect(() => {
+    if (isOpen) closeButtonRef.current?.focus()
+  }, [isOpen])
+
+  // Escape closes the drawer; Tab is trapped inside it while open.
+  useEffect(() => {
+    if (!isOpen) return undefined
+
+    const handleKeyDown = (event) => {
+      if (event.key === 'Escape') {
+        onClose()
+        return
+      }
+
+      if (event.key !== 'Tab' || !panelRef.current) return
+
+      const focusable = panelRef.current.querySelectorAll(
+        'a[href], button:not([disabled]), input, [tabindex]:not([tabindex="-1"])'
+      )
+      if (focusable.length === 0) return
+
+      const first = focusable[0]
+      const last = focusable[focusable.length - 1]
+
+      if (event.shiftKey && document.activeElement === first) {
+        event.preventDefault()
+        last.focus()
+      } else if (!event.shiftKey && document.activeElement === last) {
+        event.preventDefault()
+        first.focus()
       }
     }
 
-    fetchStatus()
-  }, [isAuthenticated, user, fetchVendorRequestStatus])
+    document.addEventListener('keydown', handleKeyDown)
+    return () => document.removeEventListener('keydown', handleKeyDown)
+  }, [isOpen, onClose])
 
-  const menuItems = [
-    {
-      name: 'Home',
-      href: '/',
-      icon: Home
-    },
-    {
-      name: 'Products',
-      href: '/products',
-      icon: ShoppingBag
-    },
-    {
-      name: 'Categories',
-      href: '/categories',
-      icon: Package
-    }
-  ]
-
-  const accountItems = [
-    {
-      name: 'My Profile',
-      href: '/profile',
-      icon: User
-    },
-    {
-      name: 'My Orders',
-      href: '/orders',
-      icon: Package
-    },
-    {
-      name: 'Wishlist',
-      href: '/wishlist',
-      icon: Heart
-    }
-  ]
-
-  // Add vendor menu item dynamically based on status
-  const getVendorMenuItem = () => {
-    if (user?.role === 'vendor') {
-      return {
-        name: 'Vendor Panel',
-        href: '/vendor/dashboard',
-        icon: Store
-      }
-    }
-    
-    // Show admin panel for admin users
-    if (user?.role === 'admin') {
-      return {
-        name: 'Admin Panel',
-        href: '/admin',
-        icon: Shield
-      }
-    }
-    
-    if (vendorRequestStatus?.hasRequest) {
-      if (vendorRequestStatus.request.status === 'pending') {
-        return {
-          name: 'Application Pending',
-          href: '/become-vendor',
-          icon: Store
-        }
-      } else if (vendorRequestStatus.request.status === 'rejected') {
-        return {
-          name: 'Become a Vendor',
-          href: '/become-vendor',
-          icon: Store
-        }
-      }
-    }
-    
-    return {
-      name: 'Become a Vendor',
-      href: '/become-vendor',
-      icon: Store
-    }
-  }
-
-  const vendorMenuItem = getVendorMenuItem()
-  const allAccountItems = vendorMenuItem 
-    ? [...accountItems, vendorMenuItem, {
-        name: 'Settings',
-        href: '/settings',
-        icon: Settings
-      }]
-    : [...accountItems, {
-        name: 'Settings',
-        href: '/settings',
-        icon: Settings
-      }]
+  // Close on route change so a back/forward navigation cannot leave it open.
+  useEffect(() => {
+    if (isOpen) onClose()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [pathname])
 
   if (!isOpen) return null
 
+  const accountItems = user ? buildAccountNav({ user, vendorRequestStatus }) : []
+
+  const handleLogout = async () => {
+    onClose()
+    await logout()
+  }
+
   return (
-    <div className="fixed inset-0 z-50">
-      {/* Backdrop */}
-      <div 
-        className="fixed inset-0 bg-black bg-opacity-50"
+    <div className="fixed inset-0 z-50 lg:hidden">
+      <div
+        className="animate-fade-in absolute inset-0 bg-gray-900/50 backdrop-blur-sm"
         onClick={onClose}
+        aria-hidden="true"
       />
-      
-      {/* Menu Panel */}
-      <div className="fixed right-0 top-0 h-full w-80 bg-white shadow-xl">
-        <div className="flex flex-col h-full">
-          {/* Header */}
-          <div className="flex items-center justify-between p-4 border-b border-gray-200">
-            <h2 className="text-lg font-semibold text-gray-900">Menu</h2>
-            <button
-              onClick={onClose}
-              className="p-2 hover:bg-gray-100 rounded-full transition-colors"
-            >
-              <X className="w-5 h-5 text-gray-500" />
-            </button>
-          </div>
 
-          {/* Menu Content */}
-          <div className="flex-1 overflow-y-auto">
-            {/* User Info Section - Only show when authenticated */}
-            {isAuthenticated && (
-              <div className="p-4 border-b border-gray-200 bg-gray-50">
-                <div className="flex items-center space-x-3">
-                  <div className="w-10 h-10 bg-primary-100 rounded-full flex items-center justify-center">
-                    <User className="w-5 h-5 text-primary-600" />
-                  </div>
-                  <div>
-                    <p className="font-medium text-gray-900">{user?.name || 'User'}</p>
-                    <p className="text-sm text-gray-600">{user?.email}</p>
-                  </div>
-                </div>
-              </div>
-            )}
+      <div
+        ref={panelRef}
+        id="mobile-menu"
+        role="dialog"
+        aria-modal="true"
+        aria-label="Navigation menu"
+        className="animate-slide-in-right absolute inset-y-0 right-0 flex w-[min(21rem,88vw)] flex-col bg-white shadow-2xl"
+      >
+        {/* Drawer title row */}
+        <div className="flex items-center justify-between border-b border-gray-200 px-4 py-3.5">
+          <h2 className="text-base font-semibold text-gray-900">Menu</h2>
+          <button
+            ref={closeButtonRef}
+            type="button"
+            onClick={onClose}
+            aria-label="Close menu"
+            className="rounded-full p-2 text-gray-500 transition-colors duration-200 hover:bg-gray-100 hover:text-gray-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500"
+          >
+            <X className="h-5 w-5" aria-hidden="true" />
+          </button>
+        </div>
 
-            {/* Main Menu */}
-            <div className="p-4">
-              <h3 className="text-sm font-medium text-gray-500 mb-3">Menu</h3>
-              <nav className="space-y-1">
-                {menuItems.map((item) => {
-                  const Icon = item.icon
-                  const isActive = location.pathname === item.href
-                  
-                  return (
-                    <Link
-                      key={item.name}
-                      to={item.href}
-                      className={`flex items-center justify-between px-3 py-2 rounded-lg transition-colors ${
-                        isActive
-                          ? 'bg-primary-50 text-primary-600'
-                          : 'text-gray-700 hover:bg-gray-50'
-                      }`}
-                      onClick={onClose}
-                    >
-                      <div className="flex items-center space-x-3">
-                        <Icon className="w-5 h-5" />
-                        <span>{item.name}</span>
-                      </div>
-                      <ChevronRight className="w-4 h-4" />
-                    </Link>
-                  )
-                })}
-              </nav>
-            </div>
-
-            {/* Account Section */}
-            {isAuthenticated && (
-              <div className="p-4 border-t border-gray-200">
-                <h3 className="text-sm font-medium text-gray-500 mb-3">Account</h3>
-                <nav className="space-y-1">
-                  {allAccountItems.map((item) => {
-                    const Icon = item.icon
-                    const isActive = location.pathname === item.href
-                    
-                    return (
-                      <Link
-                        key={item.name}
-                        to={item.href}
-                        className={`flex items-center justify-between px-3 py-2 rounded-lg transition-colors ${
-                          isActive
-                            ? 'bg-primary-50 text-primary-600'
-                            : 'text-gray-700 hover:bg-gray-50'
-                        }`}
-                        onClick={onClose}
-                      >
-                        <div className="flex items-center space-x-3">
-                          <Icon className="w-5 h-5" />
-                          <span>{item.name}</span>
-                        </div>
-                        <ChevronRight className="w-4 h-4" />
-                      </Link>
-                    )
-                  })}
-                </nav>
-              </div>
-            )}
-
-            {/* Auth Section */}
-            <div className="p-4 border-t border-gray-200">
-              {isAuthenticated ? (
-                <button
-                  onClick={async () => {
-                    await logout()
-                    onClose()
-                    navigate('/')
-                  }}
-                  className="w-full px-4 py-2 text-red-600 hover:bg-red-50 rounded-lg transition-colors text-center"
+        <div className="flex-1 overflow-y-auto overscroll-contain">
+          {/* Identity at the top */}
+          <div className="border-b border-gray-100 bg-gradient-to-br from-primary-50 to-white p-4">
+            {user ? (
+              <div className="flex items-center gap-3">
+                <span
+                  className="flex h-11 w-11 shrink-0 items-center justify-center overflow-hidden rounded-full bg-primary-100 text-sm font-semibold text-primary-700 ring-2 ring-white shadow-sm"
+                  aria-hidden="true"
                 >
-                  Logout
-                </button>
-              ) : (
-                <div className="space-y-2">
-                  <Link
-                    to="/login"
-                    className="block w-full px-4 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700 transition-colors text-center"
-                    onClick={onClose}
-                  >
-                    Login
-                  </Link>
-                  <Link
-                    to="/register"
-                    className="block w-full px-4 py-2 border border-primary-600 text-primary-600 rounded-lg hover:bg-primary-50 transition-colors text-center"
-                    onClick={onClose}
-                  >
-                    Register
-                  </Link>
+                  {user.avatar ? (
+                    <img src={user.avatar} alt="" className="h-full w-full object-cover" />
+                  ) : (
+                    getInitials(user.name) || 'U'
+                  )}
+                </span>
+                <div className="min-w-0 flex-1">
+                  <p className="truncate text-sm font-semibold text-gray-900">
+                    {user.name || 'User'}
+                  </p>
+                  <p className="truncate text-xs text-gray-500">{user.email}</p>
                 </div>
-              )}
-            </div>
+              </div>
+            ) : (
+              <>
+                <p className="text-sm font-semibold text-gray-900">Welcome to Ecommerce</p>
+                <p className="mt-1 text-xs leading-relaxed text-gray-500">
+                  Sign in to sync your cart, wishlist and orders across devices.
+                </p>
+              </>
+            )}
           </div>
+
+          {/* Primary navigation */}
+          <nav aria-label="Mobile primary" className="p-3">
+            <p className="px-3 pb-2 pt-1 text-xs font-semibold uppercase tracking-wider text-gray-400">
+              Menu
+            </p>
+            <div className="space-y-0.5">
+              {MAIN_NAV.filter((item) => !item.isDropdown).map((item) => (
+                <NavLinkItem
+                  key={item.id}
+                  item={{ ...item, isActive: item.isActive(pathname, search) }}
+                  variant="drawer"
+                  onNavigate={handleNavigate}
+                />
+              ))}
+
+              <CategoriesMenu variant="drawer" onNavigate={handleNavigate} pathname={pathname} search={search} />
+            </div>
+          </nav>
+
+          {/* Account navigation (signed-in only) */}
+          {user && (
+            <nav aria-label="Mobile account" className="border-t border-gray-100 p-3">
+              <p className="px-3 pb-2 pt-1 text-xs font-semibold uppercase tracking-wider text-gray-400">
+                Account
+              </p>
+              <div className="space-y-0.5">
+                {accountItems.map((item) => (
+                  <NavLinkItem
+                    key={item.id}
+                    item={{ ...item, isActive: item.isActive?.(pathname, search) }}
+                    variant="drawer"
+                    onNavigate={handleNavigate}
+                    className={item.isDisabled ? 'opacity-70' : ''}
+                  />
+                ))}
+              </div>
+            </nav>
+          )}
+        </div>
+
+        {/* Session action pinned to the bottom */}
+        <div className="border-t border-gray-200 bg-white p-3">
+          {user ? (
+            <button
+              type="button"
+              onClick={handleLogout}
+              className="flex w-full items-center justify-center gap-2 rounded-xl px-4 py-2.5 text-sm font-semibold text-red-600 transition-colors duration-200 hover:bg-red-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red-500"
+            >
+              <LogOut className="h-4 w-4" aria-hidden="true" />
+              Logout
+            </button>
+          ) : (
+            <div className="grid grid-cols-2 gap-2">
+              <Link
+                to="/login"
+                onClick={handleNavigate}
+                className="flex items-center justify-center gap-2 rounded-xl border border-gray-300 px-4 py-2.5 text-sm font-semibold text-gray-700 transition-colors duration-200 hover:bg-gray-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500"
+              >
+                <LogIn className="h-4 w-4" aria-hidden="true" />
+                Sign In
+              </Link>
+              <Link
+                to="/register"
+                onClick={handleNavigate}
+                className="flex items-center justify-center gap-2 rounded-xl bg-primary-600 px-4 py-2.5 text-sm font-semibold text-white transition-colors duration-200 hover:bg-primary-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500"
+              >
+                <UserPlus className="h-4 w-4" aria-hidden="true" />
+                Register
+              </Link>
+            </div>
+          )}
         </div>
       </div>
     </div>

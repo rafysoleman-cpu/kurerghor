@@ -136,7 +136,6 @@ const VerifyOTP = () => {
                 padding: '12px',
                 border: '1px solid #ddd',
                 borderRadius: '5px',
-                fontSize: '16px',
                 textAlign: 'center',
                 letterSpacing: '2px',
                 fontSize: '20px'

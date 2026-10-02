@@ -9,8 +9,9 @@ import {
   Search
 } from 'lucide-react'
 import { useQuery } from 'react-query'
-import { productAPI, categoryAPI } from '../services/api'
-import { isDemoMode, getDemoProducts, getDemoCategories } from '../demo/services/index.js'
+import { productAPI } from '../services/api'
+import { isDemoMode, getDemoProducts } from '../demo/services/index.js'
+import { useCategories } from '../hooks/useCategories'
 import ProductCard from '../components/ProductCard'
 import LoadingSpinner from '../components/LoadingSpinner'
 import Pagination from '../components/Pagination'
@@ -21,7 +22,9 @@ const ProductsPage = () => {
   const [showFilters, setShowFilters] = useState(false)
   const demoMode = isDemoMode()
   const [filters, setFilters] = useState({
-    category: '',
+    // Seed from the URL so deep links such as /products?category=<id> — the
+    // form the header's Categories menu emits — apply on first render.
+    category: searchParams.get('category') || '',
     minPrice: '',
     maxPrice: '',
     rating: '',
@@ -32,15 +35,15 @@ const ProductsPage = () => {
   const currentPage = parseInt(searchParams.get('page')) || 1
   const searchQuery = searchParams.get('search') || ''
 
-  // Fetch categories for filter
-  const { data: categories } = useQuery(
-    'categories',
-    () => demoMode ? getDemoCategories() : categoryAPI.getCategories(),
-    { 
-      staleTime: 30 * 60 * 1000,
-      enabled: true
-    }
-  )
+  // Keep filters.category in sync with the URL in both directions, so browser
+  // back/forward and the header's category links both drive this page.
+  const urlCategory = searchParams.get('category') || ''
+  useEffect(() => {
+    setFilters((prev) => (prev.category === urlCategory ? prev : { ...prev, category: urlCategory }))
+  }, [urlCategory])
+
+  // Fetch categories for filter (shared cache, normalised to an array)
+  const { data: categories = [] } = useCategories()
 
   // Fetch products
   const { data: productsData, isLoading, error } = useQuery(
@@ -198,7 +201,7 @@ const ProductsPage = () => {
                 className="w-full input"
               >
                 <option value="">All Categories</option>
-                {categories?.data?.map((category) => (
+                {categories.map((category) => (
                   <option key={category._id} value={category._id}>
                     {category.name}
                   </option>

@@ -1,4 +1,5 @@
 import express from 'express';
+import mongoose from 'mongoose';
 import Category from '../models/Category.js';
 import { protect, authorize } from '../middlewares/auth.js';
 import { validate, createCategorySchema } from '../utils/validation.js';
@@ -22,16 +23,58 @@ router.get('/', async (req, res, next) => {
       });
     }
 
-    const categories = await Category.find({ isActive: true })
-      .populate('parent', 'name slug')
-      .sort({ level: 1, sortOrder: 1, name: 1 });
+    // Resolve the products collection name so the $lookup below cannot drift
+    // if the Product model's collection is ever renamed.
+    const Product = mongoose.model('Product');
+    const productCollection = Product.collection.name;
+
+    // Aggregate so each category carries a real productCount. Mirrors the
+    // storefront filter in routes/product.js (status active + public) so the
+    // number in the nav matches the number of products actually listed.
+    const categories = await Category.aggregate([
+      { $match: { isActive: true } },
+      {
+        $lookup: {
+          from: productCollection,
+          let: { categoryId: '$_id' },
+          pipeline: [
+            { $match: { $expr: { $eq: ['$category', '$$categoryId'] } } },
+            { $match: { status: 'active', visibility: 'public' } },
+            { $count: 'count' }
+          ],
+          as: 'productCount'
+        }
+      },
+      {
+        $addFields: {
+          productCount: {
+            $ifNull: [{ $arrayElemAt: ['$productCount.count', 0] }, 0]
+          }
+        }
+      },
+      { $sort: { level: 1, sortOrder: 1, name: 1 } }
+    ]);
+
+    // Hydrate parent (name/slug) on the aggregated plain objects.
+    const parents = await Category.find({
+      _id: { $in: categories.map((category) => category.parent).filter(Boolean) }
+    })
+      .select('name slug')
+      .lean();
+
+    const parentMap = new Map(parents.map((parent) => [String(parent._id), parent]));
+
+    const data = categories.map((category) => ({
+      ...category,
+      parent: category.parent ? parentMap.get(String(category.parent)) || null : null
+    }));
 
     // Cache result
-    await setCache(cacheKey, categories, 1800); // 30 minutes
+    await setCache(cacheKey, data, 1800); // 30 minutes
 
     res.json({
       success: true,
-      data: categories
+      data
     });
   } catch (error) {
     next(error);

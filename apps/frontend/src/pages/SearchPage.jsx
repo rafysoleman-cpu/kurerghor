@@ -11,7 +11,8 @@ import {
   Clock
 } from 'lucide-react'
 import { useQuery } from 'react-query'
-import { searchAPI, categoryAPI } from '../services/api'
+import { searchAPI } from '../services/api'
+import { useCategories } from '../hooks/useCategories'
 import ProductCard from '../components/ProductCard'
 import LoadingSpinner from '../components/LoadingSpinner'
 import Pagination from '../components/Pagination'
@@ -65,12 +66,8 @@ const SearchPage = () => {
     { staleTime: 60 * 60 * 1000 }
   )
 
-  // Fetch categories for filters
-  const { data: categories } = useQuery(
-    'categories',
-    () => categoryAPI.getCategories(),
-    { staleTime: 30 * 60 * 1000 }
-  )
+  // Fetch categories for filters (shared cache, normalised to an array)
+  const { data: categories = [] } = useCategories()
 
   const products = searchResults?.data?.products || []
   const pagination = searchResults?.data?.pagination
@@ -219,7 +216,7 @@ const SearchPage = () => {
                   className="w-full input"
                 >
                   <option value="">All Categories</option>
-                  {categories?.data?.map((category) => (
+                  {categories.map((category) => (
                     <option key={category._id} value={category._id}>
                       {category.name}
                     </option>
@@ -443,7 +440,7 @@ const SearchPage = () => {
               <div className="space-y-4">
                 <h4 className="font-medium text-gray-900">Popular Categories</h4>
                 <div className="flex flex-wrap gap-2 justify-center">
-                  {categories?.data?.slice(0, 6).map((category) => (
+                  {categories.slice(0, 6).map((category) => (
                     <button
                       key={category._id}
                       onClick={() => setQuery(category.name)}

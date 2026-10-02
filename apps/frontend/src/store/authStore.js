@@ -82,7 +82,8 @@ const useAuthStore = create(
             user: null,
             token: null,
             refreshToken: null,
-            isAuthenticated: false
+            isAuthenticated: false,
+            vendorRequestStatus: null
           })
 
           // Remove auth header
@@ -90,7 +91,10 @@ const useAuthStore = create(
         }
       },
 
-      refreshToken: async () => {
+      // Named refreshAccessToken (not refreshToken) so it does not collide with
+      // the refreshToken state field above — a duplicate key would silently
+      // overwrite the token with this function.
+      refreshAccessToken: async () => {
         try {
           const { refreshToken } = get()
           if (!refreshToken) {

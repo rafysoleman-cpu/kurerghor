@@ -1,227 +1,162 @@
-import { useState, useEffect } from 'react'
-import { Link, useNavigate, useLocation } from 'react-router-dom'
-import { Search, ShoppingCart, User, Menu, X, ChevronDown } from 'lucide-react'
+import { useEffect, useState } from 'react'
+import { Link, useLocation } from 'react-router-dom'
+import { Menu, X, ShoppingCart } from 'lucide-react'
 import { useAuthStore } from '../store/authStore'
 import { useCartStore } from '../store/cartStore'
-import SearchModal from './SearchModal'
-import UserDropdown from './UserDropdown'
+import { MAIN_NAV } from '../config/navigation'
+import NavLinkItem from './header/NavLinkItem'
+import HeaderSearch from './header/HeaderSearch'
+import CategoriesMenu from './header/CategoriesMenu'
+import UserMenu from './header/UserMenu'
 import MobileMenu from './MobileMenu'
-import { demoCategories } from '../demo/data/categories.js'
 
+/**
+ * Unified storefront header.
+ *
+ * Desktop (lg+): Logo → Search → Primary nav → Cart → User, single row.
+ * Mobile/tablet: Logo → Cart → Menu in row one, full-width search in row two.
+ * The drawer handles navigation only; it no longer repeats search or account
+ * rows at the bottom.
+ */
 const Header = () => {
-  const [isSearchOpen, setIsSearchOpen] = useState(false)
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
   const [isScrolled, setIsScrolled] = useState(false)
-  const [isCategoriesOpen, setIsCategoriesOpen] = useState(false)
-  
-  const navigate = useNavigate()
-  const location = useLocation()
-  const { user, isAuthenticated, logout } = useAuthStore()
+  const { isAuthenticated } = useAuthStore()
   const { itemCount, openCart } = useCartStore()
+  const { pathname, search } = useLocation()
 
-  // Handle scroll effect
   useEffect(() => {
-    const handleScroll = () => {
-      setIsScrolled(window.scrollY > 20)
-    }
-
-    window.addEventListener('scroll', handleScroll)
+    const handleScroll = () => setIsScrolled(window.scrollY > 20)
+    handleScroll()
+    window.addEventListener('scroll', handleScroll, { passive: true })
     return () => window.removeEventListener('scroll', handleScroll)
   }, [])
 
-  // Close mobile menu when route changes
+  // Close the drawer whenever the route changes.
   useEffect(() => {
     setIsMobileMenuOpen(false)
-  }, [location])
+  }, [pathname])
 
-  const handleSearch = (query) => {
-    if (query.trim()) {
-      navigate(`/search?q=${encodeURIComponent(query.trim())}`)
-      setIsSearchOpen(false)
+  // Prevent background scroll while the drawer is open.
+  useEffect(() => {
+    if (!isMobileMenuOpen) return undefined
+    const previousOverflow = document.body.style.overflow
+    document.body.style.overflow = 'hidden'
+    return () => {
+      document.body.style.overflow = previousOverflow
     }
-  }
-
-  const handleLogout = async () => {
-    await logout()
-    navigate('/')
-  }
+  }, [isMobileMenuOpen])
 
   return (
     <>
-      <header 
-        className={`fixed top-0 left-0 right-0 z-40 transition-all duration-300 ${
-          isScrolled 
-            ? 'bg-white/95 backdrop-blur-md shadow-md border-b border-gray-200' 
-            : 'bg-white/80 backdrop-blur-sm border-b border-gray-100'
-        }`}
+      <header
+        className={`fixed inset-x-0 top-0 z-40 border-b transition-all duration-300 ${isScrolled
+            ? 'border-gray-200 bg-white/95 shadow-md backdrop-blur-md'
+            : 'border-gray-100 bg-white/80 backdrop-blur-sm'
+          }`}
       >
         <div className="container mx-auto px-4">
-          <div className={`flex items-center justify-between h-16 relative transition-all duration-300 ${
-            isMobileMenuOpen ? 'space-x-0' : 'space-x-4'
-          }`}>
-            {/* Logo - Fixed Size */}
-            <div className="flex-shrink-0">
-              <Link 
-                to="/" 
-                className="flex items-center space-x-1 sm:space-x-2 text-lg sm:text-xl lg:text-2xl font-bold text-primary-600 hover:text-primary-700 transition-colors"
+          {/* Row one */}
+          <div className="flex h-16 items-center gap-2 sm:gap-3 lg:gap-4">
+            {/* 1. Logo */}
+            <div className="flex shrink-0 items-center">
+              <Link
+                to="/"
+                className="flex items-center gap-1.5 text-lg font-bold text-primary-600 transition-colors hover:text-primary-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500 focus-visible:ring-offset-2 sm:gap-2 sm:text-xl lg:text-2xl"
               >
-                <div className="w-6 h-6 sm:w-7 sm:h-7 lg:w-8 lg:h-8 bg-primary-600 rounded-lg flex items-center justify-center">
-                  <span className="text-white font-bold text-xs sm:text-sm">E</span>
-                </div>
-                <span className="hidden sm:block">Ecommerce</span>
+                <span className="flex h-7 w-7 items-center justify-center rounded-lg bg-primary-600 sm:h-8 sm:w-8">
+                  <span className="text-xs font-bold text-white sm:text-sm">E</span>
+                </span>
+                <span className="hidden sm:inline">Ecommerce</span>
               </Link>
             </div>
 
-            {/* Search Bar - Dynamic Positioning */}
-            <div className={`transition-all duration-300 ${
-              isMobileMenuOpen 
-                ? 'absolute left-1/2 transform -translate-x-1/2 w-32 sm:w-48 md:w-64 lg:w-80 xl:w-96 z-10' 
-                : 'flex-1 max-w-xs sm:max-w-sm md:max-w-md lg:max-w-lg mx-4'
-            }`}>
-              <div className="relative">
-                <input
-                  type="text"
-                  placeholder="Search..."
-                  className={`w-full transition-all duration-300 ${
-                    isMobileMenuOpen 
-                      ? 'px-2 py-1 sm:px-3 sm:py-2 pl-6 sm:pl-10 pr-2 sm:pr-4 text-xs sm:text-sm'
-                      : 'px-3 py-2 pl-10 pr-4 text-sm'
-                  } text-gray-700 bg-gray-100 border border-gray-300 rounded-lg focus:outline-none focus:border-primary-500 focus:bg-white`}
-                  onClick={() => setIsSearchOpen(true)}
-                />
-                <Search className={`absolute text-gray-400 transition-all duration-300 ${
-                  isMobileMenuOpen 
-                    ? 'left-1.5 sm:left-3 top-1.5 sm:top-2.5 w-3 h-3 sm:w-4 sm:h-4'
-                    : 'left-3 top-2.5 w-4 h-4'
-                }`} />
-              </div>
+            {/* 2. Search Bar - flexible, always in header row */}
+            <div className="min-w-0 flex-1 px-1 sm:px-2">
+              <HeaderSearch variant="inline" />
             </div>
 
-            {/* Right Side Actions - Fixed Width */}
-            <div className={`flex items-center justify-end space-x-1 sm:space-x-3 flex-shrink-0 transition-all duration-300 ${
-              isMobileMenuOpen ? 'opacity-0 pointer-events-none' : 'opacity-100'
-            }`}>
-              {/* Desktop Navigation */}
-              <nav className="hidden lg:flex items-center space-x-3 lg:space-x-6 mr-2 lg:mr-4">
-                <Link 
-                  to="/" 
-                  className={`text-xs sm:text-sm nav-link ${location.pathname === '/' ? 'nav-link-active' : ''}`}
-                >
-                  Home
-                </Link>
-                <Link 
-                  to="/products" 
-                  className={`text-xs sm:text-sm nav-link ${location.pathname.startsWith('/products') ? 'nav-link-active' : ''}`}
-                >
-                  Products
-                </Link>
-                
-                {/* Categories Dropdown */}
-                <div 
-                  className="relative"
-                  onMouseEnter={() => setIsCategoriesOpen(true)}
-                  onMouseLeave={() => setIsCategoriesOpen(false)}
-                >
-                  <button className="flex items-center space-x-1 text-xs sm:text-sm nav-link">
-                    <span>Categories</span>
-                    <ChevronDown className="w-3 h-3" />
-                  </button>
-                  
-                  {isCategoriesOpen && (
-                    <div className="absolute top-full left-0 mt-1 w-64 bg-white rounded-lg shadow-lg border border-gray-200 py-2 z-50">
-                      {demoCategories.map((category) => (
-                        <Link
-                          key={category._id}
-                          to={`/products?category=${category.slug}`}
-                          className="flex items-center space-x-3 px-4 py-2 hover:bg-gray-50 transition-colors"
-                        >
-                          {category.image && (
-                            <img
-                              src={category.image}
-                              alt={category.name}
-                              className="w-8 h-8 rounded-full object-cover"
-                            />
-                          )}
-                          <div className="flex-1">
-                            <div className="text-sm font-medium text-gray-900">{category.name}</div>
-                            <div className="text-xs text-gray-500">{category.productCount} products</div>
-                          </div>
-                        </Link>
-                      ))}
-                    </div>
-                  )}
-                </div>
-              </nav>
+            {/* 3. Main Nav Links (Home, Products, Categories) - large screens only */}
+            <nav
+              aria-label="Primary"
+              className="hidden items-center gap-1 lg:flex xl:gap-2"
+            >
+              {MAIN_NAV.filter((item) => !item.isDropdown).map((item) => (
+                <NavLinkItem
+                  key={item.id}
+                  item={{ ...item, isActive: item.isActive(pathname, search) }}
+                  variant="inline"
+                />
+              ))}
+              <CategoriesMenu pathname={pathname} search={search} />
+            </nav>
 
-              {/* Cart - Responsive Size */}
+            {/* 4. Cart Button + User Profile/Dropdown + Hamburger */}
+            <div className="flex shrink-0 items-center gap-0.5 sm:gap-1 md:gap-2">
               <button
+                type="button"
                 onClick={openCart}
-                className="relative p-1 sm:p-2 text-gray-600 hover:text-primary-600 transition-colors"
-                aria-label="Cart"
+                aria-label={itemCount > 0 ? `Cart, ${itemCount} items` : 'Cart'}
+                className="relative rounded-lg p-2 text-gray-600 transition-colors duration-200 hover:bg-gray-100 hover:text-primary-600 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500 focus-visible:ring-offset-2"
               >
-                <ShoppingCart className="w-4 h-4 sm:w-5 sm:h-5" />
+                <ShoppingCart className="h-5 w-5" aria-hidden="true" />
                 {itemCount > 0 && (
-                  <span className="absolute -top-0.5 sm:-top-1 -right-0.5 sm:-right-1 bg-primary-600 text-white text-xs rounded-full w-3 h-3 sm:w-4 sm:h-4 sm:w-5 sm:h-5 flex items-center justify-center">
+                  <span className="absolute -right-0.5 -top-0.5 flex h-4 min-w-[1rem] items-center justify-center rounded-full bg-primary-600 px-1 text-[10px] font-semibold text-white">
                     {itemCount > 99 ? '99+' : itemCount}
                   </span>
                 )}
               </button>
 
-              {/* User Account - Desktop Only */}
               {isAuthenticated ? (
-                <div className="hidden lg:block">
-                  <UserDropdown user={user} onLogout={handleLogout} />
-                </div>
+                <>
+                  <div className="hidden md:block lg:hidden">
+                    <UserMenu includeHeaderNav />
+                  </div>
+                  <div className="hidden lg:block">
+                    <UserMenu />
+                  </div>
+                </>
               ) : (
-                <div className="hidden lg:flex items-center space-x-1 sm:space-x-2">
+                <div className="hidden items-center gap-1 md:flex">
                   <Link
                     to="/login"
-                    className="btn-ghost text-xs px-2 py-1 sm:text-sm sm:px-3 sm:py-1"
+                    className="btn-ghost rounded-lg px-2 py-2 text-sm font-medium focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500 sm:px-3"
                   >
                     Login
                   </Link>
                   <Link
                     to="/register"
-                    className="btn-primary text-xs px-2 py-1 sm:text-sm sm:px-3 sm:py-1"
+                    className="btn-primary rounded-lg px-2 py-2 text-sm font-medium focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500 focus-visible:ring-offset-2 sm:px-3"
                   >
                     Sign Up
                   </Link>
                 </div>
               )}
 
-              {/* Mobile Menu Button - Responsive Size */}
               <button
-                onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-                className="lg:hidden p-1 sm:p-2 text-gray-600 hover:text-primary-600 transition-colors"
-                aria-label="Menu"
+                type="button"
+                onClick={() => setIsMobileMenuOpen((prev) => !prev)}
+                aria-expanded={isMobileMenuOpen}
+                aria-controls="mobile-menu"
+                aria-label={isMobileMenuOpen ? 'Close menu' : 'Open menu'}
+                className="rounded-lg p-2 text-gray-600 transition-colors duration-200 hover:bg-gray-100 hover:text-primary-600 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500 focus-visible:ring-offset-2 md:hidden"
               >
                 {isMobileMenuOpen ? (
-                  <X className="w-4 h-4 sm:w-5 sm:h-5" />
+                  <X className="h-5 w-5" aria-hidden="true" />
                 ) : (
-                  <Menu className="w-4 h-4 sm:w-5 sm:h-5" />
+                  <Menu className="h-5 w-5" aria-hidden="true" />
                 )}
               </button>
             </div>
           </div>
+
         </div>
       </header>
 
-      {/* Spacer for fixed header */}
-      <div className="h-16 lg:h-16" />
+      {/* Spacer offsetting the fixed header */}
+      <div className="h-16" aria-hidden="true" />
 
-      {/* Mobile Menu */}
-      <MobileMenu 
-        isOpen={isMobileMenuOpen}
-        onClose={() => setIsMobileMenuOpen(false)}
-        onLogout={handleLogout}
-      />
-
-      {/* Search Modal */}
-      <SearchModal 
-        isOpen={isSearchOpen}
-        onClose={() => setIsSearchOpen(false)}
-        onSearch={handleSearch}
-      />
+      <MobileMenu isOpen={isMobileMenuOpen} onClose={() => setIsMobileMenuOpen(false)} />
     </>
   )
 }
