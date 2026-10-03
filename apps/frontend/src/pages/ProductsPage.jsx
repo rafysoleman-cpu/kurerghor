@@ -1,307 +1,432 @@
-import { useState, useEffect } from 'react'
-import { useSearchParams, Link } from 'react-router-dom'
-import { 
-  Filter, 
-  Grid, 
-  List, 
-  ChevronDown, 
+import { useCallback, useMemo, useState } from 'react'
+import { useSearchParams } from 'react-router-dom'
+import {
+  ChevronDown,
+  Grid,
+  List,
+  PackageSearch,
+  RefreshCw,
   SlidersHorizontal,
-  Search
+  X
 } from 'lucide-react'
 import { useQuery } from 'react-query'
 import { productAPI } from '../services/api'
-import { isDemoMode, getDemoProducts } from '../demo/services/index.js'
 import { useCategories } from '../hooks/useCategories'
 import ProductCard from '../components/ProductCard'
-import LoadingSpinner from '../components/LoadingSpinner'
+import { ProductGridSkeleton } from '../components/ProductCardSkeleton'
 import Pagination from '../components/Pagination'
+
+const PAGE_SIZE = 12
+
+const SORT_OPTIONS = [
+  { value: 'relevance', label: 'Relevance' },
+  { value: 'newest', label: 'Newest First' },
+  { value: 'price-low', label: 'Price: Low to High' },
+  { value: 'price-high', label: 'Price: High to Low' },
+  { value: 'rating', label: 'Highest Rated' },
+  { value: 'popular', label: 'Best Selling' }
+]
+
+const RATING_OPTIONS = [
+  { value: '4', label: '4+ Stars' },
+  { value: '3', label: '3+ Stars' },
+  { value: '2', label: '2+ Stars' },
+  { value: '1', label: '1+ Stars' }
+]
+
+const FILTER_KEYS = ['search', 'category', 'minPrice', 'maxPrice', 'rating', 'sortBy']
 
 const ProductsPage = () => {
   const [searchParams, setSearchParams] = useSearchParams()
   const [viewMode, setViewMode] = useState('grid')
   const [showFilters, setShowFilters] = useState(false)
-  const demoMode = isDemoMode()
-  const [filters, setFilters] = useState({
-    // Seed from the URL so deep links such as /products?category=<id> — the
-    // form the header's Categories menu emits — apply on first render.
-    category: searchParams.get('category') || '',
-    minPrice: '',
-    maxPrice: '',
-    rating: '',
-    sortBy: 'relevance'
+
+  // The URL is the single source of truth for every filter. Reading state out
+  // of it (instead of mirroring it into useState) means the header's category
+  // links, browser back/forward and the sidebar can never disagree, and there
+  // is no effect that writes params back on every render.
+  const search = searchParams.get('search') || ''
+  const category = searchParams.get('category') || ''
+  const minPrice = searchParams.get('minPrice') || ''
+  const maxPrice = searchParams.get('maxPrice') || ''
+  const rating = searchParams.get('rating') || ''
+  const sortBy = searchParams.get('sortBy') || 'relevance'
+  const page = Math.max(1, parseInt(searchParams.get('page'), 10) || 1)
+
+  const { data: categories = [], isLoading: categoriesLoading } = useCategories()
+
+  // Query params are built from primitives so react-query's structural sharing
+  // sees a stable key between renders.
+  const queryParams = useMemo(() => {
+    const params = { page, limit: PAGE_SIZE, sortBy }
+    if (search) params.search = search
+    if (category) params.category = category
+    if (minPrice) params.minPrice = minPrice
+    if (maxPrice) params.maxPrice = maxPrice
+    if (rating) params.rating = rating
+    return params
+  }, [page, search, category, minPrice, maxPrice, rating, sortBy])
+
+  const {
+    data: response,
+    isLoading,
+    isFetching,
+    isError,
+    error,
+    refetch
+  } = useQuery(['products', queryParams], () => productAPI.getProducts(queryParams), {
+    // keepPreviousData holds the current page on screen while the next one
+    // loads, so pagination does not flash a skeleton over the whole grid.
+    keepPreviousData: true,
+    staleTime: 60 * 1000
   })
 
-  // Get current page from URL
-  const currentPage = parseInt(searchParams.get('page')) || 1
-  const searchQuery = searchParams.get('search') || ''
+  const products = response?.data?.data?.products || []
+  const pagination = response?.data?.data?.pagination || {}
+  const total = pagination.total || 0
+  const totalPages = pagination.totalPages || pagination.pages || 0
+  const activeCategory = categories.find((item) => String(item._id) === String(category))
 
-  // Keep filters.category in sync with the URL in both directions, so browser
-  // back/forward and the header's category links both drive this page.
-  const urlCategory = searchParams.get('category') || ''
-  useEffect(() => {
-    setFilters((prev) => (prev.category === urlCategory ? prev : { ...prev, category: urlCategory }))
-  }, [urlCategory])
-
-  // Fetch categories for filter (shared cache, normalised to an array)
-  const { data: categories = [] } = useCategories()
-
-  // Fetch products
-  const { data: productsData, isLoading, error } = useQuery(
-    ['products', currentPage, searchQuery, filters],
-    () => {
-      const params = {
-        page: currentPage,
-        search: searchQuery,
-        category: filters.category,
-        minPrice: filters.minPrice,
-        maxPrice: filters.maxPrice,
-        rating: filters.rating,
-        sortBy: filters.sortBy
-      }
-      
-      // Remove empty params
-      Object.keys(params).forEach(key => {
-        if (!params[key]) delete params[key]
-      })
-      
-      return demoMode ? getDemoProducts(params) : productAPI.getProducts(params)
-    },
-    { 
-      staleTime: 2 * 60 * 1000,
-      enabled: true
-    }
+  const hasFilters = FILTER_KEYS.some(
+    (key) => key !== 'sortBy' && Boolean(searchParams.get(key))
   )
 
-  // Update URL when filters change
-  useEffect(() => {
-    const params = new URLSearchParams()
-    if (currentPage > 1) params.append('page', currentPage)
-    if (searchQuery) params.append('search', searchQuery)
-    if (filters.category) params.append('category', filters.category)
-    if (filters.minPrice) params.append('minPrice', filters.minPrice)
-    if (filters.maxPrice) params.append('maxPrice', filters.maxPrice)
-    if (filters.rating) params.append('rating', filters.rating)
-    if (filters.sortBy) params.append('sortBy', filters.sortBy)
-    
-    setSearchParams(params)
-  }, [currentPage, searchQuery, filters, setSearchParams])
+  /**
+   * Merge a patch into the query string. Any filter change resets to page 1,
+   * otherwise changing e.g. the category while on page 4 would land on a page
+   * that no longer exists.
+   */
+  const updateParams = useCallback(
+    (patch, { resetPage = true } = {}) => {
+      const next = new URLSearchParams(searchParams)
 
-  const handleFilterChange = (key, value) => {
-    setFilters(prev => ({ ...prev, [key]: value }))
-  }
+      Object.entries(patch).forEach(([key, value]) => {
+        if (value === '' || value === null || value === undefined) next.delete(key)
+        else next.set(key, String(value))
+      })
 
-  const clearFilters = () => {
-    setFilters({
-      category: '',
-      minPrice: '',
-      maxPrice: '',
-      rating: '',
-      sortBy: 'relevance'
-    })
-  }
+      if (resetPage) next.delete('page')
+      // 'relevance' is the backend default, so keep it out of the URL.
+      if (next.get('sortBy') === 'relevance') next.delete('sortBy')
 
-  const handlePageChange = (page) => {
-    window.scrollTo(0, 0)
-  }
+      setSearchParams(next)
+    },
+    [searchParams, setSearchParams]
+  )
 
-  if (isLoading) {
-    return <LoadingSpinner />
-  }
+  const handlePageChange = useCallback(
+    (nextPage) => {
+      if (nextPage < 1 || (totalPages > 0 && nextPage > totalPages)) return
+      updateParams({ page: nextPage > 1 ? nextPage : '' }, { resetPage: false })
+      window.scrollTo({ top: 0, behavior: 'smooth' })
+    },
+    [updateParams, totalPages]
+  )
 
-  if (error) {
-    return (
-      <div className="container mx-auto px-4 py-16 text-center">
-        <h2 className="text-2xl font-bold text-gray-900 mb-4">Error loading products</h2>
-        <p className="text-gray-600">Please try again later.</p>
-      </div>
-    )
-  }
+  const clearFilters = useCallback(() => {
+    setSearchParams(new URLSearchParams())
+  }, [setSearchParams])
 
-  const { products, pagination } = productsData?.data || {}
+  const heading = search
+    ? `Search results for "${search}"`
+    : activeCategory?.name || 'All Products'
+
+  const showSkeleton = isLoading
+  const showGrid = !showSkeleton && products.length > 0
 
   return (
     <div className="container mx-auto px-4 py-8">
-      {/* Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-8">
+      <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4 mb-8">
         <div>
-          <h1 className="text-3xl font-bold text-gray-900 mb-2">
-            {searchQuery ? `Search Results for "${searchQuery}"` : 'All Products'}
-          </h1>
-          <p className="text-gray-600">
-            {pagination?.total || 0} products found
+          <h1 className="text-3xl font-bold text-gray-900 dark:text-slate-100 mb-2">{heading}</h1>
+          <p className="text-gray-600 dark:text-slate-400" aria-live="polite">
+            {isLoading
+              ? 'Loading products…'
+              : `${total} product${total === 1 ? '' : 's'} found`}
           </p>
         </div>
-        
-        <div className="flex items-center space-x-4 mt-4 sm:mt-0">
-          {/* Sort */}
+
+        <div className="flex items-center gap-3">
           <div className="relative">
+            <label htmlFor="sortBy" className="sr-only">
+              Sort products
+            </label>
             <select
-              value={filters.sortBy}
-              onChange={(e) => handleFilterChange('sortBy', e.target.value)}
-              className="appearance-none bg-white border border-gray-300 rounded-lg px-4 py-2 pr-8 focus:outline-none focus:ring-2 focus:ring-primary-500"
+              id="sortBy"
+              value={sortBy}
+              onChange={(event) => updateParams({ sortBy: event.target.value })}
+              className="appearance-none bg-white dark:bg-slate-800 border border-gray-300 dark:border-slate-600 rounded-lg pl-4 py-2 pr-8 focus:outline-none focus:ring-2 focus:ring-primary-500"
             >
-              <option value="relevance">Relevance</option>
-              <option value="price-low">Price: Low to High</option>
-              <option value="price-high">Price: High to Low</option>
-              <option value="rating">Highest Rated</option>
-              <option value="newest">Newest First</option>
+              {SORT_OPTIONS.map((option) => (
+                <option key={option.value} value={option.value}>
+                  {option.label}
+                </option>
+              ))}
             </select>
-            <ChevronDown className="absolute right-2 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400 pointer-events-none" />
+            <ChevronDown
+              className="absolute right-2 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400 dark:text-slate-500 pointer-events-none"
+              aria-hidden="true"
+            />
           </div>
-          
-          {/* View Mode */}
-          <div className="flex items-center space-x-2 border border-gray-300 rounded-lg">
-            <button
-              onClick={() => setViewMode('grid')}
-              className={`p-2 rounded-l-lg ${viewMode === 'grid' ? 'bg-primary-100 text-primary-600' : 'text-gray-600 hover:bg-gray-100'}`}
-            >
-              <Grid className="w-4 h-4" />
-            </button>
-            <button
-              onClick={() => setViewMode('list')}
-              className={`p-2 rounded-r-lg ${viewMode === 'list' ? 'bg-primary-100 text-primary-600' : 'text-gray-600 hover:bg-gray-100'}`}
-            >
-              <List className="w-4 h-4" />
-            </button>
-          </div>
-          
-          {/* Mobile Filter Toggle */}
-          <button
-            onClick={() => setShowFilters(!showFilters)}
-            className="lg:hidden flex items-center space-x-2 btn-outline"
+
+          <div
+            className="flex items-center border border-gray-300 dark:border-slate-600 rounded-lg"
+            role="group"
+            aria-label="Change product layout"
           >
-            <SlidersHorizontal className="w-4 h-4" />
+            {[
+              { mode: 'grid', icon: Grid, label: 'Grid view' },
+              { mode: 'list', icon: List, label: 'List view' }
+            ].map(({ mode, icon: Icon, label }, index) => (
+              <button
+                key={mode}
+                type="button"
+                onClick={() => setViewMode(mode)}
+                aria-pressed={viewMode === mode}
+                aria-label={label}
+                className={`p-2 ${
+                  index === 0 ? 'rounded-l-lg' : 'rounded-r-lg'
+                } ${viewMode === mode ? 'bg-primary-100 dark:bg-primary-900/40 text-primary-600 dark:text-primary-400' : 'text-gray-600 dark:text-slate-400 hover:bg-gray-100 dark:hover:bg-slate-800/70'}`}
+              >
+                <Icon className="w-4 h-4" aria-hidden="true" />
+              </button>
+            ))}
+          </div>
+
+          <button
+            type="button"
+            onClick={() => setShowFilters((open) => !open)}
+            aria-expanded={showFilters}
+            className="lg:hidden flex items-center gap-2 btn-outline"
+          >
+            <SlidersHorizontal className="w-4 h-4" aria-hidden="true" />
             <span>Filters</span>
           </button>
         </div>
       </div>
 
+      {/* Active filter chips */}
+      {hasFilters && (
+        <div className="flex flex-wrap items-center gap-2 mb-6">
+          {search && (
+            <FilterChip label={`“${search}”`} onRemove={() => updateParams({ search: '' })} />
+          )}
+          {category && (
+            <FilterChip
+              label={activeCategory?.name || 'Category'}
+              onRemove={() => updateParams({ category: '' })}
+            />
+          )}
+          {(minPrice || maxPrice) && (
+            <FilterChip
+              label={`${minPrice ? formatFilterPrice(minPrice) : '$0'} – ${
+                maxPrice ? formatFilterPrice(maxPrice) : 'any'
+              }`}
+              onRemove={() => updateParams({ minPrice: '', maxPrice: '' })}
+            />
+          )}
+          {rating && (
+            <FilterChip
+              label={`${rating}+ stars`}
+              onRemove={() => updateParams({ rating: '' })}
+            />
+          )}
+          <button
+            type="button"
+            onClick={clearFilters}
+            className="text-sm text-primary-600 dark:text-primary-400 hover:text-primary-700 dark:hover:text-primary-300 underline"
+          >
+            Reset all
+          </button>
+        </div>
+      )}
+
       <div className="flex gap-8">
-        {/* Filters Sidebar */}
-        <aside className={`${showFilters ? 'block' : 'hidden'} lg:block w-64 flex-shrink-0`}>
-          <div className="bg-white rounded-lg p-6 border border-gray-200">
+        <aside
+          className={`${showFilters ? 'block' : 'hidden'} lg:block w-64 flex-shrink-0`}
+          aria-label="Product filters"
+        >
+          <div className="bg-white dark:bg-slate-800 rounded-lg p-6 border border-gray-200 dark:border-slate-700">
             <div className="flex items-center justify-between mb-6">
-              <h3 className="font-semibold text-gray-900">Filters</h3>
-              <button
-                onClick={clearFilters}
-                className="text-sm text-primary-600 hover:text-primary-700"
-              >
-                Clear All
-              </button>
+              <h2 className="font-semibold text-gray-900 dark:text-slate-100">Filters</h2>
+              {hasFilters && (
+                <button
+                  type="button"
+                  onClick={clearFilters}
+                  className="text-sm text-primary-600 dark:text-primary-400 hover:text-primary-700 dark:hover:text-primary-300"
+                >
+                  Clear All
+                </button>
+              )}
             </div>
 
-            {/* Category Filter */}
             <div className="mb-6">
-              <label className="block text-sm font-medium text-gray-700 mb-2">
+              <label
+                htmlFor="filter-category"
+                className="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-2"
+              >
                 Category
               </label>
               <select
-                value={filters.category}
-                onChange={(e) => handleFilterChange('category', e.target.value)}
+                id="filter-category"
+                value={category}
+                onChange={(event) => updateParams({ category: event.target.value })}
+                disabled={categoriesLoading}
                 className="w-full input"
               >
                 <option value="">All Categories</option>
-                {categories.map((category) => (
-                  <option key={category._id} value={category._id}>
-                    {category.name}
+                {categories.map((item) => (
+                  <option key={item._id} value={item._id}>
+                    {item.name}
                   </option>
                 ))}
               </select>
             </div>
 
-            {/* Price Range */}
             <div className="mb-6">
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Price Range
-              </label>
+              <span className="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-2">Price Range</span>
               <div className="space-y-2">
+                <label htmlFor="filter-min-price" className="sr-only">
+                  Minimum price
+                </label>
                 <input
+                  id="filter-min-price"
                   type="number"
+                  min="0"
                   placeholder="Min"
-                  value={filters.minPrice}
-                  onChange={(e) => handleFilterChange('minPrice', e.target.value)}
+                  value={minPrice}
+                  onChange={(event) => updateParams({ minPrice: event.target.value })}
                   className="w-full input"
                 />
+                <label htmlFor="filter-max-price" className="sr-only">
+                  Maximum price
+                </label>
                 <input
+                  id="filter-max-price"
                   type="number"
+                  min="0"
                   placeholder="Max"
-                  value={filters.maxPrice}
-                  onChange={(e) => handleFilterChange('maxPrice', e.target.value)}
+                  value={maxPrice}
+                  onChange={(event) => updateParams({ maxPrice: event.target.value })}
                   className="w-full input"
                 />
               </div>
             </div>
 
-            {/* Rating Filter */}
-            <div className="mb-6">
-              <label className="block text-sm font-medium text-gray-700 mb-2">
+            <div className="mb-2">
+              <label htmlFor="filter-rating" className="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-2">
                 Minimum Rating
               </label>
               <select
-                value={filters.rating}
-                onChange={(e) => handleFilterChange('rating', e.target.value)}
+                id="filter-rating"
+                value={rating}
+                onChange={(event) => updateParams({ rating: event.target.value })}
                 className="w-full input"
               >
                 <option value="">All Ratings</option>
-                <option value="4">4+ Stars</option>
-                <option value="3">3+ Stars</option>
-                <option value="2">2+ Stars</option>
-                <option value="1">1+ Stars</option>
+                {RATING_OPTIONS.map((option) => (
+                  <option key={option.value} value={option.value}>
+                    {option.label}
+                  </option>
+                ))}
               </select>
             </div>
           </div>
         </aside>
 
-        {/* Products Grid/List */}
-        <main className="flex-1">
-          {products?.length > 0 ? (
+        <main className="flex-1 min-w-0">
+          {/* Subtle inline progress bar for background refetches, so the grid
+              stays interactive instead of being replaced by skeletons. */}
+          {isFetching && !isLoading && (
+            <div className="h-0.5 w-full bg-gray-100 dark:bg-slate-800/70 overflow-hidden rounded mb-4">
+              <div className="h-full w-1/3 bg-primary-500 animate-pulse" />
+            </div>
+          )}
+
+          {showSkeleton && <ProductGridSkeleton count={PAGE_SIZE} viewMode={viewMode} />}
+
+          {!showSkeleton && isError && (
+            <div className="text-center py-16">
+              <PackageSearch className="w-16 h-16 text-error-400 dark:text-error-300 mx-auto mb-4" aria-hidden="true" />
+              <h2 className="text-xl font-semibold text-gray-900 dark:text-slate-100 mb-2">
+                We couldn&apos;t load these products
+              </h2>
+              <p className="text-gray-600 dark:text-slate-400 mb-6">
+                {error?.response?.data?.error || 'Something went wrong. Please try again.'}
+              </p>
+              <button type="button" onClick={() => refetch()} className="btn-primary">
+                <RefreshCw className="w-4 h-4 mr-2" aria-hidden="true" />
+                Try Again
+              </button>
+            </div>
+          )}
+
+          {!showSkeleton && !isError && !showGrid && (
+            <div className="text-center py-16">
+              <PackageSearch className="w-16 h-16 text-gray-400 dark:text-slate-500 mx-auto mb-4" aria-hidden="true" />
+              <h2 className="text-xl font-semibold text-gray-900 dark:text-slate-100 mb-2">
+                No products found{category ? ' in this category' : ''}
+              </h2>
+              <p className="text-gray-600 dark:text-slate-400 mb-6">
+                {activeCategory?.name
+                  ? `${activeCategory.name} has no matching products right now.`
+                  : 'Try adjusting your filters or search terms.'}
+              </p>
+              {hasFilters ? (
+                <button type="button" onClick={clearFilters} className="btn-primary">
+                  Reset Filters
+                </button>
+              ) : (
+                <p className="text-sm text-gray-500 dark:text-slate-400">Check back soon — new products are added daily.</p>
+              )}
+            </div>
+          )}
+
+          {showGrid && (
             <>
-              <div className={
-                viewMode === 'grid' 
-                  ? 'grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6'
-                  : 'space-y-4'
-              }>
+              <div
+                className={
+                  viewMode === 'grid'
+                    ? 'grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6'
+                    : 'space-y-4'
+                }
+              >
                 {products.map((product) => (
-                  <ProductCard 
-                    key={product._id} 
-                    product={product}
-                    viewMode={viewMode}
-                  />
+                  <ProductCard key={product._id} product={product} viewMode={viewMode} />
                 ))}
               </div>
 
-              {/* Pagination */}
-              {pagination && (
-                <div className="mt-12">
-                  <Pagination 
-                    currentPage={pagination.page}
-                    totalPages={pagination.pages}
+              {totalPages > 1 && (
+                <nav className="mt-12" aria-label="Product pagination">
+                  <Pagination
+                    currentPage={pagination.page || page}
+                    totalPages={totalPages}
                     onPageChange={handlePageChange}
                   />
-                </div>
+                </nav>
               )}
             </>
-          ) : (
-            <div className="text-center py-16">
-              <Search className="w-16 h-16 text-gray-400 mx-auto mb-4" />
-              <h3 className="text-xl font-semibold text-gray-900 mb-2">
-                No products found
-              </h3>
-              <p className="text-gray-600 mb-6">
-                Try adjusting your filters or search terms
-              </p>
-              <button
-                onClick={clearFilters}
-                className="btn-primary"
-              >
-                Clear Filters
-              </button>
-            </div>
           )}
         </main>
       </div>
     </div>
   )
 }
+
+const formatFilterPrice = (value) => `$${parseFloat(value).toFixed(0)}`
+
+const FilterChip = ({ label, onRemove }) => (
+  <span className="inline-flex items-center gap-1 pl-3 pr-1 py-1 rounded-full bg-primary-50 dark:bg-primary-950/40 text-primary-700 dark:text-primary-300 text-sm">
+    {label}
+    <button
+      type="button"
+      onClick={onRemove}
+      aria-label={`Remove filter ${label}`}
+      className="p-0.5 rounded-full hover:bg-primary-100 dark:hover:bg-primary-900/40"
+    >
+      <X className="w-3.5 h-3.5" aria-hidden="true" />
+    </button>
+  </span>
+)
 
 export default ProductsPage

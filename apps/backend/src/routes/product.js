@@ -1,13 +1,32 @@
 import express from 'express';
+import mongoose from 'mongoose';
 import Product from '../models/Product.js';
 import { protect, authorize, optionalAuth } from '../middlewares/auth.js';
 import { validate, createProductSchema, updateProductSchema } from '../utils/validation.js';
-import { getCache, setCache, deleteCachePattern } from '../config/redis.js';
+import { getCache, setCache } from '../config/redis.js';
+import { invalidateProductCaches } from '../utils/cacheInvalidation.js';
 import { handleImageUpload, handleMultipleImageUpload } from '../middlewares/uploadMiddleware.js';
 import { getDefaultUploadService } from '../services/uploadService.js';
-import { emitUploadProgress } from '../sockets/socketHandler.js';
+import { emitUploadProgress, emitCatalogUpdate } from '../sockets/socketHandler.js';
 
 const router = express.Router();
+
+// Whitelist of `sortBy` values the storefront may request, mapped to Mongo
+// sort objects. Anything not listed falls back to DEFAULT_SORT.
+const SORT_OPTIONS = {
+  relevance: { createdAt: -1 },
+  newest: { createdAt: -1 },
+  oldest: { createdAt: 1 },
+  'price-low': { price: 1 },
+  'price-high': { price: -1 },
+  rating: { 'ratings.average': -1, 'ratings.count': -1 },
+  popular: { soldCount: -1 },
+  reviews: { 'ratings.count': -1 }
+};
+
+const DEFAULT_SORT = SORT_OPTIONS.relevance;
+
+const resolveSort = (sortBy) => SORT_OPTIONS[sortBy] || DEFAULT_SORT;
 
 // @desc    Get all products
 // @route   GET /api/v1/products
@@ -43,8 +62,23 @@ router.get('/', optionalAuth, async (req, res, next) => {
       query.$text = { $search: req.query.search };
     }
 
+    if (req.query.rating) {
+      const minRating = parseFloat(req.query.rating);
+      if (!Number.isNaN(minRating)) {
+        query['ratings.average'] = { $gte: minRating };
+      }
+    }
+
+    if (req.query.inStock === 'true') {
+      query['inventory.quantity'] = { $gt: 0 };
+    }
+
+    // Resolve the requested sort through the whitelist so an unknown key can
+    // never reach Mongo as a raw sort document.
+    const sort = resolveSort(req.query.sortBy);
+
     // Check cache
-    const cacheKey = `products:${JSON.stringify(query)}:${page}:${limit}`;
+    const cacheKey = `products:${JSON.stringify(query)}:${JSON.stringify(sort)}:${page}:${limit}`;
     let cachedProducts = await getCache(cacheKey);
     
     if (cachedProducts) {
@@ -57,7 +91,7 @@ router.get('/', optionalAuth, async (req, res, next) => {
     const products = await Product.find(query)
       .populate('vendor', 'name')
       .populate('category', 'name slug')
-      .sort({ createdAt: -1 })
+      .sort(sort)
       .skip(skip)
       .limit(limit);
 
@@ -69,7 +103,8 @@ router.get('/', optionalAuth, async (req, res, next) => {
         page,
         limit,
         total,
-        pages: Math.ceil(total / limit)
+        pages: Math.ceil(total / limit),
+        totalPages: Math.ceil(total / limit)
       }
     };
 
@@ -85,27 +120,37 @@ router.get('/', optionalAuth, async (req, res, next) => {
   }
 });
 
-// @desc    Get single product
-// @route   GET /api/v1/products/:id
+// @desc    Get single product by slug or id
+// @route   GET /api/v1/products/:idOrSlug
 // @access  Public
-router.get('/:id', optionalAuth, async (req, res, next) => {
+router.get('/:idOrSlug', optionalAuth, async (req, res, next) => {
   try {
-    const { id } = req.params;
-    
+    const { idOrSlug } = req.params;
+
+    // The storefront links use the human-readable slug while admin/vendor
+    // tooling links use the ObjectId, so accept either. Guarding on
+    // isValidObjectId is what stops a slug from reaching findById and
+    // throwing a CastError (500) instead of resolving a product.
+    const isObjectId = mongoose.isValidObjectId(idOrSlug);
+    const findQuery = isObjectId
+      ? { _id: idOrSlug }
+      : { slug: String(idOrSlug).toLowerCase() };
+
     // Check cache
-    const cacheKey = `product:${id}`;
+    const cacheKey = `product:${idOrSlug}`;
     let cachedProduct = await getCache(cacheKey);
     
     if (cachedProduct) {
-      // Increment view count asynchronously
-      Product.findByIdAndUpdate(id, { $inc: { viewCount: 1 } }).exec();
+      // Increment view count asynchronously, keyed the same way we looked
+      // the product up so a slug request bumps the right document.
+      Product.findOneAndUpdate(findQuery, { $inc: { viewCount: 1 } }).exec();
       return res.json({
         success: true,
         data: cachedProduct
       });
     }
 
-    const product = await Product.findById(id)
+    const product = await Product.findOne(findQuery)
       .populate('vendor', 'name')
       .populate('category', 'name slug')
       .populate('reviews', 'rating title content user createdAt');
@@ -205,13 +250,16 @@ router.post('/', protect, authorize('vendor', 'admin'), handleMultipleImageUploa
       });
     }
 
-    // Create product in database
-    console.log('💾 Creating product in database...');
-    const product = await Product.create(productData);
-    console.log('✅ Product created successfully:', product._id);
-    
-    // Clear product cache
-    await deleteCachePattern('products:*');
+// Create product in database
+console.log('?? Creating product in database...');
+const product = await Product.create(productData);
+console.log('? Product created successfully:', product._id);
+
+// Clear every cache that can hold a copy of this product
+await invalidateProductCaches(product._id, product.slug);
+
+emitCatalogUpdate('product:created', { productId: product._id, slug: product.slug });
+
 
     // Emit completion (100%)
     console.log('🎉 Emitting completion progress...');
@@ -303,14 +351,16 @@ router.put('/:id', protect, authorize('vendor', 'admin'), handleMultipleImageUpl
       runValidators: true
     });
 
-    // Clear cache
-    await deleteCachePattern('products:*');
-    await deleteCachePattern(`product:${id}`);
+// Clear cache. This used to call deleteCachePattern(`product:${id}`), which
+// never matched the `product:<slug>` key the storefront actually reads.
+await invalidateProductCaches(id, product.slug);
 
-    res.json({
-      success: true,
-      data: product
-    });
+emitCatalogUpdate('product:updated', { productId: product._id, slug: product.slug });
+
+res.json({
+  success: true,
+  data: product
+});
   } catch (error) {
     next(error);
   }
@@ -344,14 +394,15 @@ router.delete('/:id', protect, authorize('vendor', 'admin'), async (req, res, ne
     product.status = 'deleted';
     await product.save();
 
-    // Clear cache
-    await deleteCachePattern('products:*');
-    await deleteCachePattern(`product:${id}`);
+// Clear cache
+await invalidateProductCaches(id, product.slug);
 
-    res.json({
-      success: true,
-      message: 'Product deleted successfully'
-    });
+emitCatalogUpdate('product:deleted', { productId: product._id });
+
+res.json({
+  success: true,
+  message: 'Product deleted successfully'
+});
   } catch (error) {
     next(error);
   }
@@ -456,7 +507,7 @@ router.get('/vendor/:vendorId', optionalAuth, async (req, res, next) => {
 
     const products = await Product.find(query)
       .populate('category', 'name slug')
-      .sort({ createdAt: -1 })
+      .sort(resolveSort(req.query.sortBy))
       .skip(skip)
       .limit(limit);
 
@@ -470,7 +521,8 @@ router.get('/vendor/:vendorId', optionalAuth, async (req, res, next) => {
           page,
           limit,
           total,
-          pages: Math.ceil(total / limit)
+          pages: Math.ceil(total / limit),
+          totalPages: Math.ceil(total / limit)
         }
       }
     });
