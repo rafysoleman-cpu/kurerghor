@@ -53,8 +53,8 @@ const AdminDashboard = () => {
       {/* Header */}
       <div className="flex flex-col lg:flex-row lg:items-center justify-between mb-8 gap-4">
         <div>
-          <h1 className="text-3xl font-bold text-gray-900 mb-2">Admin Dashboard</h1>
-          <p className="text-gray-600">Platform overview and management</p>
+          <h1 className="text-3xl font-bold text-gray-900 dark:text-slate-100 mb-2">Admin Dashboard</h1>
+          <p className="text-gray-600 dark:text-slate-400">Platform overview and management</p>
         </div>
         
         <div className="flex flex-col sm:flex-row gap-3">
@@ -84,77 +84,77 @@ const AdminDashboard = () => {
 
       {/* Stats Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-        <div className="bg-white rounded-lg p-6 border border-gray-200">
+        <div className="bg-white dark:bg-slate-800 rounded-lg p-6 border border-gray-200 dark:border-slate-700">
           <div className="flex items-center justify-between mb-4">
-            <div className="p-3 bg-success-100 rounded-lg">
-              <DollarSign className="w-6 h-6 text-success-600" />
+            <div className="p-3 bg-success-100 dark:bg-success-900/40 rounded-lg">
+              <DollarSign className="w-6 h-6 text-success-600 dark:text-success-400" />
             </div>
-            <span className="text-sm text-success-600 font-medium">
+            <span className="text-sm text-success-600 dark:text-success-400 font-medium">
               +{dashboard?.revenueChange || 0}%
             </span>
           </div>
-          <h3 className="text-2xl font-bold text-gray-900 mb-2">
+          <h3 className="text-2xl font-bold text-gray-900 dark:text-slate-100 mb-2">
             {formatCurrency(dashboard?.stats?.revenue?.total || 0)}
           </h3>
-          <p className="text-gray-600">Total Revenue</p>
+          <p className="text-gray-600 dark:text-slate-400">Total Revenue</p>
         </div>
 
-        <div className="bg-white rounded-lg p-6 border border-gray-200">
+        <div className="bg-white dark:bg-slate-800 rounded-lg p-6 border border-gray-200 dark:border-slate-700">
           <div className="flex items-center justify-between mb-4">
-            <div className="p-3 bg-primary-100 rounded-lg">
-              <Users className="w-6 h-6 text-primary-600" />
+            <div className="p-3 bg-primary-100 dark:bg-primary-900/40 rounded-lg">
+              <Users className="w-6 h-6 text-primary-600 dark:text-primary-400" />
             </div>
-            <span className="text-sm text-primary-600 font-medium">
+            <span className="text-sm text-primary-600 dark:text-primary-400 font-medium">
               +{dashboard?.stats?.users?.change || 0}%
             </span>
           </div>
-          <h3 className="text-2xl font-bold text-gray-900 mb-2">
+          <h3 className="text-2xl font-bold text-gray-900 dark:text-slate-100 mb-2">
             {formatNumber(dashboard?.stats?.users?.total || 0)}
           </h3>
-          <p className="text-gray-600">Total Users</p>
+          <p className="text-gray-600 dark:text-slate-400">Total Users</p>
         </div>
 
-        <div className="bg-white rounded-lg p-6 border border-gray-200">
+        <div className="bg-white dark:bg-slate-800 rounded-lg p-6 border border-gray-200 dark:border-slate-700">
           <div className="flex items-center justify-between mb-4">
-            <div className="p-3 bg-warning-100 rounded-lg">
-              <Store className="w-6 h-6 text-warning-600" />
+            <div className="p-3 bg-warning-100 dark:bg-warning-900/40 rounded-lg">
+              <Store className="w-6 h-6 text-warning-600 dark:text-warning-400" />
             </div>
-            <span className="text-sm text-warning-600 font-medium">
+            <span className="text-sm text-warning-600 dark:text-warning-400 font-medium">
               +{dashboard?.stats?.vendors?.change || 0}%
             </span>
           </div>
-          <h3 className="text-2xl font-bold text-gray-900 mb-2">
+          <h3 className="text-2xl font-bold text-gray-900 dark:text-slate-100 mb-2">
             {formatNumber(dashboard?.stats?.users?.vendors || 0)}
           </h3>
-          <p className="text-gray-600">Total Vendors</p>
+          <p className="text-gray-600 dark:text-slate-400">Total Vendors</p>
         </div>
 
-        <div className="bg-white rounded-lg p-6 border border-gray-200">
+        <div className="bg-white dark:bg-slate-800 rounded-lg p-6 border border-gray-200 dark:border-slate-700">
           <div className="flex items-center justify-between mb-4">
-            <div className="p-3 bg-indigo-100 rounded-lg">
-              <Package className="w-6 h-6 text-indigo-600" />
+            <div className="p-3 bg-indigo-100 dark:bg-indigo-900/40 rounded-lg">
+              <Package className="w-6 h-6 text-indigo-600 dark:text-indigo-400" />
             </div>
-            <span className="text-sm text-indigo-600 font-medium">
+            <span className="text-sm text-indigo-600 dark:text-indigo-400 font-medium">
               +{dashboard?.stats?.products?.change || 0}%
             </span>
           </div>
-          <h3 className="text-2xl font-bold text-gray-900 mb-2">
+          <h3 className="text-2xl font-bold text-gray-900 dark:text-slate-100 mb-2">
             {formatNumber(dashboard?.stats?.products?.total || 0)}
           </h3>
-          <p className="text-gray-600">Total Products</p>
+          <p className="text-gray-600 dark:text-slate-400">Total Products</p>
         </div>
       </div>
 
       {/* Charts and Tables */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
         {/* Recent Orders */}
-        <div className="bg-white rounded-lg border border-gray-200">
-          <div className="p-6 border-b border-gray-200">
+        <div className="bg-white dark:bg-slate-800 rounded-lg border border-gray-200 dark:border-slate-700">
+          <div className="p-6 border-b border-gray-200 dark:border-slate-700">
             <div className="flex items-center justify-between">
-              <h2 className="text-lg font-semibold text-gray-900">Recent Orders</h2>
+              <h2 className="text-lg font-semibold text-gray-900 dark:text-slate-100">Recent Orders</h2>
               <Link 
                 to="/admin/orders"
-                className="text-primary-600 hover:text-primary-700 text-sm font-medium"
+                className="text-primary-600 dark:text-primary-400 hover:text-primary-700 dark:hover:text-primary-300 text-sm font-medium"
               >
                 View All
               </Link>
@@ -165,21 +165,21 @@ const AdminDashboard = () => {
             {dashboard?.recentOrders?.length > 0 ? (
               <div className="space-y-4">
                 {dashboard.recentOrders.slice(0, 5).map((order) => (
-                  <div key={order._id} className="flex items-center justify-between py-3 border-b border-gray-100 last:border-b-0">
+                  <div key={order._id} className="flex items-center justify-between py-3 border-b border-gray-100 dark:border-slate-800 last:border-b-0">
                     <div className="flex-1 min-w-0">
-                      <p className="font-medium text-gray-900 truncate">
+                      <p className="font-medium text-gray-900 dark:text-slate-100 truncate">
                         #{order.orderNumber}
                       </p>
-                      <p className="text-sm text-gray-600 truncate">
+                      <p className="text-sm text-gray-600 dark:text-slate-400 truncate">
                         {order.user?.name || 'Guest'}
                       </p>
                     </div>
                     
                     <div className="text-right">
-                      <p className="font-semibold text-gray-900">
+                      <p className="font-semibold text-gray-900 dark:text-slate-100">
                         {formatCurrency(order.total)}
                       </p>
-                      <p className="text-sm text-gray-600">
+                      <p className="text-sm text-gray-600 dark:text-slate-400">
                         {order.status}
                       </p>
                     </div>
@@ -188,20 +188,20 @@ const AdminDashboard = () => {
               </div>
             ) : (
               <div className="text-center py-8">
-                <p className="text-gray-600">No recent orders</p>
+                <p className="text-gray-600 dark:text-slate-400">No recent orders</p>
               </div>
             )}
           </div>
         </div>
 
         {/* Pending Vendors */}
-        <div className="bg-white rounded-lg border border-gray-200">
-          <div className="p-6 border-b border-gray-200">
+        <div className="bg-white dark:bg-slate-800 rounded-lg border border-gray-200 dark:border-slate-700">
+          <div className="p-6 border-b border-gray-200 dark:border-slate-700">
             <div className="flex items-center justify-between">
-              <h2 className="text-lg font-semibold text-gray-900">Pending Vendors</h2>
+              <h2 className="text-lg font-semibold text-gray-900 dark:text-slate-100">Pending Vendors</h2>
               <Link 
                 to="/admin/vendors"
-                className="text-primary-600 hover:text-primary-700 text-sm font-medium"
+                className="text-primary-600 dark:text-primary-400 hover:text-primary-700 dark:hover:text-primary-300 text-sm font-medium"
               >
                 View All
               </Link>
@@ -211,18 +211,18 @@ const AdminDashboard = () => {
           <div className="p-6">
             {dashboard?.stats?.users?.vendorRequests > 0 ? (
               <div className="text-center py-8">
-                <AlertCircle className="w-12 h-12 text-warning-600 mx-auto mb-4" />
-                <p className="text-gray-900 font-medium mb-2">
+                <AlertCircle className="w-12 h-12 text-warning-600 dark:text-warning-400 mx-auto mb-4" />
+                <p className="text-gray-900 dark:text-slate-100 font-medium mb-2">
                   {dashboard?.stats?.users?.vendorRequests} vendor requests pending
                 </p>
-                <p className="text-gray-600 text-sm">
+                <p className="text-gray-600 dark:text-slate-400 text-sm">
                   Review and approve vendor applications
                 </p>
               </div>
             ) : (
               <div className="text-center py-8">
-                <UserCheck className="w-12 h-12 text-success-600 mx-auto mb-4" />
-                <p className="text-gray-600">No pending vendor requests</p>
+                <UserCheck className="w-12 h-12 text-success-600 dark:text-success-400 mx-auto mb-4" />
+                <p className="text-gray-600 dark:text-slate-400">No pending vendor requests</p>
               </div>
             )}
           </div>
@@ -233,17 +233,17 @@ const AdminDashboard = () => {
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
         <Link 
           to="/admin/users"
-          className="bg-white rounded-lg p-6 border border-gray-200 hover:shadow-lg transition-shadow group"
+          className="bg-white dark:bg-slate-800 rounded-lg p-6 border border-gray-200 dark:border-slate-700 hover:shadow-lg transition-shadow group"
         >
           <div className="flex items-center space-x-3">
-            <div className="p-3 bg-primary-100 rounded-lg group-hover:bg-primary-200 transition-colors">
-              <Users className="w-6 h-6 text-primary-600" />
+            <div className="p-3 bg-primary-100 dark:bg-primary-900/40 rounded-lg group-hover:bg-primary-200 transition-colors">
+              <Users className="w-6 h-6 text-primary-600 dark:text-primary-400" />
             </div>
             <div>
-              <h3 className="font-semibold text-gray-900 group-hover:text-primary-600 transition-colors">
+              <h3 className="font-semibold text-gray-900 dark:text-slate-100 group-hover:text-primary-600 dark:group-hover:text-primary-400 transition-colors">
                 Manage Users
               </h3>
-              <p className="text-sm text-gray-600">
+              <p className="text-sm text-gray-600 dark:text-slate-400">
                 View and manage all users
               </p>
             </div>
@@ -252,17 +252,17 @@ const AdminDashboard = () => {
 
         <Link 
           to="/admin/vendors"
-          className="bg-white rounded-lg p-6 border border-gray-200 hover:shadow-lg transition-shadow group"
+          className="bg-white dark:bg-slate-800 rounded-lg p-6 border border-gray-200 dark:border-slate-700 hover:shadow-lg transition-shadow group"
         >
           <div className="flex items-center space-x-3">
-            <div className="p-3 bg-warning-100 rounded-lg group-hover:bg-warning-200 transition-colors">
-              <Store className="w-6 h-6 text-warning-600" />
+            <div className="p-3 bg-warning-100 dark:bg-warning-900/40 rounded-lg group-hover:bg-warning-200 transition-colors">
+              <Store className="w-6 h-6 text-warning-600 dark:text-warning-400" />
             </div>
             <div>
-              <h3 className="font-semibold text-gray-900 group-hover:text-warning-600 transition-colors">
+              <h3 className="font-semibold text-gray-900 dark:text-slate-100 group-hover:text-warning-600 dark:group-hover:text-warning-400 transition-colors">
                 Manage Vendors
               </h3>
-              <p className="text-sm text-gray-600">
+              <p className="text-sm text-gray-600 dark:text-slate-400">
                 Approve and manage vendors
               </p>
             </div>
@@ -271,17 +271,17 @@ const AdminDashboard = () => {
 
         <Link 
           to="/admin/products"
-          className="bg-white rounded-lg p-6 border border-gray-200 hover:shadow-lg transition-shadow group"
+          className="bg-white dark:bg-slate-800 rounded-lg p-6 border border-gray-200 dark:border-slate-700 hover:shadow-lg transition-shadow group"
         >
           <div className="flex items-center space-x-3">
-            <div className="p-3 bg-indigo-100 rounded-lg group-hover:bg-indigo-200 transition-colors">
-              <Package className="w-6 h-6 text-indigo-600" />
+            <div className="p-3 bg-indigo-100 dark:bg-indigo-900/40 rounded-lg group-hover:bg-indigo-200 transition-colors">
+              <Package className="w-6 h-6 text-indigo-600 dark:text-indigo-400" />
             </div>
             <div>
-              <h3 className="font-semibold text-gray-900 group-hover:text-indigo-600 transition-colors">
+              <h3 className="font-semibold text-gray-900 dark:text-slate-100 group-hover:text-indigo-600 dark:group-hover:text-indigo-400 transition-colors">
                 Manage Products
               </h3>
-              <p className="text-sm text-gray-600">
+              <p className="text-sm text-gray-600 dark:text-slate-400">
                 Review and manage products
               </p>
             </div>
@@ -290,17 +290,17 @@ const AdminDashboard = () => {
 
         <Link 
           to="/admin/orders"
-          className="bg-white rounded-lg p-6 border border-gray-200 hover:shadow-lg transition-shadow group"
+          className="bg-white dark:bg-slate-800 rounded-lg p-6 border border-gray-200 dark:border-slate-700 hover:shadow-lg transition-shadow group"
         >
           <div className="flex items-center space-x-3">
-            <div className="p-3 bg-success-100 rounded-lg group-hover:bg-success-200 transition-colors">
-              <ShoppingCart className="w-6 h-6 text-success-600" />
+            <div className="p-3 bg-success-100 dark:bg-success-900/40 rounded-lg group-hover:bg-success-200 transition-colors">
+              <ShoppingCart className="w-6 h-6 text-success-600 dark:text-success-400" />
             </div>
             <div>
-              <h3 className="font-semibold text-gray-900 group-hover:text-success-600 transition-colors">
+              <h3 className="font-semibold text-gray-900 dark:text-slate-100 group-hover:text-success-600 dark:group-hover:text-success-400 transition-colors">
                 Manage Orders
               </h3>
-              <p className="text-sm text-gray-600">
+              <p className="text-sm text-gray-600 dark:text-slate-400">
                 View and manage orders
               </p>
             </div>
@@ -310,19 +310,19 @@ const AdminDashboard = () => {
 
       {/* System Alerts */}
       {dashboard?.alerts?.length > 0 && (
-        <div className="mt-8 bg-white rounded-lg border border-gray-200">
-          <div className="p-6 border-b border-gray-200">
-            <h2 className="text-lg font-semibold text-gray-900">System Alerts</h2>
+        <div className="mt-8 bg-white dark:bg-slate-800 rounded-lg border border-gray-200 dark:border-slate-700">
+          <div className="p-6 border-b border-gray-200 dark:border-slate-700">
+            <h2 className="text-lg font-semibold text-gray-900 dark:text-slate-100">System Alerts</h2>
           </div>
           
           <div className="p-6">
             <div className="space-y-4">
               {dashboard.alerts.map((alert, index) => (
-                <div key={index} className="flex items-center space-x-3 p-4 bg-error-50 rounded-lg">
-                  <AlertCircle className="w-5 h-5 text-error-600 flex-shrink-0" />
+                <div key={index} className="flex items-center space-x-3 p-4 bg-error-50 dark:bg-error-950/40 rounded-lg">
+                  <AlertCircle className="w-5 h-5 text-error-600 dark:text-error-400 flex-shrink-0" />
                   <div className="flex-1">
-                    <p className="font-medium text-error-900">{alert.title}</p>
-                    <p className="text-sm text-error-700">{alert.message}</p>
+                    <p className="font-medium text-error-900 dark:text-error-300">{alert.title}</p>
+                    <p className="text-sm text-error-700 dark:text-error-300">{alert.message}</p>
                   </div>
                 </div>
               ))}

@@ -58,10 +58,10 @@ const Layout = ({ requiredRole }) => {
       return (
         <>
           {/* Mobile Header */}
-          <div className="lg:hidden bg-white border-b border-gray-200 px-4 py-3 flex items-center justify-between">
+          <div className="lg:hidden bg-white dark:bg-slate-800 border-b border-gray-200 dark:border-slate-700 px-4 py-3 flex items-center justify-between">
             <button
               onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-              className="p-2 text-gray-600 hover:text-primary-600 transition-colors"
+              className="p-2 text-gray-600 dark:text-slate-400 hover:text-primary-600 dark:hover:text-primary-400 transition-colors"
               aria-label="Menu"
             >
               {isMobileMenuOpen ? (
@@ -75,13 +75,13 @@ const Layout = ({ requiredRole }) => {
             <div className="flex items-center space-x-3">
               {isAdminRoute ? (
                 <>
-                  <LayoutDashboard className="w-6 h-6 text-primary-600" />
-                  <h1 className="text-lg font-semibold text-gray-900">Admin Panel</h1>
+                  <LayoutDashboard className="w-6 h-6 text-primary-600 dark:text-primary-400" />
+                  <h1 className="text-lg font-semibold text-gray-900 dark:text-slate-100">Admin Panel</h1>
                 </>
               ) : (
                 <>
-                  <Store className="w-6 h-6 text-primary-600" />
-                  <h1 className="text-lg font-semibold text-gray-900">Vendor Panel</h1>
+                  <Store className="w-6 h-6 text-primary-600 dark:text-primary-400" />
+                  <h1 className="text-lg font-semibold text-gray-900 dark:text-slate-100">Vendor Panel</h1>
                 </>
               )}
             </div>
@@ -95,7 +95,7 @@ const Layout = ({ requiredRole }) => {
             </div>
             
             {/* Main Content - responsive padding */}
-            <main className="flex-1 min-h-screen bg-gray-50">
+            <main className="flex-1 min-h-screen bg-gray-50 dark:bg-slate-900">
               <div className="p-4 lg:p-6">
                 <Outlet />
               </div>

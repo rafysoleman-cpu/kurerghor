@@ -75,7 +75,7 @@ const AdminSettings = () => {
     <div className="space-y-6">
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-2">
+          <label className="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-2">
             Site Name
           </label>
           <input
@@ -87,7 +87,7 @@ const AdminSettings = () => {
         </div>
         
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-2">
+          <label className="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-2">
             Site URL
           </label>
           <input
@@ -99,7 +99,7 @@ const AdminSettings = () => {
         </div>
         
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-2">
+          <label className="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-2">
             Admin Email
           </label>
           <input
@@ -117,9 +117,9 @@ const AdminSettings = () => {
             type="checkbox"
             checked={generalSettings.maintenanceMode}
             onChange={(e) => setGeneralSettings(prev => ({ ...prev, maintenanceMode: e.target.checked }))}
-            className="h-4 w-4 text-primary-600 focus:ring-primary-500 border-gray-300 rounded"
+            className="h-4 w-4 text-primary-600 dark:text-primary-400 focus:ring-primary-500 border-gray-300 dark:border-slate-600 rounded"
           />
-          <span className="text-sm text-gray-700">Maintenance Mode</span>
+          <span className="text-sm text-gray-700 dark:text-slate-300">Maintenance Mode</span>
         </label>
         
         <label className="flex items-center space-x-3">
@@ -127,9 +127,9 @@ const AdminSettings = () => {
             type="checkbox"
             checked={generalSettings.debugMode}
             onChange={(e) => setGeneralSettings(prev => ({ ...prev, debugMode: e.target.checked }))}
-            className="h-4 w-4 text-primary-600 focus:ring-primary-500 border-gray-300 rounded"
+            className="h-4 w-4 text-primary-600 dark:text-primary-400 focus:ring-primary-500 border-gray-300 dark:border-slate-600 rounded"
           />
-          <span className="text-sm text-gray-700">Debug Mode</span>
+          <span className="text-sm text-gray-700 dark:text-slate-300">Debug Mode</span>
         </label>
       </div>
     </div>
@@ -137,8 +137,8 @@ const AdminSettings = () => {
 
   const renderPaymentSettings = () => (
     <div className="space-y-6">
-      <div className="border-b border-gray-200 pb-6">
-        <h3 className="text-lg font-medium text-gray-900 mb-4">Aamarpay Settings</h3>
+      <div className="border-b border-gray-200 dark:border-slate-700 pb-6">
+        <h3 className="text-lg font-medium text-gray-900 dark:text-slate-100 mb-4">Aamarpay Settings</h3>
         
         <div className="space-y-4">
           <label className="flex items-center space-x-3">
@@ -146,14 +146,14 @@ const AdminSettings = () => {
               type="checkbox"
               checked={paymentSettings.aamarpayEnabled}
               onChange={(e) => setPaymentSettings(prev => ({ ...prev, aamarpayEnabled: e.target.checked }))}
-              className="h-4 w-4 text-primary-600 focus:ring-primary-500 border-gray-300 rounded"
+              className="h-4 w-4 text-primary-600 dark:text-primary-400 focus:ring-primary-500 border-gray-300 dark:border-slate-600 rounded"
             />
-            <span className="text-sm text-gray-700">Enable Aamarpay</span>
+            <span className="text-sm text-gray-700 dark:text-slate-300">Enable Aamarpay</span>
           </label>
           
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
+              <label className="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-2">
                 Store ID
               </label>
               <input
@@ -166,7 +166,7 @@ const AdminSettings = () => {
             </div>
             
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
+              <label className="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-2">
                 Signature Key
               </label>
               <input
@@ -181,8 +181,8 @@ const AdminSettings = () => {
         </div>
       </div>
       
-      <div className="border-b border-gray-200 pb-6">
-        <h3 className="text-lg font-medium text-gray-900 mb-4">Cash on Delivery</h3>
+      <div className="border-b border-gray-200 dark:border-slate-700 pb-6">
+        <h3 className="text-lg font-medium text-gray-900 dark:text-slate-100 mb-4">Cash on Delivery</h3>
         
         <div className="space-y-4">
           <label className="flex items-center space-x-3">
@@ -190,19 +190,19 @@ const AdminSettings = () => {
               type="checkbox"
               checked={paymentSettings.cashOnDeliveryEnabled}
               onChange={(e) => setPaymentSettings(prev => ({ ...prev, cashOnDeliveryEnabled: e.target.checked }))}
-              className="h-4 w-4 text-primary-600 focus:ring-primary-500 border-gray-300 rounded"
+              className="h-4 w-4 text-primary-600 dark:text-primary-400 focus:ring-primary-500 border-gray-300 dark:border-slate-600 rounded"
             />
-            <span className="text-sm text-gray-700">Enable Cash on Delivery</span>
+            <span className="text-sm text-gray-700 dark:text-slate-300">Enable Cash on Delivery</span>
           </label>
         </div>
       </div>
       
       <div>
-        <h3 className="text-lg font-medium text-gray-900 mb-4">Order Limits</h3>
+        <h3 className="text-lg font-medium text-gray-900 dark:text-slate-100 mb-4">Order Limits</h3>
         
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
+            <label className="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-2">
               Minimum Order Amount ($)
             </label>
             <input
@@ -216,7 +216,7 @@ const AdminSettings = () => {
           </div>
           
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
+            <label className="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-2">
               Maximum Order Amount ($)
             </label>
             <input
@@ -236,11 +236,11 @@ const AdminSettings = () => {
   const renderEmailSettings = () => (
     <div className="space-y-6">
       <div>
-        <h3 className="text-lg font-medium text-gray-900 mb-4">SMTP Configuration</h3>
+        <h3 className="text-lg font-medium text-gray-900 dark:text-slate-100 mb-4">SMTP Configuration</h3>
         
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
+            <label className="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-2">
               SMTP Host
             </label>
             <input
@@ -253,7 +253,7 @@ const AdminSettings = () => {
           </div>
           
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
+            <label className="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-2">
               SMTP Port
             </label>
             <input
@@ -266,7 +266,7 @@ const AdminSettings = () => {
           </div>
           
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
+            <label className="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-2">
               SMTP Username
             </label>
             <input
@@ -279,7 +279,7 @@ const AdminSettings = () => {
           </div>
           
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
+            <label className="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-2">
               SMTP Password
             </label>
             <input
@@ -294,11 +294,11 @@ const AdminSettings = () => {
       </div>
       
       <div>
-        <h3 className="text-lg font-medium text-gray-900 mb-4">Email Settings</h3>
+        <h3 className="text-lg font-medium text-gray-900 dark:text-slate-100 mb-4">Email Settings</h3>
         
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
+            <label className="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-2">
               From Email
             </label>
             <input
@@ -311,7 +311,7 @@ const AdminSettings = () => {
           </div>
           
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
+            <label className="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-2">
               From Name
             </label>
             <input
@@ -325,8 +325,8 @@ const AdminSettings = () => {
         </div>
       </div>
       
-      <div className="bg-gray-50 rounded-lg p-4">
-        <h4 className="font-medium text-gray-900 mb-2">Test Email Configuration</h4>
+      <div className="bg-gray-50 dark:bg-slate-900 rounded-lg p-4">
+        <h4 className="font-medium text-gray-900 dark:text-slate-100 mb-2">Test Email Configuration</h4>
         <button className="btn-outline">
           Send Test Email
         </button>
@@ -337,7 +337,7 @@ const AdminSettings = () => {
   const renderSecuritySettings = () => (
     <div className="space-y-6">
       <div>
-        <h3 className="text-lg font-medium text-gray-900 mb-4">Authentication</h3>
+        <h3 className="text-lg font-medium text-gray-900 dark:text-slate-100 mb-4">Authentication</h3>
         
         <div className="space-y-4">
           <label className="flex items-center space-x-3">
@@ -345,14 +345,14 @@ const AdminSettings = () => {
               type="checkbox"
               checked={securitySettings.enable2FA}
               onChange={(e) => setSecuritySettings(prev => ({ ...prev, enable2FA: e.target.checked }))}
-              className="h-4 w-4 text-primary-600 focus:ring-primary-500 border-gray-300 rounded"
+              className="h-4 w-4 text-primary-600 dark:text-primary-400 focus:ring-primary-500 border-gray-300 dark:border-slate-600 rounded"
             />
-            <span className="text-sm text-gray-700">Enable Two-Factor Authentication</span>
+            <span className="text-sm text-gray-700 dark:text-slate-300">Enable Two-Factor Authentication</span>
           </label>
           
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
+              <label className="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-2">
                 Session Timeout (minutes)
               </label>
               <input
@@ -366,7 +366,7 @@ const AdminSettings = () => {
             </div>
             
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
+              <label className="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-2">
                 Max Login Attempts
               </label>
               <input
@@ -383,11 +383,11 @@ const AdminSettings = () => {
       </div>
       
       <div>
-        <h3 className="text-lg font-medium text-gray-900 mb-4">Password Policy</h3>
+        <h3 className="text-lg font-medium text-gray-900 dark:text-slate-100 mb-4">Password Policy</h3>
         
         <div className="space-y-4">
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
+            <label className="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-2">
               Minimum Password Length
             </label>
             <input
@@ -403,7 +403,7 @@ const AdminSettings = () => {
       </div>
       
       <div>
-        <h3 className="text-lg font-medium text-gray-900 mb-4">Protection</h3>
+        <h3 className="text-lg font-medium text-gray-900 dark:text-slate-100 mb-4">Protection</h3>
         
         <div className="space-y-4">
           <label className="flex items-center space-x-3">
@@ -411,9 +411,9 @@ const AdminSettings = () => {
               type="checkbox"
               checked={securitySettings.enableCaptcha}
               onChange={(e) => setSecuritySettings(prev => ({ ...prev, enableCaptcha: e.target.checked }))}
-              className="h-4 w-4 text-primary-600 focus:ring-primary-500 border-gray-300 rounded"
+              className="h-4 w-4 text-primary-600 dark:text-primary-400 focus:ring-primary-500 border-gray-300 dark:border-slate-600 rounded"
             />
-            <span className="text-sm text-gray-700">Enable CAPTCHA</span>
+            <span className="text-sm text-gray-700 dark:text-slate-300">Enable CAPTCHA</span>
           </label>
         </div>
       </div>
@@ -433,8 +433,8 @@ const AdminSettings = () => {
   return (
     <div className="container mx-auto px-4 py-8">
       <div className="mb-8">
-        <h1 className="text-3xl font-bold text-gray-900 mb-2">Admin Settings</h1>
-        <p className="text-gray-600">Configure platform settings and preferences</p>
+        <h1 className="text-3xl font-bold text-gray-900 dark:text-slate-100 mb-2">Admin Settings</h1>
+        <p className="text-gray-600 dark:text-slate-400">Configure platform settings and preferences</p>
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
@@ -449,8 +449,8 @@ const AdminSettings = () => {
                   onClick={() => setActiveTab(tab.id)}
                   className={`w-full text-left px-4 py-3 rounded-lg flex items-center space-x-3 transition-colors ${
                     activeTab === tab.id
-                      ? 'bg-primary-100 text-primary-700 font-medium'
-                      : 'text-gray-600 hover:bg-gray-100'
+                      ? 'bg-primary-100 dark:bg-primary-900/40 text-primary-700 dark:text-primary-300 font-medium'
+                      : 'text-gray-600 dark:text-slate-400 hover:bg-gray-100 dark:hover:bg-slate-800/70'
                   }`}
                 >
                   <Icon className="w-5 h-5" />
@@ -463,9 +463,9 @@ const AdminSettings = () => {
 
         {/* Main Content */}
         <div className="lg:col-span-3">
-          <div className="bg-white rounded-lg p-6 border border-gray-200">
+          <div className="bg-white dark:bg-slate-800 rounded-lg p-6 border border-gray-200 dark:border-slate-700">
             <div className="flex items-center justify-between mb-6">
-              <h2 className="text-xl font-semibold text-gray-900 capitalize">
+              <h2 className="text-xl font-semibold text-gray-900 dark:text-slate-100 capitalize">
                 {activeTab} Settings
               </h2>
               

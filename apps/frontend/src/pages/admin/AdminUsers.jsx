@@ -79,19 +79,19 @@ const AdminUsers = () => {
 
   const getRoleColor = (role) => {
     switch (role) {
-      case 'admin': return 'text-error-600 bg-error-50'
-      case 'vendor': return 'text-warning-600 bg-warning-50'
-      case 'user': return 'text-primary-600 bg-primary-50'
-      default: return 'text-gray-600 bg-gray-50'
+      case 'admin': return 'text-error-600 dark:text-error-400 bg-error-50 dark:bg-error-950/40'
+      case 'vendor': return 'text-warning-600 dark:text-warning-400 bg-warning-50 dark:bg-warning-950/40'
+      case 'user': return 'text-primary-600 dark:text-primary-400 bg-primary-50 dark:bg-primary-950/40'
+      default: return 'text-gray-600 dark:text-slate-400 bg-gray-50 dark:bg-slate-900'
     }
   }
 
   const getStatusColor = (status) => {
     switch (status) {
-      case 'active': return 'text-success-600 bg-success-50'
-      case 'inactive': return 'text-gray-600 bg-gray-50'
-      case 'suspended': return 'text-error-600 bg-error-50'
-      default: return 'text-gray-600 bg-gray-50'
+      case 'active': return 'text-success-600 dark:text-success-400 bg-success-50 dark:bg-success-950/40'
+      case 'inactive': return 'text-gray-600 dark:text-slate-400 bg-gray-50 dark:bg-slate-900'
+      case 'suspended': return 'text-error-600 dark:text-error-400 bg-error-50 dark:bg-error-950/40'
+      default: return 'text-gray-600 dark:text-slate-400 bg-gray-50 dark:bg-slate-900'
     }
   }
 
@@ -100,9 +100,9 @@ const AdminUsers = () => {
   if (error) {
     return (
       <div className="container mx-auto px-4 py-8">
-        <div className="bg-red-50 border border-red-200 rounded-lg p-6">
-          <h3 className="text-red-800 font-semibold mb-2">Error Loading Users</h3>
-          <p className="text-red-600">{error.message || 'Failed to load users'}</p>
+        <div className="bg-red-50 dark:bg-red-950/40 border border-red-200 dark:border-red-800 rounded-lg p-6">
+          <h3 className="text-red-800 dark:text-red-300 font-semibold mb-2">Error Loading Users</h3>
+          <p className="text-red-600 dark:text-red-400">{error.message || 'Failed to load users'}</p>
         </div>
       </div>
     );
@@ -111,12 +111,12 @@ const AdminUsers = () => {
   return (
     <div className="container mx-auto px-4 py-8">
       <div className="mb-8">
-        <h1 className="text-3xl font-bold text-gray-900 mb-2">Manage Users</h1>
-        <p className="text-gray-600">{users.length} users</p>
+        <h1 className="text-3xl font-bold text-gray-900 dark:text-slate-100 mb-2">Manage Users</h1>
+        <p className="text-gray-600 dark:text-slate-400">{users.length} users</p>
       </div>
 
       {/* Filters */}
-      <div className="bg-white rounded-lg p-6 border border-gray-200 mb-8">
+      <div className="bg-white dark:bg-slate-800 rounded-lg p-6 border border-gray-200 dark:border-slate-700 mb-8">
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           <div className="relative">
             <Search className="search-icon" />
@@ -161,34 +161,34 @@ const AdminUsers = () => {
       {/* Users Table */}
       {users.length > 0 ? (
         <>
-          <div className="bg-white rounded-lg border border-gray-200 overflow-hidden">
+          <div className="bg-white dark:bg-slate-800 rounded-lg border border-gray-200 dark:border-slate-700 overflow-hidden">
             <div className="overflow-x-auto">
-              <table className="min-w-full divide-y divide-gray-200">
-                <thead className="bg-gray-50">
+              <table className="min-w-full divide-y divide-gray-200 dark:divide-slate-700">
+                <thead className="bg-gray-50 dark:bg-slate-900">
                   <tr>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-slate-400 uppercase tracking-wider">
                       User
                     </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-slate-400 uppercase tracking-wider">
                       Role
                     </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-slate-400 uppercase tracking-wider">
                       Status
                     </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-slate-400 uppercase tracking-wider">
                       Joined
                     </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-slate-400 uppercase tracking-wider">
                       Actions
                     </th>
                   </tr>
                 </thead>
-                <tbody className="bg-white divide-y divide-gray-200">
+                <tbody className="bg-white dark:bg-slate-800 divide-y divide-gray-200 dark:divide-slate-700">
                   {users.map((user) => (
-                    <tr key={user._id} className="hover:bg-gray-50">
+                    <tr key={user._id} className="hover:bg-gray-50 dark:hover:bg-slate-900">
                       <td className="px-6 py-4 whitespace-nowrap">
                         <div className="flex items-center">
-                          <div className="w-10 h-10 bg-gray-200 rounded-full overflow-hidden">
+                          <div className="w-10 h-10 bg-gray-200 dark:bg-slate-700 rounded-full overflow-hidden">
                             {user.avatar ? (
                               <img
                                 src={user.avatar}
@@ -196,16 +196,16 @@ const AdminUsers = () => {
                                 className="w-full h-full object-cover"
                               />
                             ) : (
-                              <div className="w-full h-full flex items-center justify-center bg-primary-100">
-                                <User className="w-5 h-5 text-primary-600" />
+                              <div className="w-full h-full flex items-center justify-center bg-primary-100 dark:bg-primary-900/40">
+                                <User className="w-5 h-5 text-primary-600 dark:text-primary-400" />
                               </div>
                             )}
                           </div>
                           <div className="ml-4">
-                            <div className="text-sm font-medium text-gray-900">
+                            <div className="text-sm font-medium text-gray-900 dark:text-slate-100">
                               {user.name}
                             </div>
-                            <div className="text-sm text-gray-500">
+                            <div className="text-sm text-gray-500 dark:text-slate-400">
                               {user.email}
                             </div>
                           </div>
@@ -224,7 +224,7 @@ const AdminUsers = () => {
                         </span>
                       </td>
                       
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-slate-400">
                         {new Date(user.createdAt).toLocaleDateString()}
                       </td>
                       
@@ -232,17 +232,17 @@ const AdminUsers = () => {
                         <div className="flex items-center space-x-2">
                           <Link
                             to={`/admin/users/${user._id}`}
-                            className="text-primary-600 hover:text-primary-900"
+                            className="text-primary-600 dark:text-primary-400 hover:text-primary-900 dark:hover:text-primary-300"
                           >
                             View
                           </Link>
                           
                           {user.isActive ? (
-                            <button className="text-error-600 hover:text-error-900">
+                            <button className="text-error-600 dark:text-error-400 hover:text-error-900 dark:hover:text-error-300">
                               <Ban className="w-4 h-4" />
                             </button>
                           ) : (
-                            <button className="text-success-600 hover:text-success-900">
+                            <button className="text-success-600 dark:text-success-400 hover:text-success-900 dark:hover:text-success-300">
                               <UserCheck className="w-4 h-4" />
                             </button>
                           )}
@@ -267,9 +267,9 @@ const AdminUsers = () => {
         </>
       ) : (
         <div className="text-center py-16">
-          <User className="w-16 h-16 text-gray-400 mx-auto mb-4" />
-          <h3 className="text-xl font-semibold text-gray-900 mb-2">No users found</h3>
-          <p className="text-gray-600">Try adjusting your filters or search terms.</p>
+          <User className="w-16 h-16 text-gray-400 dark:text-slate-500 mx-auto mb-4" />
+          <h3 className="text-xl font-semibold text-gray-900 dark:text-slate-100 mb-2">No users found</h3>
+          <p className="text-gray-600 dark:text-slate-400">Try adjusting your filters or search terms.</p>
         </div>
       )}
     </div>

@@ -20,11 +20,11 @@ const Footer = () => {
           {/* Company Info */}
           <div className="space-y-4">
             <div className="flex items-center space-x-2">
-              <ShoppingBag className="w-8 h-8 text-primary-500" />
+              <ShoppingBag className="w-8 h-8 text-primary-500 dark:text-primary-400" />
               <span className="text-xl font-bold">Ecommerce</span>
             </div>
             
-            <p className="text-gray-400">
+            <p className="text-gray-400 dark:text-slate-500">
               Your trusted online marketplace for quality products and exceptional shopping experience.
             </p>
             
@@ -34,7 +34,7 @@ const Footer = () => {
                 href="https://facebook.com"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="text-gray-400 hover:text-white transition-colors"
+                className="text-gray-400 dark:text-slate-500 hover:text-white transition-colors"
               >
                 <Facebook className="w-5 h-5" />
               </a>
@@ -42,7 +42,7 @@ const Footer = () => {
                 href="https://twitter.com"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="text-gray-400 hover:text-white transition-colors"
+                className="text-gray-400 dark:text-slate-500 hover:text-white transition-colors"
               >
                 <Twitter className="w-5 h-5" />
               </a>
@@ -50,7 +50,7 @@ const Footer = () => {
                 href="https://linkedin.com"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="text-gray-400 hover:text-white transition-colors"
+                className="text-gray-400 dark:text-slate-500 hover:text-white transition-colors"
               >
                 <Linkedin className="w-5 h-5" />
               </a>
@@ -58,7 +58,7 @@ const Footer = () => {
                 href="https://instagram.com"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="text-gray-400 hover:text-white transition-colors"
+                className="text-gray-400 dark:text-slate-500 hover:text-white transition-colors"
               >
                 <Instagram className="w-5 h-5" />
               </a>
@@ -70,22 +70,22 @@ const Footer = () => {
             <h3 className="text-lg font-semibold mb-4">Quick Links</h3>
             <ul className="space-y-2">
               <li>
-                <Link to="/about" className="text-gray-400 hover:text-white transition-colors">
+                <Link to="/about" className="text-gray-400 dark:text-slate-500 hover:text-white transition-colors">
                   About Us
                 </Link>
               </li>
               <li>
-                <Link to="/contact" className="text-gray-400 hover:text-white transition-colors">
+                <Link to="/contact" className="text-gray-400 dark:text-slate-500 hover:text-white transition-colors">
                   Contact
                 </Link>
               </li>
               <li>
-                <Link to="/faq" className="text-gray-400 hover:text-white transition-colors">
+                <Link to="/faq" className="text-gray-400 dark:text-slate-500 hover:text-white transition-colors">
                   FAQ
                 </Link>
               </li>
               <li>
-                <Link to="/blog" className="text-gray-400 hover:text-white transition-colors">
+                <Link to="/blog" className="text-gray-400 dark:text-slate-500 hover:text-white transition-colors">
                   Blog
                 </Link>
               </li>
@@ -97,22 +97,22 @@ const Footer = () => {
             <h3 className="text-lg font-semibold mb-4">Customer Service</h3>
             <ul className="space-y-2">
               <li>
-                <Link to="/orders" className="text-gray-400 hover:text-white transition-colors">
+                <Link to="/orders" className="text-gray-400 dark:text-slate-500 hover:text-white transition-colors">
                   Track Order
                 </Link>
               </li>
               <li>
-                <Link to="/returns" className="text-gray-400 hover:text-white transition-colors">
+                <Link to="/returns" className="text-gray-400 dark:text-slate-500 hover:text-white transition-colors">
                   Returns
                 </Link>
               </li>
               <li>
-                <Link to="/shipping" className="text-gray-400 hover:text-white transition-colors">
+                <Link to="/shipping" className="text-gray-400 dark:text-slate-500 hover:text-white transition-colors">
                   Shipping Info
                 </Link>
               </li>
               <li>
-                <Link to="/wishlist" className="text-gray-400 hover:text-white transition-colors">
+                <Link to="/wishlist" className="text-gray-400 dark:text-slate-500 hover:text-white transition-colors">
                   Wishlist
                 </Link>
               </li>
@@ -124,18 +124,18 @@ const Footer = () => {
             <h3 className="text-lg font-semibold mb-4">Contact Info</h3>
             <div className="space-y-3">
               <div className="flex items-center space-x-3">
-                <Mail className="w-5 h-5 text-primary-500" />
-                <span className="text-gray-400">support@ecommerce.com</span>
+                <Mail className="w-5 h-5 text-primary-500 dark:text-primary-400" />
+                <span className="text-gray-400 dark:text-slate-500">support@ecommerce.com</span>
               </div>
               
               <div className="flex items-center space-x-3">
-                <Phone className="w-5 h-5 text-primary-500" />
-                <span className="text-gray-400">+1-234-567-8900</span>
+                <Phone className="w-5 h-5 text-primary-500 dark:text-primary-400" />
+                <span className="text-gray-400 dark:text-slate-500">+1-234-567-8900</span>
               </div>
               
               <div className="flex items-start space-x-3">
-                <MapPin className="w-5 h-5 text-primary-500 mt-1" />
-                <span className="text-gray-400">
+                <MapPin className="w-5 h-5 text-primary-500 dark:text-primary-400 mt-1" />
+                <span className="text-gray-400 dark:text-slate-500">
                   123 Commerce Street<br />
                   New York, NY 10001<br />
                   United States
@@ -148,18 +148,18 @@ const Footer = () => {
         {/* Bottom Section */}
         <div className="border-t border-gray-800 mt-12 pt-8">
           <div className="flex flex-col md:flex-row justify-between items-center space-y-4 md:space-y-0">
-            <div className="text-gray-400 text-sm">
+            <div className="text-gray-400 dark:text-slate-500 text-sm">
               © {currentYear} Ecommerce Platform. All rights reserved.
             </div>
             
             <div className="flex space-x-6 text-sm">
-              <Link to="/privacy" className="text-gray-400 hover:text-white transition-colors">
+              <Link to="/privacy" className="text-gray-400 dark:text-slate-500 hover:text-white transition-colors">
                 Privacy Policy
               </Link>
-              <Link to="/terms" className="text-gray-400 hover:text-white transition-colors">
+              <Link to="/terms" className="text-gray-400 dark:text-slate-500 hover:text-white transition-colors">
                 Terms of Service
               </Link>
-              <Link to="/cookies" className="text-gray-400 hover:text-white transition-colors">
+              <Link to="/cookies" className="text-gray-400 dark:text-slate-500 hover:text-white transition-colors">
                 Cookie Policy
               </Link>
             </div>

@@ -14,6 +14,7 @@ import {
   AlertCircle
 } from 'lucide-react'
 import { adminAPI } from '../../services/api'
+import { invalidateCatalog } from '../../utils/queryKeys'
 import LoadingSpinner from '../../components/LoadingSpinner'
 import toast from 'react-hot-toast'
 
@@ -36,14 +37,14 @@ const WEIGHT_UNITS = ['kg', 'g', 'lb', 'oz']
 const DIMENSION_UNITS = ['cm', 'in']
 
 const INPUT_CLASS =
-  'block w-full px-3 sm:px-4 py-2 sm:py-2.5 rounded-lg border bg-gray-50/50 text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all duration-200 text-sm'
-const LABEL_CLASS = 'block text-sm font-semibold text-gray-700 flex items-center'
+  'block w-full px-3 sm:px-4 py-2 sm:py-2.5 rounded-lg border bg-gray-50/50 dark:bg-slate-900/50 text-gray-900 dark:text-slate-100 placeholder-gray-400 dark:placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all duration-200 text-sm'
+const LABEL_CLASS = 'block text-sm font-semibold text-gray-700 dark:text-slate-300 flex items-center'
 const CARD_CLASS =
-  'bg-white rounded-xl border border-gray-200/50 shadow-xl shadow-gray-900/5 p-4 sm:p-6'
+  'bg-white dark:bg-slate-800 rounded-xl border border-gray-200/50 dark:border-slate-700/50 shadow-xl shadow-gray-900/5 dark:shadow-black/40 p-4 sm:p-6'
 const SELECT_CLASS = `${INPUT_CLASS} appearance-none cursor-pointer`
 
 const errorClass = (hasError) =>
-  hasError ? 'border-red-300 bg-red-50/50' : 'border-gray-200/50 group-hover:bg-gray-50'
+  hasError ? 'border-red-300 dark:border-red-700 bg-red-50/50 dark:bg-red-950/50' : 'border-gray-200/50 dark:border-slate-700/50 group-hover:bg-gray-50 dark:group-hover:bg-slate-900'
 
 const toInputValue = (value) => {
   if (value === undefined || value === null) return ''
@@ -193,12 +194,12 @@ const Field = ({ label, hint, error, required, children, className = '' }) => (
   <div className={`space-y-2 ${className}`}>
     <label className={LABEL_CLASS}>
       {label}
-      {required && <span className="ml-1 text-red-500">*</span>}
-      {hint && <span className="ml-2 text-xs text-gray-400 font-normal">{hint}</span>}
+      {required && <span className="ml-1 text-red-500 dark:text-red-400">*</span>}
+      {hint && <span className="ml-2 text-xs text-gray-400 dark:text-slate-500 font-normal">{hint}</span>}
     </label>
     <div className="relative group">{children}</div>
     {error && (
-      <p className="text-xs text-red-600 flex items-center gap-1">
+      <p className="text-xs text-red-600 dark:text-red-400 flex items-center gap-1">
         <AlertCircle className="w-3 h-3" />
         {error}
       </p>
@@ -214,8 +215,8 @@ const SectionCard = ({ icon: Icon, title, subtitle, badge, children }) => (
           <Icon className="w-4 h-4" />
         </div>
         <div>
-          <h2 className="text-base sm:text-lg font-bold text-gray-900">{title}</h2>
-          {subtitle && <p className="text-xs sm:text-sm text-gray-500 mt-0.5">{subtitle}</p>}
+          <h2 className="text-base sm:text-lg font-bold text-gray-900 dark:text-slate-100">{title}</h2>
+          {subtitle && <p className="text-xs sm:text-sm text-gray-500 dark:text-slate-400 mt-0.5">{subtitle}</p>}
         </div>
       </div>
       {badge}
@@ -230,11 +231,11 @@ const Toggle = ({ checked, onChange, label, description }) => (
       type="checkbox"
       checked={checked}
       onChange={(event) => onChange(event.target.checked)}
-      className="mt-1 h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+      className="mt-1 h-4 w-4 rounded border-gray-300 dark:border-slate-600 text-blue-600 dark:text-blue-400 focus:ring-blue-500"
     />
     <span>
-      <span className="block text-sm font-medium text-gray-800">{label}</span>
-      {description && <span className="block text-xs text-gray-500">{description}</span>}
+      <span className="block text-sm font-medium text-gray-800 dark:text-slate-200">{label}</span>
+      {description && <span className="block text-xs text-gray-500 dark:text-slate-400">{description}</span>}
     </span>
   </label>
 )
@@ -645,7 +646,7 @@ const AdminProductEdit = () => {
         queryClient.invalidateQueries('adminProducts')
         queryClient.invalidateQueries('adminProduct')
         queryClient.invalidateQueries(['adminProduct', id])
-        queryClient.invalidateQueries('product')
+        invalidateCatalog(queryClient)
         setIsDirty(false)
 
         toast.success(response?.data?.message || 'Product updated successfully')
@@ -692,7 +693,7 @@ const AdminProductEdit = () => {
 
   if (isLoading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-slate-50 via-blue-50/30 to-indigo-50/40">
+      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-slate-50 via-blue-50/30 to-indigo-50/40 dark:from-slate-900 dark:via-slate-800/30 dark:to-slate-900/40">
         <LoadingSpinner />
       </div>
     )
@@ -700,18 +701,18 @@ const AdminProductEdit = () => {
 
   if (loadError || !isSuccess || !product) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-slate-50 via-blue-50/30 to-indigo-50/40 px-4">
-        <div className="bg-white rounded-xl border border-gray-200/50 shadow-xl p-8 max-w-md w-full text-center">
-          <AlertCircle className="w-10 h-10 text-red-500 mx-auto mb-4" />
-          <h2 className="text-lg font-bold text-gray-900 mb-2">Product could not be loaded</h2>
-          <p className="text-sm text-gray-600 mb-6">
+      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-slate-50 via-blue-50/30 to-indigo-50/40 dark:from-slate-900 dark:via-slate-800/30 dark:to-slate-900/40 px-4">
+        <div className="bg-white dark:bg-slate-800 rounded-xl border border-gray-200/50 dark:border-slate-700/50 shadow-xl p-8 max-w-md w-full text-center">
+          <AlertCircle className="w-10 h-10 text-red-500 dark:text-red-400 mx-auto mb-4" />
+          <h2 className="text-lg font-bold text-gray-900 dark:text-slate-100 mb-2">Product could not be loaded</h2>
+          <p className="text-sm text-gray-600 dark:text-slate-400 mb-6">
             {loadError?.response?.data?.error || loadError?.message || 'The product was not found.'}
           </p>
           <div className="flex gap-3 justify-center">
             <button
               type="button"
               onClick={() => navigate('/admin/products')}
-              className="px-4 py-2 rounded-lg bg-gray-100 hover:bg-gray-200 text-sm font-medium text-gray-800"
+              className="px-4 py-2 rounded-lg bg-gray-100 dark:bg-slate-800/70 hover:bg-gray-200 dark:hover:bg-slate-700 text-sm font-medium text-gray-800 dark:text-slate-200"
             >
               Back to products
             </button>
@@ -729,28 +730,28 @@ const AdminProductEdit = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50/30 to-indigo-50/40">
-      <div className="sticky top-0 z-40 bg-white/80 backdrop-blur-md border-b border-gray-200/50">
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50/30 to-indigo-50/40 dark:from-slate-900 dark:via-slate-800/30 dark:to-slate-900/40">
+      <div className="sticky top-0 z-40 bg-white/80 dark:bg-slate-800/80 backdrop-blur-md border-b border-gray-200/50 dark:border-slate-700/50">
         <div className="max-w-7xl mx-auto px-2 sm:px-4 lg:px-8 py-3 sm:py-4">
           <div className="flex items-center justify-between gap-3">
             <div className="flex items-center gap-3 min-w-0">
               <button
                 type="button"
                 onClick={() => navigate('/admin/products')}
-                className="p-2 rounded-lg hover:bg-gray-100 text-gray-600 transition-colors"
+                className="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-slate-800/70 text-gray-600 dark:text-slate-400 transition-colors"
                 aria-label="Back to products"
               >
                 <ArrowLeft className="w-5 h-5" />
               </button>
               <div className="min-w-0">
-                <h1 className="text-sm sm:text-lg font-bold text-gray-900 truncate">Edit product</h1>
-                <p className="text-xs text-gray-500 truncate">{product.name}</p>
+                <h1 className="text-sm sm:text-lg font-bold text-gray-900 dark:text-slate-100 truncate">Edit product</h1>
+                <p className="text-xs text-gray-500 dark:text-slate-400 truncate">{product.name}</p>
               </div>
             </div>
 
             <div className="flex items-center gap-2">
               {isDirty && (
-                <span className="hidden sm:inline-flex items-center px-2 py-1 rounded-full bg-amber-50 border border-amber-200 text-xs font-medium text-amber-700">
+                <span className="hidden sm:inline-flex items-center px-2 py-1 rounded-full bg-amber-50 dark:bg-amber-950/40 border border-amber-200 dark:border-amber-800 text-xs font-medium text-amber-700 dark:text-amber-300">
                   Unsaved changes
                 </span>
               )}
@@ -758,7 +759,7 @@ const AdminProductEdit = () => {
                 type="button"
                 onClick={handleReset}
                 disabled={!isDirty || updateMutation.isLoading}
-                className="px-3 py-2 rounded-lg text-sm font-medium text-gray-700 bg-gray-100 hover:bg-gray-200 disabled:opacity-40 disabled:cursor-not-allowed"
+                className="px-3 py-2 rounded-lg text-sm font-medium text-gray-700 dark:text-slate-300 bg-gray-100 dark:bg-slate-800/70 hover:bg-gray-200 dark:hover:bg-slate-700 disabled:opacity-40 disabled:cursor-not-allowed"
               >
                 Reset
               </button>
@@ -974,8 +975,8 @@ const AdminProductEdit = () => {
             {form.images.map((image, index) => (
               <div
                 key={`${image.url || image.previewUrl}-${index}`}
-                className={`relative group rounded-xl overflow-hidden border-2 bg-gray-50 aspect-square ${
-                  image.isMain ? 'border-blue-500' : 'border-gray-200'
+                className={`relative group rounded-xl overflow-hidden border-2 bg-gray-50 dark:bg-slate-900 aspect-square ${
+                  image.isMain ? 'border-blue-500' : 'border-gray-200 dark:border-slate-700'
                 }`}
               >
                 <img
@@ -1002,7 +1003,7 @@ const AdminProductEdit = () => {
                       type="button"
                       onClick={() => setMainImage(index)}
                       disabled={image.isMain}
-                      className="p-1 rounded bg-white/90 text-gray-700 disabled:opacity-40 hover:bg-white"
+                      className="p-1 rounded bg-white/90 dark:bg-slate-800/90 text-gray-700 dark:text-slate-300 disabled:opacity-40 hover:bg-white dark:hover:bg-slate-800"
                       title="Set as main image"
                     >
                       <Star className="w-3 h-3" />
@@ -1011,7 +1012,7 @@ const AdminProductEdit = () => {
                       type="button"
                       onClick={() => moveImage(index, -1)}
                       disabled={index === 0}
-                      className="p-1 rounded bg-white/90 text-gray-700 disabled:opacity-40 hover:bg-white"
+                      className="p-1 rounded bg-white/90 dark:bg-slate-800/90 text-gray-700 dark:text-slate-300 disabled:opacity-40 hover:bg-white dark:hover:bg-slate-800"
                       title="Move earlier"
                     >
                       <ArrowLeft className="w-3 h-3" />
@@ -1020,7 +1021,7 @@ const AdminProductEdit = () => {
                       type="button"
                       onClick={() => moveImage(index, 1)}
                       disabled={index === form.images.length - 1}
-                      className="p-1 rounded bg-white/90 text-gray-700 disabled:opacity-40 hover:bg-white"
+                      className="p-1 rounded bg-white/90 dark:bg-slate-800/90 text-gray-700 dark:text-slate-300 disabled:opacity-40 hover:bg-white dark:hover:bg-slate-800"
                       title="Move later"
                     >
                       <ArrowLeft className="w-3 h-3 rotate-180" />
@@ -1047,7 +1048,7 @@ const AdminProductEdit = () => {
                   event.preventDefault()
                   handleImageFiles(event.dataTransfer.files)
                 }}
-                className="aspect-square rounded-xl border-2 border-dashed border-gray-300 hover:border-blue-400 hover:bg-blue-50/40 flex flex-col items-center justify-center gap-2 text-gray-500 transition-colors"
+                className="aspect-square rounded-xl border-2 border-dashed border-gray-300 dark:border-slate-600 hover:border-blue-400 hover:bg-blue-50/40 dark:hover:bg-blue-950/40 flex flex-col items-center justify-center gap-2 text-gray-500 dark:text-slate-400 transition-colors"
               >
                 <Upload className="w-5 h-5" />
                 <span className="text-xs font-medium">Add image</span>
@@ -1067,15 +1068,15 @@ const AdminProductEdit = () => {
             }}
           />
 
-          {errors.images && <p className="mt-3 text-xs text-red-600">{errors.images}</p>}
+          {errors.images && <p className="mt-3 text-xs text-red-600 dark:text-red-400">{errors.images}</p>}
 
           {form.images.length > 0 && (
             <div className="mt-4 space-y-2">
               {form.images.map((image, index) => (
                 <div key={`alt-${index}`} className="flex items-center gap-2">
-                  <span className="text-xs text-gray-500 w-20 shrink-0">
+                  <span className="text-xs text-gray-500 dark:text-slate-400 w-20 shrink-0">
                     Image {index + 1}
-                    {image.isMain && <span className="text-blue-600"> (main)</span>}
+                    {image.isMain && <span className="text-blue-600 dark:text-blue-400"> (main)</span>}
                   </span>
                   <input
                     type="text"
@@ -1176,17 +1177,17 @@ const AdminProductEdit = () => {
         <SectionCard icon={Package} title="Variants" subtitle="Optional option combinations">
           <div className="space-y-4">
             {form.variants.length === 0 && (
-              <p className="text-sm text-gray-500">No variants. Add one only if this product has options.</p>
+              <p className="text-sm text-gray-500 dark:text-slate-400">No variants. Add one only if this product has options.</p>
             )}
 
             {form.variants.map((variant, index) => (
-              <div key={index} className="rounded-xl border border-gray-200 p-4 space-y-3">
+              <div key={index} className="rounded-xl border border-gray-200 dark:border-slate-700 p-4 space-y-3">
                 <div className="flex items-center justify-between">
-                  <h3 className="text-sm font-semibold text-gray-800">Variant {index + 1}</h3>
+                  <h3 className="text-sm font-semibold text-gray-800 dark:text-slate-200">Variant {index + 1}</h3>
                   <button
                     type="button"
                     onClick={() => removeVariant(index)}
-                    className="p-1.5 rounded-lg text-red-600 hover:bg-red-50"
+                    className="p-1.5 rounded-lg text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-950/40"
                     title="Remove variant"
                   >
                     <Trash2 className="w-4 h-4" />
@@ -1260,7 +1261,7 @@ const AdminProductEdit = () => {
             <button
               type="button"
               onClick={addVariant}
-              className="inline-flex items-center gap-2 px-3 py-2 rounded-lg text-sm font-medium text-blue-700 bg-blue-50 hover:bg-blue-100"
+              className="inline-flex items-center gap-2 px-3 py-2 rounded-lg text-sm font-medium text-blue-700 dark:text-blue-300 bg-blue-50 dark:bg-blue-950/40 hover:bg-blue-100 dark:hover:bg-blue-900/40"
             >
               <Plus className="w-4 h-4" />
               Add variant
@@ -1508,7 +1509,7 @@ const AdminProductEdit = () => {
           <button
             type="button"
             onClick={() => navigate('/admin/products')}
-            className="inline-flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium text-gray-700 bg-white border border-gray-200 hover:bg-gray-50"
+            className="inline-flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium text-gray-700 dark:text-slate-300 bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-700 hover:bg-gray-50 dark:hover:bg-slate-900"
           >
             <X className="w-4 h-4" />
             Cancel

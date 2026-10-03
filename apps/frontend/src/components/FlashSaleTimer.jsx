@@ -38,7 +38,7 @@ const FlashSaleTimer = ({ endTime, className = '' }) => {
 
   if (!timeLeft) {
     return (
-      <div className={`flex items-center space-x-2 text-gray-500 ${className}`}>
+      <div className={`flex items-center space-x-2 text-gray-500 dark:text-slate-400 ${className}`}>
         <Clock className="w-4 h-4" />
         <span className="text-sm">Sale ended</span>
       </div>
@@ -48,8 +48,8 @@ const FlashSaleTimer = ({ endTime, className = '' }) => {
   return (
     <div className={`flex items-center space-x-4 ${className}`}>
       <div className="flex items-center space-x-2">
-        <Sparkles className="w-5 h-5 text-orange-500" />
-        <span className="font-semibold text-gray-900">Flash Sale Ends In:</span>
+        <Sparkles className="w-5 h-5 text-orange-500 dark:text-orange-400" />
+        <span className="font-semibold text-gray-900 dark:text-slate-100">Flash Sale Ends In:</span>
       </div>
       
       <div className="flex items-center space-x-2">
@@ -58,21 +58,21 @@ const FlashSaleTimer = ({ endTime, className = '' }) => {
           <div className="text-xs">Days</div>
         </div>
         
-        <span className="text-red-600 font-bold">:</span>
+        <span className="text-red-600 dark:text-red-400 font-bold">:</span>
         
         <div className="bg-red-600 text-white px-3 py-1 rounded-md min-w-[3rem] text-center">
           <div className="text-lg font-bold">{timeLeft.hours}</div>
           <div className="text-xs">Hours</div>
         </div>
         
-        <span className="text-red-600 font-bold">:</span>
+        <span className="text-red-600 dark:text-red-400 font-bold">:</span>
         
         <div className="bg-red-600 text-white px-3 py-1 rounded-md min-w-[3rem] text-center">
           <div className="text-lg font-bold">{timeLeft.minutes}</div>
           <div className="text-xs">Mins</div>
         </div>
         
-        <span className="text-red-600 font-bold">:</span>
+        <span className="text-red-600 dark:text-red-400 font-bold">:</span>
         
         <div className="bg-red-600 text-white px-3 py-1 rounded-md min-w-[3rem] text-center">
           <div className="text-lg font-bold">{timeLeft.seconds}</div>

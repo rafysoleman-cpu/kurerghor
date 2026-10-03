@@ -62,8 +62,8 @@ const ContactPage = () => {
     <div className="container mx-auto px-4 py-8">
       {/* Header */}
       <div className="text-center mb-12">
-        <h1 className="text-4xl font-bold text-gray-900 mb-4">Contact Us</h1>
-        <p className="text-xl text-gray-600 max-w-2xl mx-auto">
+        <h1 className="text-4xl font-bold text-gray-900 dark:text-slate-100 mb-4">Contact Us</h1>
+        <p className="text-xl text-gray-600 dark:text-slate-400 max-w-2xl mx-auto">
           We're here to help and answer any questions you might have
         </p>
       </div>
@@ -71,13 +71,13 @@ const ContactPage = () => {
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
         {/* Contact Form */}
         <div className="lg:col-span-2">
-          <div className="bg-white rounded-lg p-6 lg:p-8 border border-gray-200">
-            <h2 className="text-2xl font-semibold text-gray-900 mb-6">Send us a Message</h2>
+          <div className="bg-white dark:bg-slate-800 rounded-lg p-6 lg:p-8 border border-gray-200 dark:border-slate-700">
+            <h2 className="text-2xl font-semibold text-gray-900 dark:text-slate-100 mb-6">Send us a Message</h2>
             
             <form onSubmit={handleSubmit} className="space-y-6">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div>
-                  <label htmlFor="name" className="block text-sm font-medium text-gray-700 mb-2">
+                  <label htmlFor="name" className="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-2">
                     Your Name
                   </label>
                   <input
@@ -93,7 +93,7 @@ const ContactPage = () => {
                 </div>
                 
                 <div>
-                  <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-2">
+                  <label htmlFor="email" className="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-2">
                     Email Address
                   </label>
                   <input
@@ -110,7 +110,7 @@ const ContactPage = () => {
               </div>
 
               <div>
-                <label htmlFor="subject" className="block text-sm font-medium text-gray-700 mb-2">
+                <label htmlFor="subject" className="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-2">
                   Subject
                 </label>
                 <input
@@ -126,7 +126,7 @@ const ContactPage = () => {
               </div>
 
               <div>
-                <label htmlFor="message" className="block text-sm font-medium text-gray-700 mb-2">
+                <label htmlFor="message" className="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-2">
                   Message
                 </label>
                 <textarea
@@ -142,7 +142,7 @@ const ContactPage = () => {
               </div>
 
               <div className="flex items-center justify-between">
-                <p className="text-sm text-gray-600">
+                <p className="text-sm text-gray-600 dark:text-slate-400">
                   We'll respond within 24 hours.
                 </p>
                 
@@ -162,68 +162,68 @@ const ContactPage = () => {
         {/* Contact Information */}
         <div className="space-y-8">
           {/* Quick Contact */}
-          <div className="bg-white rounded-lg p-6 border border-gray-200">
-            <h3 className="text-lg font-semibold text-gray-900 mb-4">Get in Touch</h3>
+          <div className="bg-white dark:bg-slate-800 rounded-lg p-6 border border-gray-200 dark:border-slate-700">
+            <h3 className="text-lg font-semibold text-gray-900 dark:text-slate-100 mb-4">Get in Touch</h3>
             
             <div className="space-y-4">
               <div className="flex items-center space-x-3">
-                <Mail className="w-5 h-5 text-primary-600" />
+                <Mail className="w-5 h-5 text-primary-600 dark:text-primary-400" />
                 <div>
-                  <p className="font-medium text-gray-900">Email</p>
-                  <p className="text-sm text-gray-600">support@ecommerce.com</p>
+                  <p className="font-medium text-gray-900 dark:text-slate-100">Email</p>
+                  <p className="text-sm text-gray-600 dark:text-slate-400">support@ecommerce.com</p>
                 </div>
               </div>
               
               <div className="flex items-center space-x-3">
-                <Phone className="w-5 h-5 text-primary-600" />
+                <Phone className="w-5 h-5 text-primary-600 dark:text-primary-400" />
                 <div>
-                  <p className="font-medium text-gray-900">Phone</p>
-                  <p className="text-sm text-gray-600">+1-234-567-8900</p>
+                  <p className="font-medium text-gray-900 dark:text-slate-100">Phone</p>
+                  <p className="text-sm text-gray-600 dark:text-slate-400">+1-234-567-8900</p>
                 </div>
               </div>
               
               <div className="flex items-center space-x-3">
-                <MessageCircle className="w-5 h-5 text-primary-600" />
+                <MessageCircle className="w-5 h-5 text-primary-600 dark:text-primary-400" />
                 <div>
-                  <p className="font-medium text-gray-900">Live Chat</p>
-                  <p className="text-sm text-gray-600">Available 9 AM - 6 PM EST</p>
+                  <p className="font-medium text-gray-900 dark:text-slate-100">Live Chat</p>
+                  <p className="text-sm text-gray-600 dark:text-slate-400">Available 9 AM - 6 PM EST</p>
                 </div>
               </div>
             </div>
           </div>
 
           {/* Office Hours */}
-          <div className="bg-white rounded-lg p-6 border border-gray-200">
-            <h3 className="text-lg font-semibold text-gray-900 mb-4">Office Hours</h3>
+          <div className="bg-white dark:bg-slate-800 rounded-lg p-6 border border-gray-200 dark:border-slate-700">
+            <h3 className="text-lg font-semibold text-gray-900 dark:text-slate-100 mb-4">Office Hours</h3>
             
             <div className="space-y-3">
               <div className="flex items-center justify-between">
-                <span className="text-gray-700">Monday - Friday</span>
-                <span className="text-gray-900 font-medium">9:00 AM - 6:00 PM</span>
+                <span className="text-gray-700 dark:text-slate-300">Monday - Friday</span>
+                <span className="text-gray-900 dark:text-slate-100 font-medium">9:00 AM - 6:00 PM</span>
               </div>
               
               <div className="flex items-center justify-between">
-                <span className="text-gray-700">Saturday</span>
-                <span className="text-gray-900 font-medium">10:00 AM - 4:00 PM</span>
+                <span className="text-gray-700 dark:text-slate-300">Saturday</span>
+                <span className="text-gray-900 dark:text-slate-100 font-medium">10:00 AM - 4:00 PM</span>
               </div>
               
               <div className="flex items-center justify-between">
-                <span className="text-gray-700">Sunday</span>
-                <span className="text-gray-900 font-medium">Closed</span>
+                <span className="text-gray-700 dark:text-slate-300">Sunday</span>
+                <span className="text-gray-900 dark:text-slate-100 font-medium">Closed</span>
               </div>
             </div>
           </div>
 
           {/* Address */}
-          <div className="bg-white rounded-lg p-6 border border-gray-200">
-            <h3 className="text-lg font-semibold text-gray-900 mb-4">Visit Us</h3>
+          <div className="bg-white dark:bg-slate-800 rounded-lg p-6 border border-gray-200 dark:border-slate-700">
+            <h3 className="text-lg font-semibold text-gray-900 dark:text-slate-100 mb-4">Visit Us</h3>
             
             <div className="space-y-3">
               <div className="flex items-start space-x-3">
-                <MapPin className="w-5 h-5 text-primary-600 mt-1" />
+                <MapPin className="w-5 h-5 text-primary-600 dark:text-primary-400 mt-1" />
                 <div>
-                  <p className="font-medium text-gray-900">Main Office</p>
-                  <p className="text-sm text-gray-600">
+                  <p className="font-medium text-gray-900 dark:text-slate-100">Main Office</p>
+                  <p className="text-sm text-gray-600 dark:text-slate-400">
                     123 Commerce Street<br />
                     Suite 100<br />
                     New York, NY 10001<br />
@@ -235,15 +235,15 @@ const ContactPage = () => {
           </div>
 
           {/* Social Media */}
-          <div className="bg-white rounded-lg p-6 border border-gray-200">
-            <h3 className="text-lg font-semibold text-gray-900 mb-4">Follow Us</h3>
+          <div className="bg-white dark:bg-slate-800 rounded-lg p-6 border border-gray-200 dark:border-slate-700">
+            <h3 className="text-lg font-semibold text-gray-900 dark:text-slate-100 mb-4">Follow Us</h3>
             
             <div className="flex space-x-4">
               <a
                 href="https://facebook.com"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="p-3 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition-colors"
+                className="p-3 bg-gray-100 dark:bg-slate-800/70 text-gray-700 dark:text-slate-300 rounded-lg hover:bg-gray-200 dark:hover:bg-slate-700 transition-colors"
                 aria-label="Facebook"
               >
                 <Facebook className="w-5 h-5" />
@@ -253,7 +253,7 @@ const ContactPage = () => {
                 href="https://twitter.com"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="p-3 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition-colors"
+                className="p-3 bg-gray-100 dark:bg-slate-800/70 text-gray-700 dark:text-slate-300 rounded-lg hover:bg-gray-200 dark:hover:bg-slate-700 transition-colors"
                 aria-label="Twitter"
               >
                 <Twitter className="w-5 h-5" />
@@ -263,7 +263,7 @@ const ContactPage = () => {
                 href="https://linkedin.com"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="p-3 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition-colors"
+                className="p-3 bg-gray-100 dark:bg-slate-800/70 text-gray-700 dark:text-slate-300 rounded-lg hover:bg-gray-200 dark:hover:bg-slate-700 transition-colors"
                 aria-label="LinkedIn"
               >
                 <Linkedin className="w-5 h-5" />
@@ -273,7 +273,7 @@ const ContactPage = () => {
                 href="https://instagram.com"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="p-3 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition-colors"
+                className="p-3 bg-gray-100 dark:bg-slate-800/70 text-gray-700 dark:text-slate-300 rounded-lg hover:bg-gray-200 dark:hover:bg-slate-700 transition-colors"
                 aria-label="Instagram"
               >
                 <Instagram className="w-5 h-5" />
@@ -282,9 +282,9 @@ const ContactPage = () => {
           </div>
 
           {/* FAQ Link */}
-          <div className="bg-primary-50 rounded-lg p-6 border border-primary-200">
-            <h3 className="text-lg font-semibold text-gray-900 mb-4">Have a Question?</h3>
-            <p className="text-gray-600 mb-4">
+          <div className="bg-primary-50 dark:bg-primary-950/40 rounded-lg p-6 border border-primary-200 dark:border-primary-800">
+            <h3 className="text-lg font-semibold text-gray-900 dark:text-slate-100 mb-4">Have a Question?</h3>
+            <p className="text-gray-600 dark:text-slate-400 mb-4">
               Check out our FAQ section for quick answers to common questions.
             </p>
             <a
@@ -300,16 +300,16 @@ const ContactPage = () => {
 
       {/* Map */}
       <div className="mt-12">
-        <div className="bg-white rounded-lg p-6 border border-gray-200">
-          <h2 className="text-2xl font-semibold text-gray-900 mb-6">Find Us</h2>
+        <div className="bg-white dark:bg-slate-800 rounded-lg p-6 border border-gray-200 dark:border-slate-700">
+          <h2 className="text-2xl font-semibold text-gray-900 dark:text-slate-100 mb-6">Find Us</h2>
           
-          <div className="aspect-video bg-gray-100 rounded-lg overflow-hidden">
+          <div className="aspect-video bg-gray-100 dark:bg-slate-800/70 rounded-lg overflow-hidden">
             {/* In a real implementation, this would be an interactive map */}
             <div className="w-full h-full flex items-center justify-center">
               <div className="text-center">
-                <MapPin className="w-12 h-12 text-primary-600 mx-auto mb-4" />
-                <p className="text-gray-600 font-medium">Interactive Map</p>
-                <p className="text-sm text-gray-500">
+                <MapPin className="w-12 h-12 text-primary-600 dark:text-primary-400 mx-auto mb-4" />
+                <p className="text-gray-600 dark:text-slate-400 font-medium">Interactive Map</p>
+                <p className="text-sm text-gray-500 dark:text-slate-400">
                   123 Commerce Street, New York, NY 10001
                 </p>
               </div>

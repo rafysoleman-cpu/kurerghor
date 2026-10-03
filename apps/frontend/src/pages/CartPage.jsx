@@ -159,17 +159,17 @@ const CartPage = () => {
   return (
     <div className="container mx-auto px-4 py-8">
       <div className="mb-8">
-        <h1 className="text-3xl font-bold text-gray-900 mb-2">Shopping Cart</h1>
-        <p className="text-gray-600">
+        <h1 className="text-3xl font-bold text-gray-900 dark:text-slate-100 mb-2">Shopping Cart</h1>
+        <p className="text-gray-600 dark:text-slate-400">
           {isEmpty ? 'Your cart is empty' : `${cartItems.length} item${cartItems.length > 1 ? 's' : ''} in your cart`}
         </p>
       </div>
 
       {isEmpty ? (
         <div className="text-center py-16">
-          <ShoppingCart className="w-16 h-16 text-gray-400 mx-auto mb-4" />
-          <h2 className="text-2xl font-bold text-gray-900 mb-4">Your cart is empty</h2>
-          <p className="text-gray-600 mb-8">
+          <ShoppingCart className="w-16 h-16 text-gray-400 dark:text-slate-500 mx-auto mb-4" />
+          <h2 className="text-2xl font-bold text-gray-900 dark:text-slate-100 mb-4">Your cart is empty</h2>
+          <p className="text-gray-600 dark:text-slate-400 mb-8">
             Looks like you haven't added anything to your cart yet.
           </p>
           <Link to="/products" className="btn-primary">
@@ -193,12 +193,12 @@ const CartPage = () => {
             </div>
 
             {/* Cart Items List */}
-            <div className="bg-white rounded-lg border border-gray-200 overflow-hidden">
+            <div className="bg-white dark:bg-slate-800 rounded-lg border border-gray-200 dark:border-slate-700 overflow-hidden">
               {cartItems.map((item) => (
-                <div key={`${item.product._id}-${JSON.stringify(item.variant)}`} className="p-6 border-b border-gray-200 last:border-b-0">
+                <div key={`${item.product._id}-${JSON.stringify(item.variant)}`} className="p-6 border-b border-gray-200 dark:border-slate-700 last:border-b-0">
                   <div className="flex gap-4">
                     {/* Product Image */}
-                    <div className="w-24 h-24 bg-gray-100 rounded-lg overflow-hidden flex-shrink-0">
+                    <div className="w-24 h-24 bg-gray-100 dark:bg-slate-800/70 rounded-lg overflow-hidden flex-shrink-0">
                       <img
                         src={item.product.images[0]?.url || '/api/placeholder/100/100'}
                         alt={item.product.name}
@@ -211,20 +211,20 @@ const CartPage = () => {
                       <div>
                         <Link 
                           to={`/products/${item.product.slug}`}
-                          className="font-semibold text-gray-900 hover:text-primary-600 transition-colors"
+                          className="font-semibold text-gray-900 dark:text-slate-100 hover:text-primary-600 dark:hover:text-primary-400 transition-colors"
                         >
                           {item.product.name}
                         </Link>
                         
                         {/* Variant Info */}
                         {item.variant && (
-                          <p className="text-sm text-gray-600">
+                          <p className="text-sm text-gray-600 dark:text-slate-400">
                             {item.variant.name}: {item.variant.option}
                           </p>
                         )}
                         
                         {/* Price */}
-                        <p className="text-lg font-bold text-gray-900">
+                        <p className="text-lg font-bold text-gray-900 dark:text-slate-100">
                           ${item.price.toFixed(2)}
                         </p>
                       </div>
@@ -234,7 +234,7 @@ const CartPage = () => {
                         <div className="flex items-center space-x-2">
                           <button
                             onClick={() => handleQuantityChange(item, item.quantity - 1)}
-                            className="p-1 rounded border border-gray-300 hover:bg-gray-100 transition-colors"
+                            className="p-1 rounded border border-gray-300 dark:border-slate-600 hover:bg-gray-100 dark:hover:bg-slate-800/70 transition-colors"
                           >
                             <Minus className="w-3 h-3" />
                           </button>
@@ -245,7 +245,7 @@ const CartPage = () => {
                           
                           <button
                             onClick={() => handleQuantityChange(item, item.quantity + 1)}
-                            className="p-1 rounded border border-gray-300 hover:bg-gray-100 transition-colors"
+                            className="p-1 rounded border border-gray-300 dark:border-slate-600 hover:bg-gray-100 dark:hover:bg-slate-800/70 transition-colors"
                           >
                             <Plus className="w-3 h-3" />
                           </button>
@@ -253,13 +253,13 @@ const CartPage = () => {
 
                         {/* Item Total */}
                         <div className="text-right">
-                          <p className="font-semibold text-gray-900">
+                          <p className="font-semibold text-gray-900 dark:text-slate-100">
                             ${(item.price * item.quantity).toFixed(2)}
                           </p>
                           
                           <button
                             onClick={() => handleRemoveItem(item)}
-                            className="text-red-600 hover:text-red-700 text-sm flex items-center space-x-1"
+                            className="text-red-600 dark:text-red-400 hover:text-red-700 dark:hover:text-red-300 text-sm flex items-center space-x-1"
                           >
                             <Trash2 className="w-3 h-3" />
                             <span>Remove</span>
@@ -287,8 +287,8 @@ const CartPage = () => {
           {/* Order Summary */}
           <div className="space-y-6">
             {/* Coupon Form */}
-            <div className="bg-white rounded-lg p-6 border border-gray-200">
-              <h3 className="font-semibold text-gray-900 mb-4">Have a coupon?</h3>
+            <div className="bg-white dark:bg-slate-800 rounded-lg p-6 border border-gray-200 dark:border-slate-700">
+              <h3 className="font-semibold text-gray-900 dark:text-slate-100 mb-4">Have a coupon?</h3>
               
               {!appliedCoupon ? (
                 <div className="space-y-3">
@@ -308,11 +308,11 @@ const CartPage = () => {
                   </button>
                 </div>
               ) : (
-                <div className="bg-success-50 border border-success-200 rounded-lg p-4">
+                <div className="bg-success-50 dark:bg-success-950/40 border border-success-200 dark:border-success-800 rounded-lg p-4">
                   <div className="flex items-center justify-between">
                     <div>
-                      <p className="font-medium text-success-800">{appliedCoupon.code}</p>
-                      <p className="text-sm text-success-600">
+                      <p className="font-medium text-success-800 dark:text-success-300">{appliedCoupon.code}</p>
+                      <p className="text-sm text-success-600 dark:text-success-400">
                         {appliedCoupon.type === 'percentage' 
                           ? `${appliedCoupon.value}% off`
                           : `$${appliedCoupon.value} off`
@@ -321,7 +321,7 @@ const CartPage = () => {
                     </div>
                     <button
                       onClick={handleRemoveCoupon}
-                      className="text-success-600 hover:text-success-700"
+                      className="text-success-600 dark:text-success-400 hover:text-success-700 dark:hover:text-success-300"
                     >
                       <Trash2 className="w-4 h-4" />
                     </button>
@@ -331,38 +331,38 @@ const CartPage = () => {
             </div>
 
             {/* Order Summary */}
-            <div className="bg-white rounded-lg p-6 border border-gray-200">
-              <h3 className="font-semibold text-gray-900 mb-4">Order Summary</h3>
+            <div className="bg-white dark:bg-slate-800 rounded-lg p-6 border border-gray-200 dark:border-slate-700">
+              <h3 className="font-semibold text-gray-900 dark:text-slate-100 mb-4">Order Summary</h3>
               
               <div className="space-y-3">
                 <div className="flex justify-between">
-                  <span className="text-gray-600">Subtotal</span>
+                  <span className="text-gray-600 dark:text-slate-400">Subtotal</span>
                   <span className="font-medium">${(cartData?.data?.subtotal || 0).toFixed(2)}</span>
                 </div>
                 
                 {discount > 0 && (
-                  <div className="flex justify-between text-success-600">
+                  <div className="flex justify-between text-success-600 dark:text-success-400">
                     <span>Discount</span>
                     <span className="font-medium">-${discount.toFixed(2)}</span>
                   </div>
                 )}
                 
                 <div className="flex justify-between">
-                  <span className="text-gray-600">Tax</span>
+                  <span className="text-gray-600 dark:text-slate-400">Tax</span>
                   <span className="font-medium">${calculateTax().toFixed(2)}</span>
                 </div>
                 
                 <div className="flex justify-between">
-                  <span className="text-gray-600">Shipping</span>
+                  <span className="text-gray-600 dark:text-slate-400">Shipping</span>
                   <span className="font-medium">
                     {calculateShipping() === 0 ? 'Free' : `$${calculateShipping().toFixed(2)}`}
                   </span>
                 </div>
                 
-                <div className="border-t border-gray-200 pt-3">
+                <div className="border-t border-gray-200 dark:border-slate-700 pt-3">
                   <div className="flex justify-between">
-                    <span className="text-lg font-bold text-gray-900">Total</span>
-                    <span className="text-lg font-bold text-gray-900">
+                    <span className="text-lg font-bold text-gray-900 dark:text-slate-100">Total</span>
+                    <span className="text-lg font-bold text-gray-900 dark:text-slate-100">
                       ${calculateTotal().toFixed(2)}
                     </span>
                   </div>
@@ -380,8 +380,8 @@ const CartPage = () => {
 
               {/* Security Note */}
               <div className="mt-4 text-center">
-                <p className="text-sm text-gray-600">
-                  <Heart className="w-4 h-4 inline text-red-500" />
+                <p className="text-sm text-gray-600 dark:text-slate-400">
+                  <Heart className="w-4 h-4 inline text-red-500 dark:text-red-400" />
                   {' '}Secure checkout powered by industry-leading encryption
                 </p>
               </div>

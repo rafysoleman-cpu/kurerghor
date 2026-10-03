@@ -80,7 +80,7 @@ const getEnvConfig = () => {
   // Rate limiting
   config.rateLimit = {
     windowMs: parseInt(process.env.RATE_LIMIT_WINDOW_MS) || 15 * 60 * 1000,
-    maxRequests: parseInt(process.env.RATE_LIMIT_MAX_REQUESTS) || 100,
+    maxRequests: isDevelopment ? 1000 : (parseInt(process.env.RATE_LIMIT_MAX_REQUESTS) || 100),
   };
 
   // Storage configuration

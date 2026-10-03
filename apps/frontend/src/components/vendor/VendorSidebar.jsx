@@ -108,7 +108,7 @@ const VendorSidebar = () => {
     <div className="w-full lg:w-64 bg-gray-900 text-white lg:h-full">
       <div className="p-4 lg:p-6">
         <div className="flex items-center space-x-3">
-          <Store className="w-6 h-6 lg:w-8 lg:h-8 text-primary-400" />
+          <Store className="w-6 h-6 lg:w-8 lg:h-8 text-primary-400 dark:text-primary-300" />
           <h2 className="text-xl lg:text-2xl font-bold">Vendor Panel</h2>
         </div>
       </div>
@@ -131,7 +131,7 @@ const VendorSidebar = () => {
                       className={`w-full flex items-center justify-between px-4 py-3 rounded-lg transition-colors ${
                         isSubActive
                           ? 'bg-gray-800 text-white'
-                          : 'text-gray-300 hover:bg-gray-800 hover:text-white'
+                          : 'text-gray-300 dark:text-slate-600 hover:bg-gray-800 hover:text-white'
                       }`}
                     >
                       <div className="flex items-center space-x-3">
@@ -154,7 +154,7 @@ const VendorSidebar = () => {
                               className={`block px-4 py-2 rounded-lg transition-colors ${
                                 isActive(subItem.href)
                                   ? 'bg-gray-800 text-white'
-                                  : 'text-gray-400 hover:bg-gray-800 hover:text-white'
+                                  : 'text-gray-400 dark:text-slate-500 hover:bg-gray-800 hover:text-white'
                               }`}
                             >
                               {subItem.title}
@@ -171,7 +171,7 @@ const VendorSidebar = () => {
                       className={`flex items-center space-x-3 px-4 py-3 rounded-lg transition-colors ${
                         isItemActive
                           ? 'bg-gray-800 text-white'
-                          : 'text-gray-300 hover:bg-gray-800 hover:text-white'
+                          : 'text-gray-300 dark:text-slate-600 hover:bg-gray-800 hover:text-white'
                       }`}
                     >
                       <Icon className="w-5 h-5" />
@@ -183,7 +183,7 @@ const VendorSidebar = () => {
                       className={`flex items-center space-x-3 px-4 py-3 rounded-lg transition-colors ${
                         isItemActive
                           ? 'bg-gray-800 text-white'
-                          : 'text-gray-300 hover:bg-gray-800 hover:text-white'
+                          : 'text-gray-300 dark:text-slate-600 hover:bg-gray-800 hover:text-white'
                       }`}
                     >
                       <Icon className="w-5 h-5" />

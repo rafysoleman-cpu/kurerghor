@@ -20,6 +20,7 @@ import Pagination from '../../components/Pagination'
 import EnterpriseUploadProgressBar from '../../components/EnterpriseUploadProgressBar'
 import DeleteConfirmationModal from '../../components/DeleteConfirmationModal'
 import { useSocket } from '../../contexts/SocketContext'
+import { invalidateCatalog } from '../../utils/queryKeys'
 import toast from 'react-hot-toast'
 
 const AdminProducts = () => {
@@ -169,7 +170,7 @@ const AdminProducts = () => {
                 sessionStorage.removeItem('productUploadProgress');
                 sessionStorage.removeItem('productUploadError');
                 toast.success('Product created successfully!');
-                queryClient.invalidateQueries('adminProducts');
+                invalidateCatalog(queryClient); queryClient.invalidateQueries('adminProducts');
                 queryClient.refetchQueries('adminProducts');
               } else if (event.status === 'error') {
                 setErrorData({
@@ -220,7 +221,7 @@ const AdminProducts = () => {
             // Show success toast
             toast.success('Product created successfully!')
             // Refresh products list
-            queryClient.invalidateQueries('adminProducts')
+            invalidateCatalog(queryClient); queryClient.invalidateQueries('adminProducts')
             queryClient.refetchQueries('adminProducts')
           }
           
@@ -336,7 +337,7 @@ const AdminProducts = () => {
                     sessionStorage.removeItem('productUploadProgress')
                     sessionStorage.removeItem('productUploadError')
                     toast.success('Product created successfully!')
-                    queryClient.invalidateQueries('adminProducts')
+                    invalidateCatalog(queryClient); queryClient.invalidateQueries('adminProducts')
                     queryClient.refetchQueries('adminProducts')
                   } else if (event.stage === 'error') {
                     setErrorData({
@@ -382,7 +383,7 @@ const AdminProducts = () => {
                 sessionStorage.removeItem('productUploadData')
                 sessionStorage.removeItem('productUploadProgress')
                 sessionStorage.removeItem('productUploadError')
-                queryClient.invalidateQueries('adminProducts')
+                invalidateCatalog(queryClient); queryClient.invalidateQueries('adminProducts')
                 queryClient.refetchQueries('adminProducts')
               }
             }, 8000) // 8 second fallback timeout
@@ -513,7 +514,7 @@ const AdminProducts = () => {
       toast.success('Product deleted successfully')
       closeDeleteModal()
       // Refresh the products list
-      queryClient.invalidateQueries('adminProducts')
+      invalidateCatalog(queryClient); queryClient.invalidateQueries('adminProducts')
       queryClient.refetchQueries('adminProducts')
     } catch (error) {
       console.error('Error deleting product:', error)
@@ -536,11 +537,11 @@ const AdminProducts = () => {
 
   const getStatusColor = (status) => {
     switch (status) {
-      case 'active': return 'text-success-600 bg-success-50'
-      case 'draft': return 'text-warning-600 bg-warning-50'
-      case 'archived': return 'text-gray-600 bg-gray-50'
-      case 'deleted': return 'text-error-600 bg-error-50'
-      default: return 'text-gray-600 bg-gray-50'
+      case 'active': return 'text-success-600 dark:text-success-400 bg-success-50 dark:bg-success-950/40'
+      case 'draft': return 'text-warning-600 dark:text-warning-400 bg-warning-50 dark:bg-warning-950/40'
+      case 'archived': return 'text-gray-600 dark:text-slate-400 bg-gray-50 dark:bg-slate-900'
+      case 'deleted': return 'text-error-600 dark:text-error-400 bg-error-50 dark:bg-error-950/40'
+      default: return 'text-gray-600 dark:text-slate-400 bg-gray-50 dark:bg-slate-900'
     }
   }
 
@@ -563,7 +564,7 @@ const AdminProducts = () => {
             sessionStorage.removeItem('productUploadData')
             sessionStorage.removeItem('productUploadProgress')
             sessionStorage.removeItem('productUploadError')
-            queryClient.invalidateQueries('adminProducts')
+            invalidateCatalog(queryClient); queryClient.invalidateQueries('adminProducts')
             queryClient.refetchQueries('adminProducts')
           }}
         />
@@ -572,17 +573,17 @@ const AdminProducts = () => {
       {/* Error Retry Overlay */}
       {showError && errorData && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm">
-          <div className="bg-white rounded-2xl p-8 max-w-md mx-4 shadow-2xl border border-gray-200/50">
+          <div className="bg-white dark:bg-slate-800 rounded-2xl p-8 max-w-md mx-4 shadow-2xl border border-gray-200/50 dark:border-slate-700/50">
             <div className="text-center space-y-6">
               <div className="flex justify-center">
-                <div className="w-16 h-16 rounded-full bg-red-100 flex items-center justify-center">
-                  <AlertCircle className="w-8 h-8 text-red-600" />
+                <div className="w-16 h-16 rounded-full bg-red-100 dark:bg-red-900/40 flex items-center justify-center">
+                  <AlertCircle className="w-8 h-8 text-red-600 dark:text-red-400" />
                 </div>
               </div>
               
               <div className="space-y-2">
-                <h3 className="text-lg font-semibold text-gray-900">Upload Failed</h3>
-                <p className="text-sm text-gray-600">
+                <h3 className="text-lg font-semibold text-gray-900 dark:text-slate-100">Upload Failed</h3>
+                <p className="text-sm text-gray-600 dark:text-slate-400">
                   {errorData.isNetworkError 
                     ? 'The upload failed due to network issues or timeout. Your data is saved and you can retry.'
                     : errorData.error || 'Product creation failed. Please try again.'
@@ -600,7 +601,7 @@ const AdminProducts = () => {
                 </button>
                 <button
                   onClick={() => setShowError(false)}
-                  className="flex-1 bg-gray-100 text-gray-700 px-4 py-2.5 rounded-xl font-medium hover:bg-gray-200 transition-all duration-200"
+                  className="flex-1 bg-gray-100 dark:bg-slate-800/70 text-gray-700 dark:text-slate-300 px-4 py-2.5 rounded-xl font-medium hover:bg-gray-200 dark:hover:bg-slate-700 transition-all duration-200"
                 >
                   Cancel
                 </button>
@@ -612,8 +613,8 @@ const AdminProducts = () => {
       <div className="mb-8">
         <div className="flex items-center justify-between">
           <div>
-            <h1 className="text-3xl font-bold text-gray-900 mb-2">Manage Products</h1>
-            <p className="text-gray-600">{products.length} products</p>
+            <h1 className="text-3xl font-bold text-gray-900 dark:text-slate-100 mb-2">Manage Products</h1>
+            <p className="text-gray-600 dark:text-slate-400">{products.length} products</p>
           </div>
           
           <Link 
@@ -627,7 +628,7 @@ const AdminProducts = () => {
       </div>
 
       {/* Filters */}
-      <div className="bg-white rounded-lg p-6 border border-gray-200 mb-8">
+      <div className="bg-white dark:bg-slate-800 rounded-lg p-6 border border-gray-200 dark:border-slate-700 mb-8">
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           <div className="relative">
             <input
@@ -669,37 +670,37 @@ const AdminProducts = () => {
       {/* Products Table */}
       {products.length > 0 ? (
         <>
-          <div className="bg-white rounded-lg border border-gray-200 overflow-hidden">
+          <div className="bg-white dark:bg-slate-800 rounded-lg border border-gray-200 dark:border-slate-700 overflow-hidden">
             <div className="overflow-x-auto">
-              <table className="min-w-full divide-y divide-gray-200">
-                <thead className="bg-gray-50">
+              <table className="min-w-full divide-y divide-gray-200 dark:divide-slate-700">
+                <thead className="bg-gray-50 dark:bg-slate-900">
                   <tr>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-slate-400 uppercase tracking-wider">
                       Product
                     </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-slate-400 uppercase tracking-wider">
                       Vendor
                     </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-slate-400 uppercase tracking-wider">
                       Price
                     </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-slate-400 uppercase tracking-wider">
                       Stock
                     </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-slate-400 uppercase tracking-wider">
                       Status
                     </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-slate-400 uppercase tracking-wider">
                       Actions
                     </th>
                   </tr>
                 </thead>
-                <tbody className="bg-white divide-y divide-gray-200">
+                <tbody className="bg-white dark:bg-slate-800 divide-y divide-gray-200 dark:divide-slate-700">
                   {products.map((product) => (
-                    <tr key={product._id} className="hover:bg-gray-50">
+                    <tr key={product._id} className="hover:bg-gray-50 dark:hover:bg-slate-900">
                       <td className="px-6 py-4 whitespace-nowrap">
                         <div className="flex items-center">
-                          <div className="w-12 h-12 bg-gray-100 rounded-lg overflow-hidden">
+                          <div className="w-12 h-12 bg-gray-100 dark:bg-slate-800/70 rounded-lg overflow-hidden">
                             {product.images?.[0]?.url ? (
                               <img
                                 src={product.images[0].url}
@@ -707,16 +708,16 @@ const AdminProducts = () => {
                                 className="w-full h-full object-cover"
                               />
                             ) : (
-                              <div className="w-full h-full flex items-center justify-center bg-primary-100">
-                                <Package className="w-6 h-6 text-primary-600" />
+                              <div className="w-full h-full flex items-center justify-center bg-primary-100 dark:bg-primary-900/40">
+                                <Package className="w-6 h-6 text-primary-600 dark:text-primary-400" />
                               </div>
                             )}
                           </div>
                           <div className="ml-4">
-                            <div className="text-sm font-medium text-gray-900 line-clamp-1">
+                            <div className="text-sm font-medium text-gray-900 dark:text-slate-100 line-clamp-1">
                               {product.name}
                             </div>
-                            <div className="text-sm text-gray-500">
+                            <div className="text-sm text-gray-500 dark:text-slate-400">
                               {product.category?.name || 'Uncategorized'}
                             </div>
                           </div>
@@ -724,19 +725,19 @@ const AdminProducts = () => {
                       </td>
                       
                       <td className="px-6 py-4 whitespace-nowrap">
-                        <div className="text-sm text-gray-900">
+                        <div className="text-sm text-gray-900 dark:text-slate-100">
                           {product.vendor?.vendorRequest?.shopName || product.vendor?.name || 'N/A'}
                         </div>
-                        <div className="text-sm text-gray-500">
+                        <div className="text-sm text-gray-500 dark:text-slate-400">
                           {product.vendor?.owner?.name || ''}
                         </div>
                       </td>
                       
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-slate-100">
                         ${product.price.toFixed(2)}
                       </td>
                       
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-slate-400">
                         {product.inventory?.quantity || 0}
                       </td>
                       
@@ -751,14 +752,14 @@ const AdminProducts = () => {
                           <Link
                             to={`/products/${product.slug}`}
                             target="_blank"
-                            className="text-primary-600 hover:text-primary-900"
+                            className="text-primary-600 dark:text-primary-400 hover:text-primary-900 dark:hover:text-primary-300"
                           >
                             <Eye className="w-4 h-4" />
                           </Link>
                           
                           <Link
                             to={`/admin/products/${product._id}/edit`}
-                            className="text-success-600 hover:text-success-900"
+                            className="text-success-600 dark:text-success-400 hover:text-success-900 dark:hover:text-success-300"
                           >
                             <Edit className="w-4 h-4" />
                           </Link>
@@ -767,7 +768,7 @@ const AdminProducts = () => {
                             <button
                               onClick={() => handleDeleteProduct(product._id, product.name)}
                               disabled={deletingProductId === product._id}
-                              className={`text-error-600 hover:text-error-900 ${deletingProductId === product._id ? 'opacity-50 cursor-not-allowed' : ''}`}
+                              className={`text-error-600 dark:text-error-400 hover:text-error-900 dark:hover:text-error-300 ${deletingProductId === product._id ? 'opacity-50 cursor-not-allowed' : ''}`}
                             >
                               <Trash2 className="w-4 h-4" />
                             </button>
@@ -793,22 +794,22 @@ const AdminProducts = () => {
         </>
       ) : (
         <div className="text-center py-16">
-          <Package className="w-16 h-16 text-gray-400 mx-auto mb-4" />
-          <h3 className="text-xl font-semibold text-gray-900 mb-2">No products found</h3>
-          <p className="text-gray-600">Try adjusting your filters or search terms.</p>
+          <Package className="w-16 h-16 text-gray-400 dark:text-slate-500 mx-auto mb-4" />
+          <h3 className="text-xl font-semibold text-gray-900 dark:text-slate-100 mb-2">No products found</h3>
+          <p className="text-gray-600 dark:text-slate-400">Try adjusting your filters or search terms.</p>
         </div>
       )}
 
       {/* Flagged Products Alert */}
       {products.some(p => p.status === 'flagged') && (
-        <div className="mt-8 bg-error-50 border border-error-200 rounded-lg p-6">
+        <div className="mt-8 bg-error-50 dark:bg-error-950/40 border border-error-200 dark:border-error-800 rounded-lg p-6">
           <div className="flex items-start space-x-3">
-            <AlertCircle className="w-5 h-5 text-error-600 mt-0.5" />
+            <AlertCircle className="w-5 h-5 text-error-600 dark:text-error-400 mt-0.5" />
             <div>
-              <h3 className="text-lg font-semibold text-error-900 mb-2">
+              <h3 className="text-lg font-semibold text-error-900 dark:text-error-300 mb-2">
                 Flagged Products
               </h3>
-              <p className="text-error-700 mb-4">
+              <p className="text-error-700 dark:text-error-300 mb-4">
                 Some products have been flagged and require review.
               </p>
               <button className="btn-primary">

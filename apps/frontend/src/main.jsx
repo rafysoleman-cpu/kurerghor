@@ -6,16 +6,25 @@ import { Toaster } from 'react-hot-toast'
 import App from './App.jsx'
 import './index.css'
 import { autoEnableDemoMode } from './demo/utils/index.js'
+import { useThemeStore } from './store/themeStore'
 
 // Auto-enable demo mode in development (commented out to allow manual control)
 // autoEnableDemoMode()
+
+// The inline script in index.html has already painted the correct theme; this
+// mirrors that into React state and attaches the prefers-color-scheme
+// listener before the first render, so nothing depends on a stale mount.
+useThemeStore.getState().init()
 
 // Create a client
 const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
       retry: 1,
-      refetchOnWindowFocus: false,
+      // Only refetches when the cached entry is actually stale, so this makes a
+      // tab self-heal after a change instead of showing a stale catalog until it
+      // is manually reloaded.
+      refetchOnWindowFocus: true,
       staleTime: 5 * 60 * 1000, // 5 minutes
     },
   },

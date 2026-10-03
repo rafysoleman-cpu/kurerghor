@@ -137,38 +137,38 @@ const AdminLogin = () => {
           <div className="mx-auto h-16 w-16 bg-red-600 rounded-full flex items-center justify-center">
             <Shield className="h-8 w-8 text-white" />
           </div>
-          <h2 className="mt-6 text-3xl font-extrabold text-gray-900">
+          <h2 className="mt-6 text-3xl font-extrabold text-gray-900 dark:text-slate-100">
             Admin Portal
           </h2>
-          <p className="mt-2 text-sm text-gray-600">
+          <p className="mt-2 text-sm text-gray-600 dark:text-slate-400">
             Secure admin access with OTP verification
           </p>
         </div>
 
-        <div className="bg-white shadow-xl rounded-lg p-8">
+        <div className="bg-white dark:bg-slate-800 shadow-xl rounded-lg p-8">
           {error && (
-            <div className="mb-4 p-3 bg-red-50 border border-red-200 rounded-md flex items-center space-x-2">
-              <AlertCircle className="h-5 w-5 text-red-500" />
-              <span className="text-sm text-red-700">{error}</span>
+            <div className="mb-4 p-3 bg-red-50 dark:bg-red-950/40 border border-red-200 dark:border-red-800 rounded-md flex items-center space-x-2">
+              <AlertCircle className="h-5 w-5 text-red-500 dark:text-red-400" />
+              <span className="text-sm text-red-700 dark:text-red-300">{error}</span>
             </div>
           )}
 
           {success && (
-            <div className="mb-4 p-3 bg-green-50 border border-green-200 rounded-md flex items-center space-x-2">
-              <CheckCircle className="h-5 w-5 text-green-500" />
-              <span className="text-sm text-green-700">{success}</span>
+            <div className="mb-4 p-3 bg-green-50 dark:bg-green-950/40 border border-green-200 dark:border-green-800 rounded-md flex items-center space-x-2">
+              <CheckCircle className="h-5 w-5 text-green-500 dark:text-green-400" />
+              <span className="text-sm text-green-700 dark:text-green-300">{success}</span>
             </div>
           )}
 
           {step === 1 ? (
             <form onSubmit={handleLogin} className="space-y-6">
               <div>
-                <label htmlFor="email" className="block text-sm font-medium text-gray-700">
+                <label htmlFor="email" className="block text-sm font-medium text-gray-700 dark:text-slate-300">
                   Admin Email
                 </label>
                 <div className="mt-1 relative">
                   <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                    <Mail className="h-5 w-5 text-gray-400" />
+                    <Mail className="h-5 w-5 text-gray-400 dark:text-slate-500" />
                   </div>
                   <input
                     id="email"
@@ -177,19 +177,19 @@ const AdminLogin = () => {
                     required
                     value={formData.email}
                     onChange={handleInputChange}
-                    className="appearance-none block w-full pl-10 pr-3 py-3 border border-gray-300 rounded-md placeholder-gray-400 focus:outline-none focus:ring-red-500 focus:border-red-500"
+                    className="appearance-none block w-full pl-10 pr-3 py-3 border border-gray-300 dark:border-slate-600 rounded-md placeholder-gray-400 dark:placeholder-slate-500 focus:outline-none focus:ring-red-500 focus:border-red-500"
                     placeholder="admin@example.com"
                   />
                 </div>
               </div>
 
               <div>
-                <label htmlFor="password" className="block text-sm font-medium text-gray-700">
+                <label htmlFor="password" className="block text-sm font-medium text-gray-700 dark:text-slate-300">
                   Password
                 </label>
                 <div className="mt-1 relative">
                   <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                    <Lock className="h-5 w-5 text-gray-400" />
+                    <Lock className="h-5 w-5 text-gray-400 dark:text-slate-500" />
                   </div>
                   <input
                     id="password"
@@ -198,7 +198,7 @@ const AdminLogin = () => {
                     required
                     value={formData.password}
                     onChange={handleInputChange}
-                    className="appearance-none block w-full pl-10 pr-3 py-3 border border-gray-300 rounded-md placeholder-gray-400 focus:outline-none focus:ring-red-500 focus:border-red-500"
+                    className="appearance-none block w-full pl-10 pr-3 py-3 border border-gray-300 dark:border-slate-600 rounded-md placeholder-gray-400 dark:placeholder-slate-500 focus:outline-none focus:ring-red-500 focus:border-red-500"
                     placeholder="Enter your password"
                   />
                 </div>
@@ -208,7 +208,7 @@ const AdminLogin = () => {
                 <button
                   type="submit"
                   disabled={loading}
-                  className="w-full flex justify-center py-3 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-red-600 hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="w-full flex justify-center py-3 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-red-600 hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 dark:focus:ring-offset-slate-900 focus:ring-red-500 disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   {loading ? 'Sending OTP...' : 'Login & Get OTP'}
                 </button>
@@ -217,12 +217,12 @@ const AdminLogin = () => {
           ) : (
             <form onSubmit={handleOTPVerification} className="space-y-6">
               <div>
-                <label htmlFor="otp" className="block text-sm font-medium text-gray-700">
+                <label htmlFor="otp" className="block text-sm font-medium text-gray-700 dark:text-slate-300">
                   One-Time Password (OTP)
                 </label>
                 <div className="mt-1 relative">
                   <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                    <Key className="h-5 w-5 text-gray-400" />
+                    <Key className="h-5 w-5 text-gray-400 dark:text-slate-500" />
                   </div>
                   <input
                     id="otp"
@@ -233,11 +233,11 @@ const AdminLogin = () => {
                     pattern="[0-9]{6}"
                     value={formData.otp}
                     onChange={handleInputChange}
-                    className="appearance-none block w-full pl-10 pr-3 py-3 border border-gray-300 rounded-md placeholder-gray-400 focus:outline-none focus:ring-red-500 focus:border-red-500 text-center text-lg tracking-widest"
+                    className="appearance-none block w-full pl-10 pr-3 py-3 border border-gray-300 dark:border-slate-600 rounded-md placeholder-gray-400 dark:placeholder-slate-500 focus:outline-none focus:ring-red-500 focus:border-red-500 text-center text-lg tracking-widest"
                     placeholder="000000"
                   />
                 </div>
-                <p className="mt-2 text-sm text-gray-500">
+                <p className="mt-2 text-sm text-gray-500 dark:text-slate-400">
                   Enter the 6-digit code sent to {formData.email}
                 </p>
               </div>
@@ -246,7 +246,7 @@ const AdminLogin = () => {
                 <button
                   type="submit"
                   disabled={loading || formData.otp.length !== 6}
-                  className="w-full flex justify-center py-3 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-red-600 hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="w-full flex justify-center py-3 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-red-600 hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 dark:focus:ring-offset-slate-900 focus:ring-red-500 disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   {loading ? 'Verifying...' : 'Verify OTP'}
                 </button>
@@ -257,7 +257,7 @@ const AdminLogin = () => {
                   type="button"
                   onClick={handleResendOTP}
                   disabled={otpTimer > 0 || loading}
-                  className="text-sm text-red-600 hover:text-red-500 disabled:text-gray-400 disabled:cursor-not-allowed"
+                  className="text-sm text-red-600 dark:text-red-400 hover:text-red-500 dark:hover:text-red-400 disabled:text-gray-400 dark:disabled:text-slate-500 disabled:cursor-not-allowed"
                 >
                   {otpTimer > 0 
                     ? `Resend OTP in ${formatTime(otpTimer)}` 
@@ -271,14 +271,14 @@ const AdminLogin = () => {
           <div className="mt-6 text-center">
             <Link
               to="/login"
-              className="text-sm text-gray-600 hover:text-gray-500"
+              className="text-sm text-gray-600 dark:text-slate-400 hover:text-gray-500 dark:hover:text-slate-400"
             >
               ← Back to regular login
             </Link>
           </div>
         </div>
 
-        <div className="text-center text-xs text-gray-500">
+        <div className="text-center text-xs text-gray-500 dark:text-slate-400">
           <p>Protected by 2-factor authentication</p>
           <p className="mt-1">Only authorized admin emails can access</p>
         </div>

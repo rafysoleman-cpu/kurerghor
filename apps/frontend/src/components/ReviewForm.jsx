@@ -57,13 +57,13 @@ const ReviewForm = ({ productId, orderId, onSubmit }) => {
   }
 
   return (
-    <div className="bg-white rounded-lg p-6 border border-gray-200">
-      <h3 className="text-lg font-semibold text-gray-900 mb-6">Write a Review</h3>
+    <div className="bg-white dark:bg-slate-800 rounded-lg p-6 border border-gray-200 dark:border-slate-700">
+      <h3 className="text-lg font-semibold text-gray-900 dark:text-slate-100 mb-6">Write a Review</h3>
       
       <form onSubmit={handleSubmit} className="space-y-6">
         {/* Rating */}
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-2">
+          <label className="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-2">
             Rating
           </label>
           <div className="flex items-center space-x-2">
@@ -77,13 +77,13 @@ const ReviewForm = ({ productId, orderId, onSubmit }) => {
                 <Star
                   className={`w-6 h-6 ${
                     index < formData.rating
-                      ? 'text-yellow-400 fill-current'
-                      : 'text-gray-300 hover:text-yellow-400'
+                      ? 'text-yellow-400 dark:text-yellow-300 fill-current'
+                      : 'text-gray-300 dark:text-slate-600 hover:text-yellow-400 dark:hover:text-yellow-300'
                   } transition-colors`}
                 />
               </button>
             ))}
-            <span className="text-sm text-gray-600 ml-2">
+            <span className="text-sm text-gray-600 dark:text-slate-400 ml-2">
               {formData.rating} out of 5
             </span>
           </div>
@@ -91,7 +91,7 @@ const ReviewForm = ({ productId, orderId, onSubmit }) => {
 
         {/* Title */}
         <div>
-          <label htmlFor="title" className="block text-sm font-medium text-gray-700 mb-2">
+          <label htmlFor="title" className="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-2">
             Review Title
           </label>
           <input
@@ -108,7 +108,7 @@ const ReviewForm = ({ productId, orderId, onSubmit }) => {
 
         {/* Comment */}
         <div>
-          <label htmlFor="comment" className="block text-sm font-medium text-gray-700 mb-2">
+          <label htmlFor="comment" className="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-2">
             Your Review
           </label>
           <textarea

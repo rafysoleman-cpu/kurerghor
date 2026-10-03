@@ -14,6 +14,7 @@ import {
 } from 'lucide-react'
 import { useMutation, useQuery, useQueryClient } from 'react-query'
 import { adminAPI } from '../../services/api'
+import { invalidateCatalog } from '../../utils/queryKeys'
 import uploadService from '../../services/uploadService'
 import uploadRecoveryService from '../../services/uploadRecoveryService'
 import LoadingSpinner from '../../components/LoadingSpinner'
@@ -268,8 +269,11 @@ useEffect(() => {
           uploadProgress: 0,
           uploadStartTime: null
         }))
-        // Don't navigate here since we already navigated in handleSubmit
-        // The AdminProducts page will handle the success via WebSocket
+            // Don't navigate here since we already navigated in handleSubmit
+            // The AdminProducts page will handle the success via WebSocket
+            // Invalidate here too so a new product still shows up in the
+            // storefront when the socket is unavailable or slow.
+            invalidateCatalog(queryClient)
       },
       onError: (error) => {
         console.error('❌ Admin product creation failed:', error)
@@ -704,7 +708,7 @@ useEffect(() => {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50/30 to-indigo-50/40 relative">
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50/30 to-indigo-50/40 dark:from-slate-900 dark:via-slate-800/30 dark:to-slate-900/40 relative">
       {/* Enterprise Upload Progress Bar */}
       <EnterpriseUploadProgressBar
         isUploading={uploadState.isUploading}
@@ -728,23 +732,23 @@ useEffect(() => {
       />
 
       {/* Header */}
-      <div className="sticky top-0 z-40 bg-white/80 backdrop-blur-xl border-b border-gray-200/50 shadow-sm">
+      <div className="sticky top-0 z-40 bg-white/80 dark:bg-slate-800/80 backdrop-blur-xl border-b border-gray-200/50 dark:border-slate-700/50 shadow-sm">
         <div className="max-w-7xl mx-auto px-3 sm:px-4 lg:px-8">
           <div className="flex items-center justify-between h-14 sm:h-16">
             <button
               onClick={() => navigate('/admin/products')}
-              className="group flex items-center text-gray-600 hover:text-gray-900 transition-all duration-200"
+              className="group flex items-center text-gray-600 dark:text-slate-400 hover:text-gray-900 dark:hover:text-slate-100 transition-all duration-200"
             >
-              <div className="flex items-center justify-center w-7 h-7 sm:w-8 sm:h-8 rounded-lg bg-gray-100 group-hover:bg-gray-200 transition-colors duration-200 mr-2 sm:mr-3">
+              <div className="flex items-center justify-center w-7 h-7 sm:w-8 sm:h-8 rounded-lg bg-gray-100 dark:bg-slate-800/70 group-hover:bg-gray-200 dark:group-hover:bg-slate-700 transition-colors duration-200 mr-2 sm:mr-3">
                 <ArrowLeft className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
               </div>
               <span className="font-medium text-sm sm:text-base">Back</span>
             </button>
             
             <div className="flex items-center space-x-2 sm:space-x-4">
-              <div className="hidden xs:flex items-center px-2 sm:px-3 py-1 sm:py-1.5 rounded-full bg-gradient-to-r from-blue-50 to-indigo-50 border border-blue-200/50">
+              <div className="hidden xs:flex items-center px-2 sm:px-3 py-1 sm:py-1.5 rounded-full bg-gradient-to-r from-blue-50 to-indigo-50 border border-blue-200/50 dark:border-blue-800/50">
                 <div className="w-1.5 h-1.5 sm:w-2 sm:h-2 bg-green-500 rounded-full animate-pulse mr-1 sm:mr-2"></div>
-                <span className="text-xs sm:text-sm font-medium text-gray-700">Auto-save</span>
+                <span className="text-xs sm:text-sm font-medium text-gray-700 dark:text-slate-300">Auto-save</span>
               </div>
             </div>
           </div>
@@ -752,7 +756,7 @@ useEffect(() => {
       </div>
 
       {/* Progress Indicator */}
-      <div className="sticky top-14 sm:top-16 z-30 bg-white/60 backdrop-blur-md border-b border-gray-200/30">
+      <div className="sticky top-14 sm:top-16 z-30 bg-white/60 backdrop-blur-md border-b border-gray-200/30 dark:border-slate-700/30">
         <div className="max-w-7xl mx-auto px-2 sm:px-3 lg:px-8">
           <div className="flex items-center justify-between py-2 sm:py-3 overflow-x-auto scrollbar-hide">
             {['basic', 'pricing', 'inventory', 'organization', 'shipping', 'images', 'seo'].map((section, index) => (
@@ -762,12 +766,12 @@ useEffect(() => {
                 className={`flex items-center px-2 sm:px-3 md:px-4 lg:px-5 xl:px-6 py-1.5 rounded-lg text-xs sm:text-sm font-medium transition-all duration-200 whitespace-nowrap flex-grow ${
                   activeSection === section
                     ? 'bg-gradient-to-r from-blue-500 to-indigo-500 text-white shadow-lg'
-                    : 'text-gray-600 hover:text-gray-900 hover:bg-gray-100'
+                    : 'text-gray-600 dark:text-slate-400 hover:text-gray-900 dark:hover:text-slate-100 hover:bg-gray-100 dark:hover:bg-slate-800/70'
                 }`}
               >
                 <span className="capitalize">{section}</span>
                 {index < 6 && (
-                  <div className="w-3 sm:w-4 h-0.5 bg-gray-300 mx-1 hidden sm:block"></div>
+                  <div className="w-3 sm:w-4 h-0.5 bg-gray-300 dark:bg-slate-600 mx-1 hidden sm:block"></div>
                 )}
               </button>
             ))}
@@ -781,7 +785,7 @@ useEffect(() => {
           {/* Basic Information */}
           <div 
             ref={sectionRefs.basic}
-            className={`bg-white rounded-lg sm:rounded-xl lg:rounded-2xl border border-gray-200/50 shadow-xl shadow-gray-900/5 p-3 sm:p-4 lg:p-6 xl:p-8 2xl:p-10 transition-all duration-300 scroll-mt-20 sm:scroll-mt-24 lg:scroll-mt-32 ${
+            className={`bg-white dark:bg-slate-800 rounded-lg sm:rounded-xl lg:rounded-2xl border border-gray-200/50 dark:border-slate-700/50 shadow-xl shadow-gray-900/5 dark:shadow-black/40 p-3 sm:p-4 lg:p-6 xl:p-8 2xl:p-10 transition-all duration-300 scroll-mt-20 sm:scroll-mt-24 lg:scroll-mt-32 ${
               activeSection === 'basic' ? 'ring-2 ring-blue-500/20 shadow-2xl shadow-blue-500/10' : ''
             }`}>
             <div className="flex flex-col sm:flex-row sm:items-center justify-between mb-4 sm:mb-6 lg:mb-8 space-y-2 sm:space-y-0">
@@ -790,21 +794,21 @@ useEffect(() => {
                   <Package className="w-3 h-3 sm:w-4 sm:h-4 lg:w-5 lg:h-5" />
                 </div>
                 <div>
-                  <h2 className="text-base sm:text-lg lg:text-xl font-bold text-gray-900">Basic Info</h2>
-                  <p className="text-xs sm:text-sm text-gray-500 mt-0.5 hidden sm:block">Product details</p>
+                  <h2 className="text-base sm:text-lg lg:text-xl font-bold text-gray-900 dark:text-slate-100">Basic Info</h2>
+                  <p className="text-xs sm:text-sm text-gray-500 dark:text-slate-400 mt-0.5 hidden sm:block">Product details</p>
                 </div>
               </div>
-              <div className="hidden sm:flex items-center px-2 sm:px-3 py-1 sm:py-1.5 rounded-full bg-gradient-to-r from-amber-50 to-orange-50 border border-amber-200/50">
+              <div className="hidden sm:flex items-center px-2 sm:px-3 py-1 sm:py-1.5 rounded-full bg-gradient-to-r from-amber-50 to-orange-50 border border-amber-200/50 dark:border-amber-800/50">
                 <div className="w-1.5 h-1.5 sm:w-2 sm:h-2 bg-amber-500 rounded-full animate-pulse mr-1 sm:mr-2"></div>
-                <span className="text-xs sm:text-sm font-medium text-amber-700">Required</span>
+                <span className="text-xs sm:text-sm font-medium text-amber-700 dark:text-amber-300">Required</span>
               </div>
             </div>
             
             <div className="grid grid-cols-1 xl:grid-cols-2 2xl:grid-cols-3 gap-3 sm:gap-4 lg:gap-6">
               <div className="space-y-2">
-                <label className="block text-sm font-semibold text-gray-700 flex items-center">
+                <label className="block text-sm font-semibold text-gray-700 dark:text-slate-300 flex items-center">
                   Product Name *
-                  <span className="ml-2 text-xs text-gray-400 font-normal">Max 100 chars</span>
+                  <span className="ml-2 text-xs text-gray-400 dark:text-slate-500 font-normal">Max 100 chars</span>
                 </label>
                 <div className="relative group">
                   <input
@@ -812,8 +816,8 @@ useEffect(() => {
                     name="name"
                     value={formData.name}
                     onChange={handleInputChange}
-                    className={`block w-full px-2 sm:px-3 lg:px-4 py-2 sm:py-2.5 lg:py-3 rounded-md sm:rounded-lg lg:rounded-xl border border-gray-200/50 bg-gray-50/50 text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all duration-200 group-hover:bg-gray-50 text-xs sm:text-sm ${
-                      errors.name ? 'border-red-300 bg-red-50/50' : ''
+                    className={`block w-full px-2 sm:px-3 lg:px-4 py-2 sm:py-2.5 lg:py-3 rounded-md sm:rounded-lg lg:rounded-xl border border-gray-200/50 dark:border-slate-700/50 bg-gray-50/50 dark:bg-slate-900/50 text-gray-900 dark:text-slate-100 placeholder-gray-400 dark:placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all duration-200 group-hover:bg-gray-50 dark:group-hover:bg-slate-900 text-xs sm:text-sm ${
+                      errors.name ? 'border-red-300 dark:border-red-700 bg-red-50/50 dark:bg-red-950/50' : ''
                     }`}
                     placeholder="Enter product name"
                     required
@@ -821,7 +825,7 @@ useEffect(() => {
                   <div className="absolute inset-0 rounded-md sm:rounded-lg lg:rounded-xl bg-gradient-to-r from-blue-500/5 to-indigo-500/5 opacity-0 group-focus-within:opacity-100 transition-opacity duration-200 pointer-events-none"></div>
                 </div>
                 {errors.name && (
-                  <p className="mt-2 text-sm text-red-600 flex items-center">
+                  <p className="mt-2 text-sm text-red-600 dark:text-red-400 flex items-center">
                     <AlertCircle className="w-4 h-4 mr-1" />
                     {errors.name}
                   </p>
@@ -829,9 +833,9 @@ useEffect(() => {
               </div>
 
               <div className="space-y-2">
-                <label className="block text-sm font-semibold text-gray-700 flex items-center">
+                <label className="block text-sm font-semibold text-gray-700 dark:text-slate-300 flex items-center">
                   URL Slug *
-                  <span className="ml-2 text-xs text-gray-400 font-normal">Auto-generated</span>
+                  <span className="ml-2 text-xs text-gray-400 dark:text-slate-500 font-normal">Auto-generated</span>
                 </label>
                 <div className="relative group">
                   <input
@@ -839,8 +843,8 @@ useEffect(() => {
                     name="slug"
                     value={formData.slug}
                     onChange={handleInputChange}
-                    className={`block w-full px-2 sm:px-3 lg:px-4 py-2 sm:py-2.5 lg:py-3 rounded-md sm:rounded-lg lg:rounded-xl border border-gray-200/50 bg-gray-50/50 text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all duration-200 group-hover:bg-gray-50 text-xs sm:text-sm ${
-                      errors.slug ? 'border-red-300 bg-red-50/50' : ''
+                    className={`block w-full px-2 sm:px-3 lg:px-4 py-2 sm:py-2.5 lg:py-3 rounded-md sm:rounded-lg lg:rounded-xl border border-gray-200/50 dark:border-slate-700/50 bg-gray-50/50 dark:bg-slate-900/50 text-gray-900 dark:text-slate-100 placeholder-gray-400 dark:placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all duration-200 group-hover:bg-gray-50 dark:group-hover:bg-slate-900 text-xs sm:text-sm ${
+                      errors.slug ? 'border-red-300 dark:border-red-700 bg-red-50/50 dark:bg-red-950/50' : ''
                     }`}
                     placeholder="product-url-slug"
                     required
@@ -848,7 +852,7 @@ useEffect(() => {
                   <div className="absolute inset-0 rounded-md sm:rounded-lg lg:rounded-xl bg-gradient-to-r from-blue-500/5 to-indigo-500/5 opacity-0 group-focus-within:opacity-100 transition-opacity duration-200 pointer-events-none"></div>
                 </div>
                 {errors.slug && (
-                  <p className="mt-2 text-sm text-red-600 flex items-center">
+                  <p className="mt-2 text-sm text-red-600 dark:text-red-400 flex items-center">
                     <AlertCircle className="w-4 h-4 mr-1" />
                     {errors.slug}
                   </p>
@@ -857,9 +861,9 @@ useEffect(() => {
             </div>
 
             <div className="mt-8 space-y-2">
-              <label className="block text-sm font-semibold text-gray-700 flex items-center">
+              <label className="block text-sm font-semibold text-gray-700 dark:text-slate-300 flex items-center">
                 Description
-                <span className="ml-2 text-xs text-gray-400 font-normal">Optional - Rich text supported</span>
+                <span className="ml-2 text-xs text-gray-400 dark:text-slate-500 font-normal">Optional - Rich text supported</span>
               </label>
               <div className="relative group">
                 <textarea
@@ -867,7 +871,7 @@ useEffect(() => {
                   value={formData.description}
                   onChange={handleInputChange}
                   rows="2 sm:rows-3 lg:rows-4"
-                  className="block w-full px-2 sm:px-3 lg:px-4 py-2 sm:py-2.5 lg:py-3 rounded-md sm:rounded-lg lg:rounded-xl border border-gray-200/50 bg-gray-50/50 text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all duration-200 group-hover:bg-gray-50 resize-none text-xs sm:text-sm"
+                  className="block w-full px-2 sm:px-3 lg:px-4 py-2 sm:py-2.5 lg:py-3 rounded-md sm:rounded-lg lg:rounded-xl border border-gray-200/50 dark:border-slate-700/50 bg-gray-50/50 dark:bg-slate-900/50 text-gray-900 dark:text-slate-100 placeholder-gray-400 dark:placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all duration-200 group-hover:bg-gray-50 dark:group-hover:bg-slate-900 resize-none text-xs sm:text-sm"
                   placeholder="Describe your product (optional)..."
                 />
                 <div className="absolute inset-0 rounded-md sm:rounded-lg lg:rounded-xl bg-gradient-to-r from-blue-500/5 to-indigo-500/5 opacity-0 group-focus-within:opacity-100 transition-opacity duration-200 pointer-events-none"></div>
@@ -878,7 +882,7 @@ useEffect(() => {
           {/* Pricing */}
           <div 
             ref={sectionRefs.pricing}
-            className={`bg-white rounded-2xl border border-gray-200/50 shadow-xl shadow-gray-900/5 p-6 sm:p-8 lg:p-10 transition-all duration-300 scroll-mt-32 ${
+            className={`bg-white dark:bg-slate-800 rounded-2xl border border-gray-200/50 dark:border-slate-700/50 shadow-xl shadow-gray-900/5 dark:shadow-black/40 p-6 sm:p-8 lg:p-10 transition-all duration-300 scroll-mt-32 ${
               activeSection === 'pricing' ? 'ring-2 ring-blue-500/20 shadow-2xl shadow-blue-500/10' : ''
             }`}>
             <div className="flex items-center justify-between mb-8">
@@ -887,20 +891,20 @@ useEffect(() => {
                   <div className="w-5 h-5 flex items-center justify-center text-white font-bold text-sm">$</div>
                 </div>
                 <div>
-                  <h2 className="text-xl font-bold text-gray-900">Pricing Strategy</h2>
-                  <p className="text-sm text-gray-500 mt-0.5">Set competitive prices</p>
+                  <h2 className="text-xl font-bold text-gray-900 dark:text-slate-100">Pricing Strategy</h2>
+                  <p className="text-sm text-gray-500 dark:text-slate-400 mt-0.5">Set competitive prices</p>
                 </div>
               </div>
             </div>
             
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
               <div className="space-y-2">
-                <label className="block text-sm font-semibold text-gray-700 flex items-center">
+                <label className="block text-sm font-semibold text-gray-700 dark:text-slate-300 flex items-center">
                   Price *
-                  <span className="ml-2 text-xs text-gray-400 font-normal">Base price</span>
+                  <span className="ml-2 text-xs text-gray-400 dark:text-slate-500 font-normal">Base price</span>
                 </label>
                 <div className="relative group">
-                  <div className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-500 font-medium">$</div>
+                  <div className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-500 dark:text-slate-400 font-medium">$</div>
                   <input
                     type="number"
                     name="price"
@@ -908,8 +912,8 @@ useEffect(() => {
                     onChange={handleInputChange}
                     step="0.01"
                     min="0"
-                    className={`block w-full pl-10 pr-4 py-3 rounded-xl border border-gray-200/50 bg-gray-50/50 text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-green-500/20 focus:border-green-500 transition-all duration-200 group-hover:bg-gray-50 ${
-                      errors.price ? 'border-red-300 bg-red-50/50' : ''
+                    className={`block w-full pl-10 pr-4 py-3 rounded-xl border border-gray-200/50 dark:border-slate-700/50 bg-gray-50/50 dark:bg-slate-900/50 text-gray-900 dark:text-slate-100 placeholder-gray-400 dark:placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-green-500/20 focus:border-green-500 transition-all duration-200 group-hover:bg-gray-50 dark:group-hover:bg-slate-900 ${
+                      errors.price ? 'border-red-300 dark:border-red-700 bg-red-50/50 dark:bg-red-950/50' : ''
                     }`}
                     placeholder="0.00"
                     required
@@ -917,7 +921,7 @@ useEffect(() => {
                   <div className="absolute inset-0 rounded-xl bg-gradient-to-r from-green-500/5 to-emerald-500/5 opacity-0 group-focus-within:opacity-100 transition-opacity duration-200 pointer-events-none"></div>
                 </div>
                 {errors.price && (
-                  <p className="mt-2 text-sm text-red-600 flex items-center">
+                  <p className="mt-2 text-sm text-red-600 dark:text-red-400 flex items-center">
                     <AlertCircle className="w-4 h-4 mr-1" />
                     {errors.price}
                   </p>
@@ -925,12 +929,12 @@ useEffect(() => {
               </div>
 
               <div className="space-y-2">
-                <label className="block text-sm font-semibold text-gray-700 flex items-center">
+                <label className="block text-sm font-semibold text-gray-700 dark:text-slate-300 flex items-center">
                   Compare at Price
-                  <span className="ml-2 text-xs text-gray-400 font-normal">Strikethrough</span>
+                  <span className="ml-2 text-xs text-gray-400 dark:text-slate-500 font-normal">Strikethrough</span>
                 </label>
                 <div className="relative group">
-                  <div className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-500 font-medium">$</div>
+                  <div className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-500 dark:text-slate-400 font-medium">$</div>
                   <input
                     type="number"
                     name="comparePrice"
@@ -938,7 +942,7 @@ useEffect(() => {
                     onChange={handleInputChange}
                     step="0.01"
                     min="0"
-                    className="block w-full pl-10 pr-4 py-3 rounded-xl border border-gray-200/50 bg-gray-50/50 text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-green-500/20 focus:border-green-500 transition-all duration-200 group-hover:bg-gray-50"
+                    className="block w-full pl-10 pr-4 py-3 rounded-xl border border-gray-200/50 dark:border-slate-700/50 bg-gray-50/50 dark:bg-slate-900/50 text-gray-900 dark:text-slate-100 placeholder-gray-400 dark:placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-green-500/20 focus:border-green-500 transition-all duration-200 group-hover:bg-gray-50 dark:group-hover:bg-slate-900"
                     placeholder="0.00"
                   />
                   <div className="absolute inset-0 rounded-xl bg-gradient-to-r from-green-500/5 to-emerald-500/5 opacity-0 group-focus-within:opacity-100 transition-opacity duration-200 pointer-events-none"></div>
@@ -946,12 +950,12 @@ useEffect(() => {
               </div>
 
               <div className="space-y-2">
-                <label className="block text-sm font-semibold text-gray-700 flex items-center">
+                <label className="block text-sm font-semibold text-gray-700 dark:text-slate-300 flex items-center">
                   Cost Price
-                  <span className="ml-2 text-xs text-gray-400 font-normal">Internal</span>
+                  <span className="ml-2 text-xs text-gray-400 dark:text-slate-500 font-normal">Internal</span>
                 </label>
                 <div className="relative group">
-                  <div className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-500 font-medium">$</div>
+                  <div className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-500 dark:text-slate-400 font-medium">$</div>
                   <input
                     type="number"
                     name="costPrice"
@@ -959,7 +963,7 @@ useEffect(() => {
                     onChange={handleInputChange}
                     step="0.01"
                     min="0"
-                    className="block w-full pl-10 pr-4 py-3 rounded-xl border border-gray-200/50 bg-gray-50/50 text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-green-500/20 focus:border-green-500 transition-all duration-200 group-hover:bg-gray-50"
+                    className="block w-full pl-10 pr-4 py-3 rounded-xl border border-gray-200/50 dark:border-slate-700/50 bg-gray-50/50 dark:bg-slate-900/50 text-gray-900 dark:text-slate-100 placeholder-gray-400 dark:placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-green-500/20 focus:border-green-500 transition-all duration-200 group-hover:bg-gray-50 dark:group-hover:bg-slate-900"
                     placeholder="0.00"
                   />
                   <div className="absolute inset-0 rounded-xl bg-gradient-to-r from-green-500/5 to-emerald-500/5 opacity-0 group-focus-within:opacity-100 transition-opacity duration-200 pointer-events-none"></div>
@@ -969,14 +973,14 @@ useEffect(() => {
 
             {/* Profit Calculator */}
             {formData.price && formData.costPrice && (
-              <div className="mt-6 p-4 rounded-xl bg-gradient-to-r from-green-50 to-emerald-50 border border-green-200/50">
+              <div className="mt-6 p-4 rounded-xl bg-gradient-to-r from-green-50 to-emerald-50 border border-green-200/50 dark:border-green-800/50">
                 <div className="flex items-center justify-between">
-                  <span className="text-sm font-medium text-green-700">Estimated Profit</span>
-                  <span className="text-lg font-bold text-green-800">
+                  <span className="text-sm font-medium text-green-700 dark:text-green-300">Estimated Profit</span>
+                  <span className="text-lg font-bold text-green-800 dark:text-green-300">
                     ${(parseFloat(formData.price) - parseFloat(formData.costPrice || 0)).toFixed(2)}
                   </span>
                 </div>
-                <div className="mt-2 text-xs text-green-600">
+                <div className="mt-2 text-xs text-green-600 dark:text-green-400">
                   Margin: {((parseFloat(formData.price) - parseFloat(formData.costPrice || 0)) / parseFloat(formData.price) * 100).toFixed(1)}%
                 </div>
               </div>
@@ -986,7 +990,7 @@ useEffect(() => {
           {/* Inventory */}
           <div 
             ref={sectionRefs.inventory}
-            className={`bg-white rounded-2xl border border-gray-200/50 shadow-xl shadow-gray-900/5 p-6 sm:p-8 lg:p-10 transition-all duration-300 scroll-mt-32 ${
+            className={`bg-white dark:bg-slate-800 rounded-2xl border border-gray-200/50 dark:border-slate-700/50 shadow-xl shadow-gray-900/5 dark:shadow-black/40 p-6 sm:p-8 lg:p-10 transition-all duration-300 scroll-mt-32 ${
               activeSection === 'inventory' ? 'ring-2 ring-blue-500/20 shadow-2xl shadow-blue-500/10' : ''
             }`}>
             <div className="flex items-center justify-between mb-8">
@@ -995,17 +999,17 @@ useEffect(() => {
                   <Package className="w-5 h-5" />
                 </div>
                 <div>
-                  <h2 className="text-xl font-bold text-gray-900">Inventory Management</h2>
-                  <p className="text-sm text-gray-500 mt-0.5">Track stock and availability</p>
+                  <h2 className="text-xl font-bold text-gray-900 dark:text-slate-100">Inventory Management</h2>
+                  <p className="text-sm text-gray-500 dark:text-slate-400 mt-0.5">Track stock and availability</p>
                 </div>
               </div>
             </div>
             
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div className="space-y-2">
-                <label className="block text-sm font-semibold text-gray-700 flex items-center">
+                <label className="block text-sm font-semibold text-gray-700 dark:text-slate-300 flex items-center">
                   SKU
-                  <span className="ml-2 text-xs text-gray-400 font-normal">Stock Keeping Unit</span>
+                  <span className="ml-2 text-xs text-gray-400 dark:text-slate-500 font-normal">Stock Keeping Unit</span>
                 </label>
                 <div className="relative group">
                   <input
@@ -1013,7 +1017,7 @@ useEffect(() => {
                     name="sku"
                     value={formData.sku}
                     onChange={handleInputChange}
-                    className="block w-full px-4 py-3 rounded-xl border border-gray-200/50 bg-gray-50/50 text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500 transition-all duration-200 group-hover:bg-gray-50"
+                    className="block w-full px-4 py-3 rounded-xl border border-gray-200/50 dark:border-slate-700/50 bg-gray-50/50 dark:bg-slate-900/50 text-gray-900 dark:text-slate-100 placeholder-gray-400 dark:placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500 transition-all duration-200 group-hover:bg-gray-50 dark:group-hover:bg-slate-900"
                     placeholder="SKU-12345"
                   />
                   <div className="absolute inset-0 rounded-xl bg-gradient-to-r from-orange-500/5 to-red-500/5 opacity-0 group-focus-within:opacity-100 transition-opacity duration-200 pointer-events-none"></div>
@@ -1021,9 +1025,9 @@ useEffect(() => {
               </div>
 
               <div className="space-y-2">
-                <label className="block text-sm font-semibold text-gray-700 flex items-center">
+                <label className="block text-sm font-semibold text-gray-700 dark:text-slate-300 flex items-center">
                   Barcode
-                  <span className="ml-2 text-xs text-gray-400 font-normal">Optional</span>
+                  <span className="ml-2 text-xs text-gray-400 dark:text-slate-500 font-normal">Optional</span>
                 </label>
                 <div className="relative group">
                   <input
@@ -1031,7 +1035,7 @@ useEffect(() => {
                     name="barcode"
                     value={formData.barcode}
                     onChange={handleInputChange}
-                    className="block w-full px-4 py-3 rounded-xl border border-gray-200/50 bg-gray-50/50 text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500 transition-all duration-200 group-hover:bg-gray-50"
+                    className="block w-full px-4 py-3 rounded-xl border border-gray-200/50 dark:border-slate-700/50 bg-gray-50/50 dark:bg-slate-900/50 text-gray-900 dark:text-slate-100 placeholder-gray-400 dark:placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500 transition-all duration-200 group-hover:bg-gray-50 dark:group-hover:bg-slate-900"
                     placeholder="1234567890"
                   />
                   <div className="absolute inset-0 rounded-xl bg-gradient-to-r from-orange-500/5 to-red-500/5 opacity-0 group-focus-within:opacity-100 transition-opacity duration-200 pointer-events-none"></div>
@@ -1040,28 +1044,28 @@ useEffect(() => {
             </div>
 
             <div className="mt-8 space-y-4">
-              <div className="flex items-center justify-between p-4 rounded-xl bg-gradient-to-r from-orange-50 to-red-50 border border-orange-200/50">
+              <div className="flex items-center justify-between p-4 rounded-xl bg-gradient-to-r from-orange-50 to-red-50 border border-orange-200/50 dark:border-orange-800/50">
                 <label className="flex items-center cursor-pointer">
                   <input
                     type="checkbox"
                     name="trackQuantity"
                     checked={formData.trackQuantity}
                     onChange={handleInputChange}
-                    className="w-5 h-5 text-orange-600 border-gray-300 rounded focus:ring-orange-500 focus:ring-2"
+                    className="w-5 h-5 text-orange-600 dark:text-orange-400 border-gray-300 dark:border-slate-600 rounded focus:ring-orange-500 focus:ring-2"
                   />
-                  <span className="ml-3 text-sm font-semibold text-gray-700">Track Quantity</span>
+                  <span className="ml-3 text-sm font-semibold text-gray-700 dark:text-slate-300">Track Quantity</span>
                 </label>
                 <div className="flex items-center space-x-2">
-                  <div className={`w-2 h-2 rounded-full ${formData.trackQuantity ? 'bg-green-500 animate-pulse' : 'bg-gray-300'}`}></div>
-                  <span className="text-xs text-gray-500">{formData.trackQuantity ? 'Enabled' : 'Disabled'}</span>
+                  <div className={`w-2 h-2 rounded-full ${formData.trackQuantity ? 'bg-green-500 animate-pulse' : 'bg-gray-300 dark:bg-slate-600'}`}></div>
+                  <span className="text-xs text-gray-500 dark:text-slate-400">{formData.trackQuantity ? 'Enabled' : 'Disabled'}</span>
                 </div>
               </div>
 
               {formData.trackQuantity && (
                 <div className="space-y-2 animate-fade-in">
-                  <label className="block text-sm font-semibold text-gray-700 flex items-center">
+                  <label className="block text-sm font-semibold text-gray-700 dark:text-slate-300 flex items-center">
                     Quantity *
-                    <span className="ml-2 text-xs text-gray-400 font-normal">Current stock level</span>
+                    <span className="ml-2 text-xs text-gray-400 dark:text-slate-500 font-normal">Current stock level</span>
                   </label>
                   <div className="relative group">
                     <input
@@ -1070,7 +1074,7 @@ useEffect(() => {
                       value={formData.quantity}
                       onChange={handleInputChange}
                       min="0"
-                      className="block w-full px-4 py-3 rounded-xl border border-gray-200/50 bg-gray-50/50 text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500 transition-all duration-200 group-hover:bg-gray-50"
+                      className="block w-full px-4 py-3 rounded-xl border border-gray-200/50 dark:border-slate-700/50 bg-gray-50/50 dark:bg-slate-900/50 text-gray-900 dark:text-slate-100 placeholder-gray-400 dark:placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500 transition-all duration-200 group-hover:bg-gray-50 dark:group-hover:bg-slate-900"
                       placeholder="0"
                       required={formData.trackQuantity}
                     />
@@ -1081,20 +1085,20 @@ useEffect(() => {
             </div>
 
             <div className="mt-8">
-              <label className="flex items-center justify-between p-4 rounded-xl bg-gradient-to-r from-blue-50 to-indigo-50 border border-blue-200/50 cursor-pointer hover:bg-blue-100/50 transition-all duration-200">
+              <label className="flex items-center justify-between p-4 rounded-xl bg-gradient-to-r from-blue-50 to-indigo-50 border border-blue-200/50 dark:border-blue-800/50 cursor-pointer hover:bg-blue-100/50 dark:hover:bg-blue-900/50 transition-all duration-200">
                 <div className="flex items-center">
                   <input
                     type="checkbox"
                     name="allowBackorder"
                     checked={formData.allowBackorder}
                     onChange={handleInputChange}
-                    className="w-5 h-5 text-blue-600 border-gray-300 rounded focus:ring-blue-500 focus:ring-2"
+                    className="w-5 h-5 text-blue-600 dark:text-blue-400 border-gray-300 dark:border-slate-600 rounded focus:ring-blue-500 focus:ring-2"
                   />
-                  <span className="ml-3 text-sm font-semibold text-gray-700">Allow Backorder</span>
+                  <span className="ml-3 text-sm font-semibold text-gray-700 dark:text-slate-300">Allow Backorder</span>
                 </div>
                 <div className="flex items-center space-x-2">
-                  <div className={`w-2 h-2 rounded-full ${formData.allowBackorder ? 'bg-blue-500 animate-pulse' : 'bg-gray-300'}`}></div>
-                  <span className="text-xs text-gray-500">{formData.allowBackorder ? 'Enabled' : 'Disabled'}</span>
+                  <div className={`w-2 h-2 rounded-full ${formData.allowBackorder ? 'bg-blue-500 animate-pulse' : 'bg-gray-300 dark:bg-slate-600'}`}></div>
+                  <span className="text-xs text-gray-500 dark:text-slate-400">{formData.allowBackorder ? 'Enabled' : 'Disabled'}</span>
                 </div>
               </label>
             </div>
@@ -1103,7 +1107,7 @@ useEffect(() => {
           {/* Product Organization */}
           <div 
             ref={sectionRefs.organization}
-            className={`bg-white rounded-2xl border border-gray-200/50 shadow-xl shadow-gray-900/5 p-6 sm:p-8 lg:p-10 transition-all duration-300 scroll-mt-32 ${
+            className={`bg-white dark:bg-slate-800 rounded-2xl border border-gray-200/50 dark:border-slate-700/50 shadow-xl shadow-gray-900/5 dark:shadow-black/40 p-6 sm:p-8 lg:p-10 transition-all duration-300 scroll-mt-32 ${
               activeSection === 'organization' ? 'ring-2 ring-blue-500/20 shadow-2xl shadow-blue-500/10' : ''
             }`}>
             <div className="flex items-center justify-between mb-8">
@@ -1112,25 +1116,25 @@ useEffect(() => {
                   <Package className="w-5 h-5" />
                 </div>
                 <div>
-                  <h2 className="text-xl font-bold text-gray-900">Product Organization</h2>
-                  <p className="text-sm text-gray-500 mt-0.5">Categorize and organize your product</p>
+                  <h2 className="text-xl font-bold text-gray-900 dark:text-slate-100">Product Organization</h2>
+                  <p className="text-sm text-gray-500 dark:text-slate-400 mt-0.5">Categorize and organize your product</p>
                 </div>
               </div>
             </div>
             
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div className="space-y-2">
-                <label className="block text-sm font-semibold text-gray-700 flex items-center">
+                <label className="block text-sm font-semibold text-gray-700 dark:text-slate-300 flex items-center">
                   Category *
-                  <span className="ml-2 text-xs text-gray-400 font-normal">Required</span>
+                  <span className="ml-2 text-xs text-gray-400 dark:text-slate-500 font-normal">Required</span>
                 </label>
                 <div className="relative group">
                   <select
                     name="categoryId"
                     value={formData.categoryId}
                     onChange={handleInputChange}
-                    className={`block w-full px-4 py-3 rounded-xl border border-gray-200/50 bg-gray-50/50 text-gray-900 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 transition-all duration-200 group-hover:bg-gray-50 appearance-none cursor-pointer ${
-                      errors.categoryId ? 'border-red-300 bg-red-50/50' : ''
+                    className={`block w-full px-4 py-3 rounded-xl border border-gray-200/50 dark:border-slate-700/50 bg-gray-50/50 dark:bg-slate-900/50 text-gray-900 dark:text-slate-100 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 transition-all duration-200 group-hover:bg-gray-50 dark:group-hover:bg-slate-900 appearance-none cursor-pointer ${
+                      errors.categoryId ? 'border-red-300 dark:border-red-700 bg-red-50/50 dark:bg-red-950/50' : ''
                     }`}
                     required
                   >
@@ -1146,14 +1150,14 @@ useEffect(() => {
                     )}
                   </select>
                   <div className="absolute inset-y-0 right-0 flex items-center px-3 pointer-events-none">
-                    <svg className="w-4 h-4 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <svg className="w-4 h-4 text-gray-500 dark:text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
                     </svg>
                   </div>
                   <div className="absolute inset-0 rounded-xl bg-gradient-to-r from-indigo-500/5 to-purple-500/5 opacity-0 group-focus-within:opacity-100 transition-opacity duration-200 pointer-events-none"></div>
                 </div>
                 {errors.categoryId && (
-                  <p className="mt-2 text-sm text-red-600 flex items-center">
+                  <p className="mt-2 text-sm text-red-600 dark:text-red-400 flex items-center">
                     <AlertCircle className="w-4 h-4 mr-1" />
                     {errors.categoryId}
                   </p>
@@ -1161,16 +1165,16 @@ useEffect(() => {
               </div>
 
               <div className="space-y-2">
-                <label className="block text-sm font-semibold text-gray-700 flex items-center">
+                <label className="block text-sm font-semibold text-gray-700 dark:text-slate-300 flex items-center">
                   Vendor
-                  <span className="ml-2 text-xs text-gray-400 font-normal">Optional</span>
+                  <span className="ml-2 text-xs text-gray-400 dark:text-slate-500 font-normal">Optional</span>
                 </label>
                 <div className="relative group">
                   <select
                     name="vendorId"
                     value={formData.vendorId}
                     onChange={handleInputChange}
-                    className="block w-full px-4 py-3 rounded-xl border border-gray-200/50 bg-gray-50/50 text-gray-900 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 transition-all duration-200 group-hover:bg-gray-50 appearance-none cursor-pointer"
+                    className="block w-full px-4 py-3 rounded-xl border border-gray-200/50 dark:border-slate-700/50 bg-gray-50/50 dark:bg-slate-900/50 text-gray-900 dark:text-slate-100 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 transition-all duration-200 group-hover:bg-gray-50 dark:group-hover:bg-slate-900 appearance-none cursor-pointer"
                   >
                     <option value="">Select a vendor</option>
                     {vendors.map((vendor) => (
@@ -1180,7 +1184,7 @@ useEffect(() => {
                     ))}
                   </select>
                   <div className="absolute inset-y-0 right-0 flex items-center px-3 pointer-events-none">
-                    <svg className="w-4 h-4 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <svg className="w-4 h-4 text-gray-500 dark:text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
                     </svg>
                   </div>
@@ -1190,16 +1194,16 @@ useEffect(() => {
             </div>
 
             <div className="mt-8 space-y-2">
-              <label className="block text-sm font-semibold text-gray-700 flex items-center">
+              <label className="block text-sm font-semibold text-gray-700 dark:text-slate-300 flex items-center">
                 Status *
-                <span className="ml-2 text-xs text-gray-400 font-normal">Product visibility</span>
+                <span className="ml-2 text-xs text-gray-400 dark:text-slate-500 font-normal">Product visibility</span>
               </label>
               <div className="relative group">
                 <select
                   name="status"
                   value={formData.status}
                   onChange={handleInputChange}
-                  className="block w-full px-4 py-3 rounded-xl border border-gray-200/50 bg-gray-50/50 text-gray-900 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 transition-all duration-200 group-hover:bg-gray-50 appearance-none cursor-pointer"
+                  className="block w-full px-4 py-3 rounded-xl border border-gray-200/50 dark:border-slate-700/50 bg-gray-50/50 dark:bg-slate-900/50 text-gray-900 dark:text-slate-100 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 transition-all duration-200 group-hover:bg-gray-50 dark:group-hover:bg-slate-900 appearance-none cursor-pointer"
                   required
                 >
                   <option value="draft">Draft</option>
@@ -1207,7 +1211,7 @@ useEffect(() => {
                   <option value="archived">Archived</option>
                 </select>
                 <div className="absolute inset-y-0 right-0 flex items-center px-3 pointer-events-none">
-                  <svg className="w-4 h-4 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <svg className="w-4 h-4 text-gray-500 dark:text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
                   </svg>
                 </div>
@@ -1218,11 +1222,11 @@ useEffect(() => {
             {/* Tags Section */}
             <div className="mt-8 space-y-4">
               <div className="flex items-center justify-between">
-                <label className="block text-sm font-semibold text-gray-700 flex items-center">
+                <label className="block text-sm font-semibold text-gray-700 dark:text-slate-300 flex items-center">
                   Tags
-                  <span className="ml-2 text-xs text-gray-400 font-normal">Product keywords</span>
+                  <span className="ml-2 text-xs text-gray-400 dark:text-slate-500 font-normal">Product keywords</span>
                 </label>
-                <div className="px-2 py-1 rounded-lg bg-indigo-100 text-indigo-700 text-xs font-medium">
+                <div className="px-2 py-1 rounded-lg bg-indigo-100 dark:bg-indigo-900/40 text-indigo-700 dark:text-indigo-300 text-xs font-medium">
                   {formData.tags.length} tags
                 </div>
               </div>
@@ -1234,7 +1238,7 @@ useEffect(() => {
                     value={tagInput}
                     onChange={(e) => setTagInput(e.target.value)}
                     onKeyPress={(e) => e.key === 'Enter' && (e.preventDefault(), handleTagAdd())}
-                    className="block w-full px-4 py-3 rounded-xl border border-gray-200/50 bg-gray-50/50 text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 transition-all duration-200 group-hover:bg-gray-50"
+                    className="block w-full px-4 py-3 rounded-xl border border-gray-200/50 dark:border-slate-700/50 bg-gray-50/50 dark:bg-slate-900/50 text-gray-900 dark:text-slate-100 placeholder-gray-400 dark:placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 transition-all duration-200 group-hover:bg-gray-50 dark:group-hover:bg-slate-900"
                     placeholder="Add a tag..."
                   />
                   <div className="absolute inset-0 rounded-xl bg-gradient-to-r from-indigo-500/5 to-purple-500/5 opacity-0 group-focus-within:opacity-100 transition-opacity duration-200 pointer-events-none"></div>
@@ -1253,13 +1257,13 @@ useEffect(() => {
                   {formData.tags.map((tag, index) => (
                     <span
                       key={index}
-                      className="inline-flex items-center px-3 py-1.5 rounded-full text-sm bg-gradient-to-r from-indigo-50 to-purple-50 text-indigo-800 border border-indigo-200/50 group"
+                      className="inline-flex items-center px-3 py-1.5 rounded-full text-sm bg-gradient-to-r from-indigo-50 to-purple-50 text-indigo-800 dark:text-indigo-300 border border-indigo-200/50 dark:border-indigo-800/50 group"
                     >
                       {tag}
                       <button
                         type="button"
                         onClick={() => handleTagRemove(tag)}
-                        className="ml-2 text-indigo-600 hover:text-indigo-800 transition-colors duration-200 transform hover:scale-110"
+                        className="ml-2 text-indigo-600 dark:text-indigo-400 hover:text-indigo-800 dark:hover:text-indigo-300 transition-colors duration-200 transform hover:scale-110"
                       >
                         <X className="w-3 h-3" />
                       </button>
@@ -1273,7 +1277,7 @@ useEffect(() => {
           {/* Shipping */}
           <div 
             ref={sectionRefs.shipping}
-            className={`bg-white rounded-2xl border border-gray-200/50 shadow-xl shadow-gray-900/5 p-6 sm:p-8 lg:p-10 transition-all duration-300 scroll-mt-32 ${
+            className={`bg-white dark:bg-slate-800 rounded-2xl border border-gray-200/50 dark:border-slate-700/50 shadow-xl shadow-gray-900/5 dark:shadow-black/40 p-6 sm:p-8 lg:p-10 transition-all duration-300 scroll-mt-32 ${
               activeSection === 'shipping' ? 'ring-2 ring-blue-500/20 shadow-2xl shadow-blue-500/10' : ''
             }`}>
             <div className="flex items-center justify-between mb-8">
@@ -1282,17 +1286,17 @@ useEffect(() => {
                   <Package className="w-5 h-5" />
                 </div>
                 <div>
-                  <h2 className="text-xl font-bold text-gray-900">Shipping Details</h2>
-                  <p className="text-sm text-gray-500 mt-0.5">Physical product specifications</p>
+                  <h2 className="text-xl font-bold text-gray-900 dark:text-slate-100">Shipping Details</h2>
+                  <p className="text-sm text-gray-500 dark:text-slate-400 mt-0.5">Physical product specifications</p>
                 </div>
               </div>
             </div>
             
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div className="space-y-2">
-                <label className="block text-sm font-semibold text-gray-700 flex items-center">
+                <label className="block text-sm font-semibold text-gray-700 dark:text-slate-300 flex items-center">
                   Weight (kg)
-                  <span className="ml-2 text-xs text-gray-400 font-normal">For shipping calculations</span>
+                  <span className="ml-2 text-xs text-gray-400 dark:text-slate-500 font-normal">For shipping calculations</span>
                 </label>
                 <div className="relative group">
                   <input
@@ -1302,7 +1306,7 @@ useEffect(() => {
                     onChange={handleInputChange}
                     step="0.01"
                     min="0"
-                    className="block w-full px-4 py-3 rounded-xl border border-gray-200/50 bg-gray-50/50 text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-teal-500/20 focus:border-teal-500 transition-all duration-200 group-hover:bg-gray-50"
+                    className="block w-full px-4 py-3 rounded-xl border border-gray-200/50 dark:border-slate-700/50 bg-gray-50/50 dark:bg-slate-900/50 text-gray-900 dark:text-slate-100 placeholder-gray-400 dark:placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-teal-500/20 focus:border-teal-500 transition-all duration-200 group-hover:bg-gray-50 dark:group-hover:bg-slate-900"
                     placeholder="0.00"
                   />
                   <div className="absolute inset-0 rounded-xl bg-gradient-to-r from-teal-500/5 to-cyan-500/5 opacity-0 group-focus-within:opacity-100 transition-opacity duration-200 pointer-events-none"></div>
@@ -1310,9 +1314,9 @@ useEffect(() => {
               </div>
 
               <div className="space-y-2">
-                <label className="block text-sm font-semibold text-gray-700 flex items-center">
+                <label className="block text-sm font-semibold text-gray-700 dark:text-slate-300 flex items-center">
                   Dimensions (cm)
-                  <span className="ml-2 text-xs text-gray-400 font-normal">L × W × H</span>
+                  <span className="ml-2 text-xs text-gray-400 dark:text-slate-500 font-normal">L × W × H</span>
                 </label>
                 <div className="grid grid-cols-3 gap-2">
                   <div className="relative group">
@@ -1322,7 +1326,7 @@ useEffect(() => {
                       onChange={(e) => handleDimensionChange('length', e.target.value)}
                       step="0.1"
                       min="0"
-                      className="block w-full px-3 py-2 rounded-lg border border-gray-200/50 bg-gray-50/50 text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-teal-500/20 focus:border-teal-500 transition-all duration-200 group-hover:bg-gray-50 text-sm"
+                      className="block w-full px-3 py-2 rounded-lg border border-gray-200/50 dark:border-slate-700/50 bg-gray-50/50 dark:bg-slate-900/50 text-gray-900 dark:text-slate-100 placeholder-gray-400 dark:placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-teal-500/20 focus:border-teal-500 transition-all duration-200 group-hover:bg-gray-50 dark:group-hover:bg-slate-900 text-sm"
                       placeholder="L"
                     />
                     <div className="absolute inset-0 rounded-lg bg-gradient-to-r from-teal-500/5 to-cyan-500/5 opacity-0 group-focus-within:opacity-100 transition-opacity duration-200 pointer-events-none"></div>
@@ -1334,7 +1338,7 @@ useEffect(() => {
                       onChange={(e) => handleDimensionChange('width', e.target.value)}
                       step="0.1"
                       min="0"
-                      className="block w-full px-3 py-2 rounded-lg border border-gray-200/50 bg-gray-50/50 text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-teal-500/20 focus:border-teal-500 transition-all duration-200 group-hover:bg-gray-50 text-sm"
+                      className="block w-full px-3 py-2 rounded-lg border border-gray-200/50 dark:border-slate-700/50 bg-gray-50/50 dark:bg-slate-900/50 text-gray-900 dark:text-slate-100 placeholder-gray-400 dark:placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-teal-500/20 focus:border-teal-500 transition-all duration-200 group-hover:bg-gray-50 dark:group-hover:bg-slate-900 text-sm"
                       placeholder="W"
                     />
                     <div className="absolute inset-0 rounded-lg bg-gradient-to-r from-teal-500/5 to-cyan-500/5 opacity-0 group-focus-within:opacity-100 transition-opacity duration-200 pointer-events-none"></div>
@@ -1346,7 +1350,7 @@ useEffect(() => {
                       onChange={(e) => handleDimensionChange('height', e.target.value)}
                       step="0.1"
                       min="0"
-                      className="block w-full px-3 py-2 rounded-lg border border-gray-200/50 bg-gray-50/50 text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-teal-500/20 focus:border-teal-500 transition-all duration-200 group-hover:bg-gray-50 text-sm"
+                      className="block w-full px-3 py-2 rounded-lg border border-gray-200/50 dark:border-slate-700/50 bg-gray-50/50 dark:bg-slate-900/50 text-gray-900 dark:text-slate-100 placeholder-gray-400 dark:placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-teal-500/20 focus:border-teal-500 transition-all duration-200 group-hover:bg-gray-50 dark:group-hover:bg-slate-900 text-sm"
                       placeholder="H"
                     />
                     <div className="absolute inset-0 rounded-lg bg-gradient-to-r from-teal-500/5 to-cyan-500/5 opacity-0 group-focus-within:opacity-100 transition-opacity duration-200 pointer-events-none"></div>
@@ -1357,10 +1361,10 @@ useEffect(() => {
 
             {/* Volume Calculator */}
             {(formData.dimensions.length && formData.dimensions.width && formData.dimensions.height) && (
-              <div className="mt-6 p-4 rounded-xl bg-gradient-to-r from-teal-50 to-cyan-50 border border-teal-200/50">
+              <div className="mt-6 p-4 rounded-xl bg-gradient-to-r from-teal-50 to-cyan-50 border border-teal-200/50 dark:border-teal-800/50">
                 <div className="flex items-center justify-between">
-                  <span className="text-sm font-medium text-teal-700">Calculated Volume</span>
-                  <span className="text-lg font-bold text-teal-800">
+                  <span className="text-sm font-medium text-teal-700 dark:text-teal-300">Calculated Volume</span>
+                  <span className="text-lg font-bold text-teal-800 dark:text-teal-300">
                     {(parseFloat(formData.dimensions.length) * parseFloat(formData.dimensions.width) * parseFloat(formData.dimensions.height)).toFixed(2)} cm³
                   </span>
                 </div>
@@ -1371,7 +1375,7 @@ useEffect(() => {
           {/* Images */}
           <div 
             ref={sectionRefs.images}
-            className={`bg-white rounded-lg sm:rounded-xl lg:rounded-2xl border border-gray-200/50 shadow-xl shadow-gray-900/5 p-3 sm:p-4 lg:p-6 xl:p-8 transition-all duration-300 scroll-mt-20 sm:scroll-mt-24 lg:scroll-mt-32 ${
+            className={`bg-white dark:bg-slate-800 rounded-lg sm:rounded-xl lg:rounded-2xl border border-gray-200/50 dark:border-slate-700/50 shadow-xl shadow-gray-900/5 dark:shadow-black/40 p-3 sm:p-4 lg:p-6 xl:p-8 transition-all duration-300 scroll-mt-20 sm:scroll-mt-24 lg:scroll-mt-32 ${
               activeSection === 'images' ? 'ring-2 ring-blue-500/20 shadow-2xl shadow-blue-500/10' : ''
             }`}>
             <div className="flex flex-col sm:flex-row sm:items-center justify-between mb-4 sm:mb-6 lg:mb-8 space-y-2 sm:space-y-0">
@@ -1380,20 +1384,20 @@ useEffect(() => {
                   <Upload className="w-3 h-3 sm:w-4 sm:h-4 lg:w-5 lg:h-5" />
                 </div>
                 <div>
-                  <h2 className="text-base sm:text-lg lg:text-xl font-bold text-gray-900">Gallery</h2>
-                  <p className="text-xs sm:text-sm text-gray-500 mt-0.5 hidden sm:block">Product images</p>
+                  <h2 className="text-base sm:text-lg lg:text-xl font-bold text-gray-900 dark:text-slate-100">Gallery</h2>
+                  <p className="text-xs sm:text-sm text-gray-500 dark:text-slate-400 mt-0.5 hidden sm:block">Product images</p>
                 </div>
               </div>
-              <div className="hidden sm:flex items-center px-2 sm:px-3 py-1 sm:py-1.5 rounded-full bg-gradient-to-r from-purple-50 to-pink-50 border border-purple-200/50">
-                <Upload className="w-3 h-3 sm:w-4 sm:h-4 text-purple-600 mr-1 sm:mr-2" />
-                <span className="text-xs sm:text-sm font-medium text-purple-700">{previewImages.length} / 10</span>
+              <div className="hidden sm:flex items-center px-2 sm:px-3 py-1 sm:py-1.5 rounded-full bg-gradient-to-r from-purple-50 to-pink-50 border border-purple-200/50 dark:border-purple-800/50">
+                <Upload className="w-3 h-3 sm:w-4 sm:h-4 text-purple-600 dark:text-purple-400 mr-1 sm:mr-2" />
+                <span className="text-xs sm:text-sm font-medium text-purple-700 dark:text-purple-300">{previewImages.length} / 10</span>
               </div>
             </div>
             
             {/* Drag & Drop Upload Area */}
             <div
-              className={`relative border-2 ${isDragging ? 'border-purple-400 bg-purple-50/50' : 'border-dashed border-gray-300'} rounded-lg sm:rounded-xl lg:rounded-2xl p-4 sm:p-6 lg:p-8 xl:p-12 text-center transition-all duration-300 ${
-                isDragging ? 'scale-102 shadow-lg shadow-purple-500/20' : 'hover:border-gray-400 bg-gray-50/30'
+              className={`relative border-2 ${isDragging ? 'border-purple-400 bg-purple-50/50 dark:bg-purple-950/50' : 'border-dashed border-gray-300 dark:border-slate-600'} rounded-lg sm:rounded-xl lg:rounded-2xl p-4 sm:p-6 lg:p-8 xl:p-12 text-center transition-all duration-300 ${
+                isDragging ? 'scale-102 shadow-lg shadow-purple-500/20' : 'hover:border-gray-400 dark:hover:border-slate-500 bg-gray-50/30 dark:bg-slate-900/30'
               }`}
               onDragOver={handleDragOver}
               onDragLeave={handleDragLeave}
@@ -1415,24 +1419,24 @@ useEffect(() => {
                   isDragging ? 'bg-gradient-to-br from-purple-500 to-pink-600 scale-110' : 'bg-gradient-to-br from-purple-100 to-pink-100'
                 }`}>
                   <Upload className={`w-5 h-5 sm:w-6 sm:h-6 lg:w-8 lg:h-8 xl:w-10 xl:h-10 transition-all duration-300 ${
-                    isDragging ? 'text-white' : 'text-purple-600'
+                    isDragging ? 'text-white' : 'text-purple-600 dark:text-purple-400'
                   }`} />
                 </div>
                 <div className="space-y-1 sm:space-y-2">
-                  <span className="text-sm sm:text-base lg:text-lg font-semibold text-gray-900">
+                  <span className="text-sm sm:text-base lg:text-lg font-semibold text-gray-900 dark:text-slate-100">
                     {isDragging ? 'Drop images' : 'Upload images'}
                   </span>
-                  <div className="flex flex-col sm:flex-row items-center text-xs sm:text-sm text-gray-500 space-y-1 sm:space-y-0 sm:space-x-2">
+                  <div className="flex flex-col sm:flex-row items-center text-xs sm:text-sm text-gray-500 dark:text-slate-400 space-y-1 sm:space-y-0 sm:space-x-2">
                     <span>PNG, JPG, GIF up to 20MB</span>
-                    <span className="hidden sm:inline text-gray-300">•</span>
+                    <span className="hidden sm:inline text-gray-300 dark:text-slate-600">•</span>
                     <span>Max 10 images</span>
                   </div>
                 </div>
               </label>
             </div>
             {errors.images && (
-              <div className="mt-4 p-3 rounded-xl bg-red-50 border border-red-200/50">
-                <p className="text-sm text-red-600 flex items-center">
+              <div className="mt-4 p-3 rounded-xl bg-red-50 dark:bg-red-950/40 border border-red-200/50 dark:border-red-800/50">
+                <p className="text-sm text-red-600 dark:text-red-400 flex items-center">
                   <AlertCircle className="w-4 h-4 mr-2" />
                   {errors.images}
                 </p>
@@ -1444,17 +1448,17 @@ useEffect(() => {
               <div className="mt-8">
                 <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
                   <div className="flex items-center space-x-3">
-                    <h4 className="text-lg font-semibold text-gray-900">Gallery Preview</h4>
-                    <div className="px-2 py-1 rounded-lg bg-purple-100 text-purple-700 text-sm font-medium">
+                    <h4 className="text-lg font-semibold text-gray-900 dark:text-slate-100">Gallery Preview</h4>
+                    <div className="px-2 py-1 rounded-lg bg-purple-100 dark:bg-purple-900/40 text-purple-700 dark:text-purple-300 text-sm font-medium">
                       {previewImages.length} images
                     </div>
                   </div>
                   <div className="flex items-center gap-3">
                     {/* Size Capacity Indicator */}
-                    <div className="hidden sm:flex items-center space-x-2 px-3 py-1.5 rounded-lg bg-gradient-to-r from-blue-50 to-indigo-50 border border-blue-200/50">
+                    <div className="hidden sm:flex items-center space-x-2 px-3 py-1.5 rounded-lg bg-gradient-to-r from-blue-50 to-indigo-50 border border-blue-200/50 dark:border-blue-800/50">
                       <div className="flex items-center space-x-2">
-                        <Package className="w-4 h-4 text-blue-600" />
-                        <span className="text-xs font-medium text-blue-700">
+                        <Package className="w-4 h-4 text-blue-600 dark:text-blue-400" />
+                        <span className="text-xs font-medium text-blue-700 dark:text-blue-300">
                           {totalImageSize.toFixed(1)}MB / 200MB
                         </span>
                       </div>
@@ -1472,9 +1476,9 @@ useEffect(() => {
                     </div>
                     
                     {/* Mobile Size Display */}
-                    <div className="sm:hidden flex items-center space-x-1 px-2 py-1 rounded-lg bg-blue-50 border border-blue-200/50">
-                      <Package className="w-3 h-3 text-blue-600" />
-                      <span className="text-xs font-medium text-blue-700">
+                    <div className="sm:hidden flex items-center space-x-1 px-2 py-1 rounded-lg bg-blue-50 dark:bg-blue-950/40 border border-blue-200/50 dark:border-blue-800/50">
+                      <Package className="w-3 h-3 text-blue-600 dark:text-blue-400" />
+                      <span className="text-xs font-medium text-blue-700 dark:text-blue-300">
                         {totalImageSize.toFixed(1)}MB
                       </span>
                       {totalImageSize > 180 && (
@@ -1482,7 +1486,7 @@ useEffect(() => {
                       )}
                     </div>
                     
-                    <span className="text-xs text-gray-500 hidden sm:block">
+                    <span className="text-xs text-gray-500 dark:text-slate-400 hidden sm:block">
                       Drag to reorder • Click to remove
                     </span>
                     <button
@@ -1493,7 +1497,7 @@ useEffect(() => {
                         setImageSizes([])
                         setTotalImageSize(0)
                       }}
-                      className="px-3 py-1.5 text-sm text-red-600 hover:text-red-700 hover:bg-red-50 rounded-lg font-medium transition-all duration-200"
+                      className="px-3 py-1.5 text-sm text-red-600 dark:text-red-400 hover:text-red-700 dark:hover:text-red-300 hover:bg-red-50 dark:hover:bg-red-950/40 rounded-lg font-medium transition-all duration-200"
                     >
                       Clear All
                     </button>
@@ -1505,7 +1509,7 @@ useEffect(() => {
                   {previewImages.map((preview, index) => (
                     <div key={index} className="group relative">
                       {/* Image Container - Smaller Size */}
-                      <div className="relative aspect-square rounded-lg overflow-hidden bg-gray-100 border border-gray-200/50 hover:border-purple-300 hover:shadow-lg transition-all duration-300">
+                      <div className="relative aspect-square rounded-lg overflow-hidden bg-gray-100 dark:bg-slate-800/70 border border-gray-200/50 dark:border-slate-700/50 hover:border-purple-300 dark:hover:border-purple-700 hover:shadow-lg transition-all duration-300">
                         <img
                           src={preview}
                           alt={`Product preview ${index + 1}`}
@@ -1536,13 +1540,13 @@ useEffect(() => {
                       </div>
                       
                       {/* Image Info - Compact with Size */}
-                      <div className="mt-1 px-1 py-1 bg-gray-50 rounded border border-gray-100">
+                      <div className="mt-1 px-1 py-1 bg-gray-50 dark:bg-slate-900 rounded border border-gray-100 dark:border-slate-800">
                         <div className="flex flex-col items-center space-y-0.5">
-                          <span className="text-xs text-gray-500 font-medium">
+                          <span className="text-xs text-gray-500 dark:text-slate-400 font-medium">
                             #{index + 1}
                           </span>
                           {imageSizes[index] && (
-                            <span className="text-xs text-gray-400">
+                            <span className="text-xs text-gray-400 dark:text-slate-500">
                               {imageSizes[index].sizeMB}MB
                             </span>
                           )}
@@ -1558,7 +1562,7 @@ useEffect(() => {
           {/* SEO */}
           <div 
             ref={sectionRefs.seo}
-            className={`bg-white rounded-2xl border border-gray-200/50 shadow-xl shadow-gray-900/5 p-6 sm:p-8 lg:p-10 transition-all duration-300 scroll-mt-32 ${
+            className={`bg-white dark:bg-slate-800 rounded-2xl border border-gray-200/50 dark:border-slate-700/50 shadow-xl shadow-gray-900/5 dark:shadow-black/40 p-6 sm:p-8 lg:p-10 transition-all duration-300 scroll-mt-32 ${
               activeSection === 'seo' ? 'ring-2 ring-blue-500/20 shadow-2xl shadow-blue-500/10' : ''
             }`}>
             <div className="flex items-center justify-between mb-8">
@@ -1567,17 +1571,17 @@ useEffect(() => {
                   <div className="w-5 h-5 flex items-center justify-center text-white font-bold text-sm">SEO</div>
                 </div>
                 <div>
-                  <h2 className="text-xl font-bold text-gray-900">Search Optimization</h2>
-                  <p className="text-sm text-gray-500 mt-0.5">Improve discoverability</p>
+                  <h2 className="text-xl font-bold text-gray-900 dark:text-slate-100">Search Optimization</h2>
+                  <p className="text-sm text-gray-500 dark:text-slate-400 mt-0.5">Improve discoverability</p>
                 </div>
               </div>
             </div>
             
             <div className="space-y-6">
               <div className="space-y-2">
-                <label className="block text-sm font-semibold text-gray-700 flex items-center">
+                <label className="block text-sm font-semibold text-gray-700 dark:text-slate-300 flex items-center">
                   SEO Title
-                  <span className="ml-2 text-xs text-gray-400 font-normal">60 chars max</span>
+                  <span className="ml-2 text-xs text-gray-400 dark:text-slate-500 font-normal">60 chars max</span>
                 </label>
                 <div className="relative group">
                   <input
@@ -1585,7 +1589,7 @@ useEffect(() => {
                     name="seoTitle"
                     value={formData.seoTitle}
                     onChange={handleInputChange}
-                    className="block w-full px-4 py-3 rounded-xl border border-gray-200/50 bg-gray-50/50 text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-pink-500/20 focus:border-pink-500 transition-all duration-200 group-hover:bg-gray-50"
+                    className="block w-full px-4 py-3 rounded-xl border border-gray-200/50 dark:border-slate-700/50 bg-gray-50/50 dark:bg-slate-900/50 text-gray-900 dark:text-slate-100 placeholder-gray-400 dark:placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-pink-500/20 focus:border-pink-500 transition-all duration-200 group-hover:bg-gray-50 dark:group-hover:bg-slate-900"
                     placeholder="SEO title for search engines"
                   />
                   <div className="absolute inset-0 rounded-xl bg-gradient-to-r from-pink-500/5 to-rose-500/5 opacity-0 group-focus-within:opacity-100 transition-opacity duration-200 pointer-events-none"></div>
@@ -1593,9 +1597,9 @@ useEffect(() => {
               </div>
 
               <div className="space-y-2">
-                <label className="block text-sm font-semibold text-gray-700 flex items-center">
+                <label className="block text-sm font-semibold text-gray-700 dark:text-slate-300 flex items-center">
                   SEO Description
-                  <span className="ml-2 text-xs text-gray-400 font-normal">160 chars max</span>
+                  <span className="ml-2 text-xs text-gray-400 dark:text-slate-500 font-normal">160 chars max</span>
                 </label>
                 <div className="relative group">
                   <textarea
@@ -1603,7 +1607,7 @@ useEffect(() => {
                     value={formData.seoDescription}
                     onChange={handleInputChange}
                     rows="3"
-                    className="block w-full px-4 py-3 rounded-xl border border-gray-200/50 bg-gray-50/50 text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-pink-500/20 focus:border-pink-500 transition-all duration-200 group-hover:bg-gray-50 resize-none"
+                    className="block w-full px-4 py-3 rounded-xl border border-gray-200/50 dark:border-slate-700/50 bg-gray-50/50 dark:bg-slate-900/50 text-gray-900 dark:text-slate-100 placeholder-gray-400 dark:placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-pink-500/20 focus:border-pink-500 transition-all duration-200 group-hover:bg-gray-50 dark:group-hover:bg-slate-900 resize-none"
                     placeholder="SEO description for search engines"
                   />
                   <div className="absolute inset-0 rounded-xl bg-gradient-to-r from-pink-500/5 to-rose-500/5 opacity-0 group-focus-within:opacity-100 transition-opacity duration-200 pointer-events-none"></div>
@@ -1614,9 +1618,9 @@ useEffect(() => {
         </div>
 
         {/* Form Actions */}
-        <div className="bg-white rounded-lg border border-gray-200 p-6">
+        <div className="bg-white dark:bg-slate-800 rounded-lg border border-gray-200 dark:border-slate-700 p-6">
           <div className="flex items-center justify-between">
-            <div className="text-xs text-gray-500">
+            <div className="text-xs text-gray-500 dark:text-slate-400">
               <p>💡 Hold Shift + Click "Create" to force fail for testing</p>
             </div>
             <div className="flex items-center space-x-4">

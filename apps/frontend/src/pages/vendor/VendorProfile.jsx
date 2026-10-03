@@ -92,16 +92,16 @@ const VendorProfile = () => {
   return (
     <div className="container mx-auto px-4 py-8">
       <div className="mb-8">
-        <h1 className="text-3xl font-bold text-gray-900 mb-2">Store Profile</h1>
-        <p className="text-gray-600">Manage your store information and settings</p>
+        <h1 className="text-3xl font-bold text-gray-900 dark:text-slate-100 mb-2">Store Profile</h1>
+        <p className="text-gray-600 dark:text-slate-400">Manage your store information and settings</p>
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
         {/* Main Content */}
         <div className="lg:col-span-2">
-          <div className="bg-white rounded-lg p-6 border border-gray-200">
+          <div className="bg-white dark:bg-slate-800 rounded-lg p-6 border border-gray-200 dark:border-slate-700">
             <div className="flex items-center justify-between mb-6">
-              <h2 className="text-xl font-semibold text-gray-900">Store Information</h2>
+              <h2 className="text-xl font-semibold text-gray-900 dark:text-slate-100">Store Information</h2>
               <button
                 onClick={() => setIsEditing(!isEditing)}
                 className="btn-outline flex items-center space-x-2"
@@ -115,7 +115,7 @@ const VendorProfile = () => {
               {/* Store Avatar */}
               <div className="flex items-center space-x-6">
                 <div className="relative">
-                  <div className="w-24 h-24 bg-gray-200 rounded-full overflow-hidden">
+                  <div className="w-24 h-24 bg-gray-200 dark:bg-slate-700 rounded-full overflow-hidden">
                     {formData.avatar ? (
                       <img
                         src={formData.avatar}
@@ -123,8 +123,8 @@ const VendorProfile = () => {
                         className="w-full h-full object-cover"
                       />
                     ) : (
-                      <div className="w-full h-full flex items-center justify-center bg-primary-100">
-                        <Store className="w-12 h-12 text-primary-600" />
+                      <div className="w-full h-full flex items-center justify-center bg-primary-100 dark:bg-primary-900/40">
+                        <Store className="w-12 h-12 text-primary-600 dark:text-primary-400" />
                       </div>
                     )}
                   </div>
@@ -139,15 +139,15 @@ const VendorProfile = () => {
                 </div>
                 
                 <div className="flex-1">
-                  <h3 className="font-medium text-gray-900">Store Logo</h3>
-                  <p className="text-sm text-gray-600">Upload your store logo</p>
+                  <h3 className="font-medium text-gray-900 dark:text-slate-100">Store Logo</h3>
+                  <p className="text-sm text-gray-600 dark:text-slate-400">Upload your store logo</p>
                 </div>
               </div>
 
               {/* Store Details */}
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                  <label className="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-2">
                     Store Name
                   </label>
                   <input
@@ -162,7 +162,7 @@ const VendorProfile = () => {
                 </div>
                 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                  <label className="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-2">
                     Email
                   </label>
                   <input
@@ -178,7 +178,7 @@ const VendorProfile = () => {
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+                <label className="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-2">
                   Store Description
                 </label>
                 <textarea
@@ -194,7 +194,7 @@ const VendorProfile = () => {
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                  <label className="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-2">
                     Phone
                   </label>
                   <input
@@ -209,7 +209,7 @@ const VendorProfile = () => {
                 </div>
                 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                  <label className="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-2">
                     Website
                   </label>
                   <input
@@ -226,7 +226,7 @@ const VendorProfile = () => {
 
               {/* Address */}
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+                <label className="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-2">
                   Address
                 </label>
                 <input
@@ -242,7 +242,7 @@ const VendorProfile = () => {
 
               <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                  <label className="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-2">
                     City
                   </label>
                   <input
@@ -257,7 +257,7 @@ const VendorProfile = () => {
                 </div>
                 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                  <label className="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-2">
                     Postal Code
                   </label>
                   <input
@@ -272,7 +272,7 @@ const VendorProfile = () => {
                 </div>
                 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                  <label className="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-2">
                     Country
                   </label>
                   <input
@@ -306,29 +306,29 @@ const VendorProfile = () => {
         {/* Sidebar */}
         <div className="space-y-6">
           {/* Store Stats */}
-          <div className="bg-white rounded-lg p-6 border border-gray-200">
-            <h3 className="text-lg font-semibold text-gray-900 mb-4">Store Stats</h3>
+          <div className="bg-white dark:bg-slate-800 rounded-lg p-6 border border-gray-200 dark:border-slate-700">
+            <h3 className="text-lg font-semibold text-gray-900 dark:text-slate-100 mb-4">Store Stats</h3>
             
             <div className="space-y-4">
               <div className="flex justify-between">
-                <span className="text-gray-600">Products</span>
+                <span className="text-gray-600 dark:text-slate-400">Products</span>
                 <span className="font-medium">{profile?.productCount || 0}</span>
               </div>
               
               <div className="flex justify-between">
-                <span className="text-gray-600">Orders</span>
+                <span className="text-gray-600 dark:text-slate-400">Orders</span>
                 <span className="font-medium">{profile?.orderCount || 0}</span>
               </div>
               
               <div className="flex justify-between">
-                <span className="text-gray-600">Rating</span>
+                <span className="text-gray-600 dark:text-slate-400">Rating</span>
                 <span className="font-medium">
                   {profile?.rating ? profile.rating.toFixed(1) : 'N/A'}
                 </span>
               </div>
               
               <div className="flex justify-between">
-                <span className="text-gray-600">Member Since</span>
+                <span className="text-gray-600 dark:text-slate-400">Member Since</span>
                 <span className="font-medium">
                   {profile?.createdAt ? new Date(profile.createdAt).getFullYear() : 'N/A'}
                 </span>
@@ -337,13 +337,13 @@ const VendorProfile = () => {
           </div>
 
           {/* Quick Links */}
-          <div className="bg-white rounded-lg p-6 border border-gray-200">
-            <h3 className="text-lg font-semibold text-gray-900 mb-4">Quick Links</h3>
+          <div className="bg-white dark:bg-slate-800 rounded-lg p-6 border border-gray-200 dark:border-slate-700">
+            <h3 className="text-lg font-semibold text-gray-900 dark:text-slate-100 mb-4">Quick Links</h3>
             
             <div className="space-y-3">
               <a
                 href="/vendor/products"
-                className="flex items-center space-x-3 text-gray-700 hover:text-primary-600 transition-colors"
+                className="flex items-center space-x-3 text-gray-700 dark:text-slate-300 hover:text-primary-600 dark:hover:text-primary-400 transition-colors"
               >
                 <Store className="w-4 h-4" />
                 <span>Manage Products</span>
@@ -351,7 +351,7 @@ const VendorProfile = () => {
               
               <a
                 href="/vendor/orders"
-                className="flex items-center space-x-3 text-gray-700 hover:text-primary-600 transition-colors"
+                className="flex items-center space-x-3 text-gray-700 dark:text-slate-300 hover:text-primary-600 dark:hover:text-primary-400 transition-colors"
               >
                 <User className="w-4 h-4" />
                 <span>View Orders</span>
@@ -359,7 +359,7 @@ const VendorProfile = () => {
               
               <a
                 href="/vendor/earnings"
-                className="flex items-center space-x-3 text-gray-700 hover:text-primary-600 transition-colors"
+                className="flex items-center space-x-3 text-gray-700 dark:text-slate-300 hover:text-primary-600 dark:hover:text-primary-400 transition-colors"
               >
                 <DollarSign className="w-4 h-4" />
                 <span>Earnings</span>
@@ -370,7 +370,7 @@ const VendorProfile = () => {
                   href={formData.website}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="flex items-center space-x-3 text-gray-700 hover:text-primary-600 transition-colors"
+                  className="flex items-center space-x-3 text-gray-700 dark:text-slate-300 hover:text-primary-600 dark:hover:text-primary-400 transition-colors"
                 >
                   <Globe className="w-4 h-4" />
                   <span>Visit Store</span>

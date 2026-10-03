@@ -199,11 +199,11 @@ const CheckoutPage = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-gray-50 dark:bg-slate-900">
       {/* Header */}
-      <div className="bg-white border-b border-gray-200">
+      <div className="bg-white dark:bg-slate-800 border-b border-gray-200 dark:border-slate-700">
         <div className="container mx-auto px-4 py-4">
-          <Link to="/" className="text-2xl font-bold text-primary-600">
+          <Link to="/" className="text-2xl font-bold text-primary-600 dark:text-primary-400">
             Ecommerce
           </Link>
         </div>
@@ -218,12 +218,12 @@ const CheckoutPage = () => {
                 <div className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-medium ${
                   currentStep >= step 
                     ? 'bg-primary-600 text-white' 
-                    : 'bg-gray-200 text-gray-600'
+                    : 'bg-gray-200 dark:bg-slate-700 text-gray-600 dark:text-slate-400'
                 }`}>
                   {step}
                 </div>
                 <span className={`ml-2 text-sm ${
-                  currentStep >= step ? 'text-primary-600' : 'text-gray-600'
+                  currentStep >= step ? 'text-primary-600 dark:text-primary-400' : 'text-gray-600 dark:text-slate-400'
                 }`}>
                   {step === 1 && 'Shipping'}
                   {step === 2 && 'Billing'}
@@ -231,7 +231,7 @@ const CheckoutPage = () => {
                   {step === 4 && 'Review'}
                 </span>
                 {step < 4 && (
-                  <ChevronRight className="w-4 h-4 text-gray-400 ml-4" />
+                  <ChevronRight className="w-4 h-4 text-gray-400 dark:text-slate-500 ml-4" />
                 )}
               </div>
             ))}
@@ -243,26 +243,26 @@ const CheckoutPage = () => {
           <div className="lg:col-span-2">
             {/* Step 1: Shipping */}
             {currentStep === 1 && (
-              <div className="bg-white rounded-lg p-6 border border-gray-200">
-                <h2 className="text-xl font-semibold text-gray-900 mb-6">Shipping Information</h2>
+              <div className="bg-white dark:bg-slate-800 rounded-lg p-6 border border-gray-200 dark:border-slate-700">
+                <h2 className="text-xl font-semibold text-gray-900 dark:text-slate-100 mb-6">Shipping Information</h2>
                 
                 {/* Saved Addresses */}
                 {addresses.length > 0 && (
                   <div className="mb-6">
-                    <h3 className="font-medium text-gray-900 mb-3">Saved Addresses</h3>
+                    <h3 className="font-medium text-gray-900 dark:text-slate-100 mb-3">Saved Addresses</h3>
                     <div className="space-y-3">
                       {addresses.map((address) => (
                         <div
                           key={address._id}
-                          className="border border-gray-200 rounded-lg p-4 cursor-pointer hover:border-primary-300"
+                          className="border border-gray-200 dark:border-slate-700 rounded-lg p-4 cursor-pointer hover:border-primary-300 dark:hover:border-primary-700"
                           onClick={() => setShippingAddress(address)}
                         >
                           <div className="flex items-start justify-between">
                             <div>
                               <p className="font-medium">{address.name}</p>
-                              <p className="text-sm text-gray-600">{address.phone}</p>
-                              <p className="text-sm text-gray-600">{address.address}</p>
-                              <p className="text-sm text-gray-600">
+                              <p className="text-sm text-gray-600 dark:text-slate-400">{address.phone}</p>
+                              <p className="text-sm text-gray-600 dark:text-slate-400">{address.address}</p>
+                              <p className="text-sm text-gray-600 dark:text-slate-400">
                                 {address.city}, {address.postalCode}, {address.country}
                               </p>
                             </div>
@@ -280,7 +280,7 @@ const CheckoutPage = () => {
                 <div className="space-y-4">
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-1">
+                      <label className="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-1">
                         Full Name
                       </label>
                       <input
@@ -292,7 +292,7 @@ const CheckoutPage = () => {
                       />
                     </div>
                     <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-1">
+                      <label className="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-1">
                         Phone Number
                       </label>
                       <input
@@ -306,7 +306,7 @@ const CheckoutPage = () => {
                   </div>
                   
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                    <label className="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-1">
                       Address
                     </label>
                     <input
@@ -320,7 +320,7 @@ const CheckoutPage = () => {
                   
                   <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                     <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-1">
+                      <label className="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-1">
                         City
                       </label>
                       <input
@@ -332,7 +332,7 @@ const CheckoutPage = () => {
                       />
                     </div>
                     <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-1">
+                      <label className="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-1">
                         Postal Code
                       </label>
                       <input
@@ -344,7 +344,7 @@ const CheckoutPage = () => {
                       />
                     </div>
                     <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-1">
+                      <label className="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-1">
                         Country
                       </label>
                       <input
@@ -371,8 +371,8 @@ const CheckoutPage = () => {
 
             {/* Step 2: Billing */}
             {currentStep === 2 && (
-              <div className="bg-white rounded-lg p-6 border border-gray-200">
-                <h2 className="text-xl font-semibold text-gray-900 mb-6">Billing Information</h2>
+              <div className="bg-white dark:bg-slate-800 rounded-lg p-6 border border-gray-200 dark:border-slate-700">
+                <h2 className="text-xl font-semibold text-gray-900 dark:text-slate-100 mb-6">Billing Information</h2>
                 
                 <div className="mb-6">
                   <label className="flex items-center space-x-2">
@@ -380,9 +380,9 @@ const CheckoutPage = () => {
                       type="checkbox"
                       checked={sameAsShipping}
                       onChange={(e) => setSameAsShipping(e.target.checked)}
-                      className="h-4 w-4 text-primary-600 focus:ring-primary-500 border-gray-300 rounded"
+                      className="h-4 w-4 text-primary-600 dark:text-primary-400 focus:ring-primary-500 border-gray-300 dark:border-slate-600 rounded"
                     />
-                    <span className="text-sm text-gray-700">
+                    <span className="text-sm text-gray-700 dark:text-slate-300">
                       Same as shipping address
                     </span>
                   </label>
@@ -392,7 +392,7 @@ const CheckoutPage = () => {
                   <div className="space-y-4">
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                       <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-1">
+                        <label className="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-1">
                           Full Name
                         </label>
                         <input
@@ -404,7 +404,7 @@ const CheckoutPage = () => {
                         />
                       </div>
                       <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-1">
+                        <label className="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-1">
                           Phone Number
                         </label>
                         <input
@@ -418,7 +418,7 @@ const CheckoutPage = () => {
                     </div>
                     
                     <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-1">
+                      <label className="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-1">
                         Address
                       </label>
                       <input
@@ -432,7 +432,7 @@ const CheckoutPage = () => {
                     
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                       <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-1">
+                        <label className="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-1">
                           City
                         </label>
                         <input
@@ -444,7 +444,7 @@ const CheckoutPage = () => {
                         />
                       </div>
                       <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-1">
+                        <label className="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-1">
                           Postal Code
                         </label>
                         <input
@@ -456,7 +456,7 @@ const CheckoutPage = () => {
                         />
                       </div>
                       <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-1">
+                        <label className="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-1">
                           Country
                         </label>
                         <input
@@ -484,40 +484,40 @@ const CheckoutPage = () => {
 
             {/* Step 3: Payment */}
             {currentStep === 3 && (
-              <div className="bg-white rounded-lg p-6 border border-gray-200">
-                <h2 className="text-xl font-semibold text-gray-900 mb-6">Payment Method</h2>
+              <div className="bg-white dark:bg-slate-800 rounded-lg p-6 border border-gray-200 dark:border-slate-700">
+                <h2 className="text-xl font-semibold text-gray-900 dark:text-slate-100 mb-6">Payment Method</h2>
                 
                 <div className="space-y-4">
-                  <label className="flex items-center space-x-3 p-4 border border-gray-200 rounded-lg cursor-pointer hover:border-primary-300">
+                  <label className="flex items-center space-x-3 p-4 border border-gray-200 dark:border-slate-700 rounded-lg cursor-pointer hover:border-primary-300 dark:hover:border-primary-700">
                     <input
                       type="radio"
                       name="paymentMethod"
                       value="aamarpay"
                       checked={paymentMethod === 'aamarpay'}
                       onChange={(e) => setPaymentMethod(e.target.value)}
-                      className="h-4 w-4 text-primary-600 focus:ring-primary-500 border-gray-300"
+                      className="h-4 w-4 text-primary-600 dark:text-primary-400 focus:ring-primary-500 border-gray-300 dark:border-slate-600"
                     />
                     <div className="flex-1">
                       <div className="font-medium">Aamarpay</div>
-                      <div className="text-sm text-gray-600">Pay with credit/debit card or mobile banking</div>
+                      <div className="text-sm text-gray-600 dark:text-slate-400">Pay with credit/debit card or mobile banking</div>
                     </div>
-                    <CreditCard className="w-8 h-8 text-gray-400" />
+                    <CreditCard className="w-8 h-8 text-gray-400 dark:text-slate-500" />
                   </label>
 
-                  <label className="flex items-center space-x-3 p-4 border border-gray-200 rounded-lg cursor-pointer hover:border-primary-300">
+                  <label className="flex items-center space-x-3 p-4 border border-gray-200 dark:border-slate-700 rounded-lg cursor-pointer hover:border-primary-300 dark:hover:border-primary-700">
                     <input
                       type="radio"
                       name="paymentMethod"
                       value="cash_on_delivery"
                       checked={paymentMethod === 'cash_on_delivery'}
                       onChange={(e) => setPaymentMethod(e.target.value)}
-                      className="h-4 w-4 text-primary-600 focus:ring-primary-500 border-gray-300"
+                      className="h-4 w-4 text-primary-600 dark:text-primary-400 focus:ring-primary-500 border-gray-300 dark:border-slate-600"
                     />
                     <div className="flex-1">
                       <div className="font-medium">Cash on Delivery</div>
-                      <div className="text-sm text-gray-600">Pay when you receive your order</div>
+                      <div className="text-sm text-gray-600 dark:text-slate-400">Pay when you receive your order</div>
                     </div>
-                    <Truck className="w-8 h-8 text-gray-400" />
+                    <Truck className="w-8 h-8 text-gray-400 dark:text-slate-500" />
                   </label>
                 </div>
 
@@ -534,16 +534,16 @@ const CheckoutPage = () => {
 
             {/* Step 4: Review */}
             {currentStep === 4 && (
-              <div className="bg-white rounded-lg p-6 border border-gray-200">
-                <h2 className="text-xl font-semibold text-gray-900 mb-6">Review Your Order</h2>
+              <div className="bg-white dark:bg-slate-800 rounded-lg p-6 border border-gray-200 dark:border-slate-700">
+                <h2 className="text-xl font-semibold text-gray-900 dark:text-slate-100 mb-6">Review Your Order</h2>
                 
                 {/* Order Items */}
                 <div className="mb-6">
-                  <h3 className="font-medium text-gray-900 mb-4">Order Items ({itemCount})</h3>
+                  <h3 className="font-medium text-gray-900 dark:text-slate-100 mb-4">Order Items ({itemCount})</h3>
                   <div className="space-y-3">
                     {cartItems.map((item) => (
                       <div key={`${item.product._id}-${JSON.stringify(item.variant)}`} className="flex items-center space-x-4">
-                        <div className="w-16 h-16 bg-gray-100 rounded-lg overflow-hidden">
+                        <div className="w-16 h-16 bg-gray-100 dark:bg-slate-800/70 rounded-lg overflow-hidden">
                           <img
                             src={item.product.images[0]?.url || '/api/placeholder/100/100'}
                             alt={item.product.name}
@@ -553,11 +553,11 @@ const CheckoutPage = () => {
                         <div className="flex-1">
                           <p className="font-medium">{item.product.name}</p>
                           {item.variant && (
-                            <p className="text-sm text-gray-600">
+                            <p className="text-sm text-gray-600 dark:text-slate-400">
                               {item.variant.name}: {item.variant.option}
                             </p>
                           )}
-                          <p className="text-sm text-gray-600">Qty: {item.quantity}</p>
+                          <p className="text-sm text-gray-600 dark:text-slate-400">Qty: {item.quantity}</p>
                         </div>
                         <div className="text-right">
                           <p className="font-semibold">
@@ -572,8 +572,8 @@ const CheckoutPage = () => {
                 {/* Shipping & Billing Addresses */}
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
                   <div>
-                    <h3 className="font-medium text-gray-900 mb-3">Shipping Address</h3>
-                    <div className="text-sm text-gray-600 space-y-1">
+                    <h3 className="font-medium text-gray-900 dark:text-slate-100 mb-3">Shipping Address</h3>
+                    <div className="text-sm text-gray-600 dark:text-slate-400 space-y-1">
                       <p>{shippingAddress.name}</p>
                       <p>{shippingAddress.phone}</p>
                       <p>{shippingAddress.address}</p>
@@ -582,8 +582,8 @@ const CheckoutPage = () => {
                     </div>
                   </div>
                   <div>
-                    <h3 className="font-medium text-gray-900 mb-3">Billing Address</h3>
-                    <div className="text-sm text-gray-600 space-y-1">
+                    <h3 className="font-medium text-gray-900 dark:text-slate-100 mb-3">Billing Address</h3>
+                    <div className="text-sm text-gray-600 dark:text-slate-400 space-y-1">
                       <p>{sameAsShipping ? shippingAddress.name : billingAddress.name}</p>
                       <p>{sameAsShipping ? shippingAddress.phone : billingAddress.phone}</p>
                       <p>{sameAsShipping ? shippingAddress.address : billingAddress.address}</p>
@@ -611,38 +611,38 @@ const CheckoutPage = () => {
 
           {/* Order Summary Sidebar */}
           <div className="lg:col-span-1">
-            <div className="bg-white rounded-lg p-6 border border-gray-200 sticky top-4">
-              <h3 className="font-semibold text-gray-900 mb-4">Order Summary</h3>
+            <div className="bg-white dark:bg-slate-800 rounded-lg p-6 border border-gray-200 dark:border-slate-700 sticky top-4">
+              <h3 className="font-semibold text-gray-900 dark:text-slate-100 mb-4">Order Summary</h3>
               
               <div className="space-y-3">
                 <div className="flex justify-between">
-                  <span className="text-gray-600">Subtotal ({itemCount} items)</span>
+                  <span className="text-gray-600 dark:text-slate-400">Subtotal ({itemCount} items)</span>
                   <span className="font-medium">${(subtotal || 0).toFixed(2)}</span>
                 </div>
                 
                 {discount > 0 && (
-                  <div className="flex justify-between text-success-600">
+                  <div className="flex justify-between text-success-600 dark:text-success-400">
                     <span>Discount</span>
                     <span className="font-medium">-${discount.toFixed(2)}</span>
                   </div>
                 )}
                 
                 <div className="flex justify-between">
-                  <span className="text-gray-600">Tax</span>
+                  <span className="text-gray-600 dark:text-slate-400">Tax</span>
                   <span className="font-medium">${calculateTax().toFixed(2)}</span>
                 </div>
                 
                 <div className="flex justify-between">
-                  <span className="text-gray-600">Shipping</span>
+                  <span className="text-gray-600 dark:text-slate-400">Shipping</span>
                   <span className="font-medium">
                     {calculateShipping() === 0 ? 'Free' : `$${calculateShipping().toFixed(2)}`}
                   </span>
                 </div>
                 
-                <div className="border-t border-gray-200 pt-3">
+                <div className="border-t border-gray-200 dark:border-slate-700 pt-3">
                   <div className="flex justify-between">
-                    <span className="text-lg font-bold text-gray-900">Total</span>
-                    <span className="text-lg font-bold text-gray-900">
+                    <span className="text-lg font-bold text-gray-900 dark:text-slate-100">Total</span>
+                    <span className="text-lg font-bold text-gray-900 dark:text-slate-100">
                       ${calculateTotal().toFixed(2)}
                     </span>
                   </div>
@@ -650,10 +650,10 @@ const CheckoutPage = () => {
               </div>
 
               {/* Security Badge */}
-              <div className="mt-6 p-4 bg-gray-50 rounded-lg">
+              <div className="mt-6 p-4 bg-gray-50 dark:bg-slate-900 rounded-lg">
                 <div className="flex items-center space-x-2">
-                  <Shield className="w-5 h-5 text-primary-600" />
-                  <span className="text-sm text-gray-600">
+                  <Shield className="w-5 h-5 text-primary-600 dark:text-primary-400" />
+                  <span className="text-sm text-gray-600 dark:text-slate-400">
                     Secure checkout with SSL encryption
                   </span>
                 </div>

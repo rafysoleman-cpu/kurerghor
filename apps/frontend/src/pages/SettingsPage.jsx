@@ -9,13 +9,22 @@ import { useQuery, useMutation, useQueryClient } from 'react-query'
 import { userAPI } from '../services/api'
 import { useAuthStore } from '../store/authStore'
 import LoadingSpinner from '../components/LoadingSpinner'
+import ThemeAppearanceCard from '../components/settings/ThemeAppearanceCard'
 import toast from 'react-hot-toast'
+
+// Appearance first: it is the only tab that needs no network round trip, so it
+// is the one that always works.
+const SETTINGS_TABS = [
+  { id: 'appearance', label: 'Appearance' },
+  { id: 'security', label: 'Security' },
+  { id: 'addresses', label: 'Addresses' }
+]
 
 const SettingsPage = () => {
   const { user } = useAuthStore()
   const queryClient = useQueryClient()
   
-  const [activeTab, setActiveTab] = useState('security')
+  const [activeTab, setActiveTab] = useState('appearance')
   const [passwordData, setPasswordData] = useState({
     currentPassword: '',
     newPassword: '',
@@ -155,7 +164,10 @@ const SettingsPage = () => {
     })
   }
 
-  if (isLoading) {
+  // Gate the spinner on the Addresses tab only. Appearance and Security need
+  // no request, so making Appearance the default tab must not put the whole
+  // page behind the address query.
+  if (isLoading && activeTab === 'addresses') {
     return <LoadingSpinner />
   }
 
@@ -165,17 +177,18 @@ const SettingsPage = () => {
         {/* Sidebar */}
         <div className="lg:col-span-1">
           <nav className="space-y-1">
-            {['security', 'addresses'].map((tab) => (
+            {SETTINGS_TABS.map((tab) => (
               <button
-                key={tab}
-                onClick={() => setActiveTab(tab)}
-                className={`w-full text-left px-4 py-3 rounded-lg capitalize transition-colors ${
-                  activeTab === tab
-                    ? 'bg-primary-100 text-primary-700 font-medium'
-                    : 'text-gray-600 hover:bg-gray-100'
+                key={tab.id}
+                onClick={() => setActiveTab(tab.id)}
+                aria-current={activeTab === tab.id ? 'page' : undefined}
+                className={`w-full text-left px-4 py-3 rounded-lg transition-colors duration-200 ${
+                  activeTab === tab.id
+                    ? 'bg-primary-100 dark:bg-primary-900/40 text-primary-700 dark:text-primary-300 font-medium'
+                    : 'text-gray-600 dark:text-slate-400 hover:bg-gray-100 dark:hover:bg-slate-800'
                 }`}
               >
-                {tab}
+                {tab.label}
               </button>
             ))}
           </nav>
@@ -183,14 +196,17 @@ const SettingsPage = () => {
 
         {/* Content */}
         <div className="lg:col-span-3">
+          {/* Appearance Tab */}
+          {activeTab === 'appearance' && <ThemeAppearanceCard />}
+
           {/* Security Tab */}
           {activeTab === 'security' && (
-            <div className="bg-white rounded-lg p-6 border border-gray-200">
-              <h2 className="text-xl font-semibold text-gray-900 mb-6">Security Settings</h2>
+            <div className="bg-white dark:bg-slate-800 rounded-lg p-6 border border-gray-200 dark:border-slate-700">
+              <h2 className="text-xl font-semibold text-gray-900 dark:text-slate-100 mb-6">Security Settings</h2>
               
               <form onSubmit={handlePasswordSubmit} className="space-y-6">
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                  <label className="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-1">
                     Current Password
                   </label>
                   <input
@@ -204,7 +220,7 @@ const SettingsPage = () => {
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                  <label className="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-1">
                     New Password
                   </label>
                   <input
@@ -218,7 +234,7 @@ const SettingsPage = () => {
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                  <label className="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-1">
                     Confirm New Password
                   </label>
                   <input
@@ -248,7 +264,7 @@ const SettingsPage = () => {
           {activeTab === 'addresses' && (
             <div className="space-y-6">
               <div className="flex items-center justify-between">
-                <h2 className="text-xl font-semibold text-gray-900">Shipping Addresses</h2>
+                <h2 className="text-xl font-semibold text-gray-900 dark:text-slate-100">Shipping Addresses</h2>
                 <button
                   onClick={() => setShowAddressForm(!showAddressForm)}
                   className="btn-primary flex items-center space-x-2"
@@ -260,13 +276,13 @@ const SettingsPage = () => {
 
               {/* Add Address Form */}
               {showAddressForm && (
-                <div className="bg-white rounded-lg p-6 border border-gray-200">
-                  <h3 className="font-semibold text-gray-900 mb-4">Add New Address</h3>
+                <div className="bg-white dark:bg-slate-800 rounded-lg p-6 border border-gray-200 dark:border-slate-700">
+                  <h3 className="font-semibold text-gray-900 dark:text-slate-100 mb-4">Add New Address</h3>
                   
                   <form onSubmit={handleAddressSubmit} className="space-y-4">
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                       <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-1">
+                        <label className="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-1">
                           Address Type
                         </label>
                         <select
@@ -281,7 +297,7 @@ const SettingsPage = () => {
                       </div>
                       
                       <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-1">
+                        <label className="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-1">
                           Name
                         </label>
                         <input
@@ -296,7 +312,7 @@ const SettingsPage = () => {
                     </div>
 
                     <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-1">
+                      <label className="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-1">
                         Phone
                       </label>
                       <input
@@ -310,7 +326,7 @@ const SettingsPage = () => {
                     </div>
 
                     <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-1">
+                      <label className="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-1">
                         Address
                       </label>
                       <input
@@ -325,7 +341,7 @@ const SettingsPage = () => {
 
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                       <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-1">
+                        <label className="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-1">
                           City
                         </label>
                         <input
@@ -339,7 +355,7 @@ const SettingsPage = () => {
                       </div>
                       
                       <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-1">
+                        <label className="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-1">
                           Postal Code
                         </label>
                         <input
@@ -353,7 +369,7 @@ const SettingsPage = () => {
                       </div>
                       
                       <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-1">
+                        <label className="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-1">
                           Country
                         </label>
                         <input
@@ -372,9 +388,9 @@ const SettingsPage = () => {
                         type="checkbox"
                         checked={addressForm.isDefault}
                         onChange={(e) => setAddressForm(prev => ({ ...prev, isDefault: e.target.checked }))}
-                        className="h-4 w-4 text-primary-600 focus:ring-primary-500 border-gray-300 rounded"
+                        className="h-4 w-4 text-primary-600 dark:text-primary-400 focus:ring-primary-500 dark:border-slate-600 border-gray-300 rounded dark:bg-slate-900"
                       />
-                      <label className="text-sm text-gray-700">
+                      <label className="text-sm text-gray-700 dark:text-slate-300">
                         Set as default address
                       </label>
                     </div>
@@ -402,17 +418,17 @@ const SettingsPage = () => {
               {/* Existing Addresses */}
               <div className="space-y-4">
                 {addresses.map((address) => (
-                  <div key={address._id} className="bg-white rounded-lg p-6 border border-gray-200">
+                  <div key={address._id} className="bg-white dark:bg-slate-800 rounded-lg p-6 border border-gray-200 dark:border-slate-700">
                     <div className="flex items-start justify-between">
                       <div className="flex-1">
                         <div className="flex items-center space-x-3 mb-3">
-                          <h3 className="font-semibold text-gray-900 capitalize">{address.type}</h3>
+                          <h3 className="font-semibold text-gray-900 dark:text-slate-100 capitalize">{address.type}</h3>
                           {address.isDefault && (
                             <span className="badge-success">Default</span>
                           )}
                         </div>
                         
-                        <div className="space-y-1 text-sm text-gray-600">
+                        <div className="space-y-1 text-sm text-gray-600 dark:text-slate-400">
                           <p>{address.name}</p>
                           <p>{address.phone}</p>
                           <p>{address.address}</p>
@@ -425,14 +441,14 @@ const SettingsPage = () => {
                         {!address.isDefault && (
                           <button
                             onClick={() => handleSetDefaultAddress(address._id)}
-                            className="text-primary-600 hover:text-primary-700 text-sm"
+                            className="text-primary-600 dark:text-primary-400 hover:text-primary-700 dark:hover:text-primary-300 text-sm"
                           >
                             Set Default
                           </button>
                         )}
                         <button
                           onClick={() => handleDeleteAddress(address._id)}
-                          className="text-red-600 hover:text-red-700"
+                          className="text-red-600 dark:text-red-400 hover:text-red-700 dark:hover:text-red-300"
                         >
                           <Trash2 className="w-4 h-4" />
                         </button>

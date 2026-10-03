@@ -16,6 +16,7 @@ import {
 } from 'lucide-react'
 import { useQuery, useMutation, useQueryClient } from 'react-query'
 import { vendorAPI } from '../../services/api'
+import { invalidateCatalog } from '../../utils/queryKeys'
 import LoadingSpinner from '../../components/LoadingSpinner'
 import Pagination from '../../components/Pagination'
 import toast from 'react-hot-toast'
@@ -44,10 +45,11 @@ const VendorProducts = () => {
   const deleteProductMutation = useMutation(
     vendorAPI.deleteProduct,
     {
-      onSuccess: () => {
-        toast.success('Product deleted successfully!')
-        queryClient.invalidateQueries('vendorProducts')
-      },
+    onSuccess: () => {
+      toast.success('Product deleted successfully!')
+      invalidateCatalog(queryClient)
+      queryClient.invalidateQueries('vendorProducts')
+    },
       onError: (error) => {
         toast.error(error.response?.data?.error || 'Failed to delete product')
       }
@@ -83,13 +85,13 @@ const VendorProducts = () => {
   const getStatusColor = (status) => {
     switch (status) {
       case 'active':
-        return 'text-success-600 bg-success-50'
+        return 'text-success-600 dark:text-success-400 bg-success-50 dark:bg-success-950/40'
       case 'inactive':
-        return 'text-gray-600 bg-gray-50'
+        return 'text-gray-600 dark:text-slate-400 bg-gray-50 dark:bg-slate-900'
       case 'out_of_stock':
-        return 'text-error-600 bg-error-50'
+        return 'text-error-600 dark:text-error-400 bg-error-50 dark:bg-error-950/40'
       default:
-        return 'text-gray-600 bg-gray-50'
+        return 'text-gray-600 dark:text-slate-400 bg-gray-50 dark:bg-slate-900'
     }
   }
 
@@ -115,8 +117,8 @@ const VendorProducts = () => {
       {/* Header */}
       <div className="flex items-center justify-between mb-8">
         <div>
-          <h1 className="text-3xl font-bold text-gray-900 mb-2">My Products</h1>
-          <p className="text-gray-600">
+          <h1 className="text-3xl font-bold text-gray-900 dark:text-slate-100 mb-2">My Products</h1>
+          <p className="text-gray-600 dark:text-slate-400">
             {products.length} product{products.length !== 1 ? 's' : ''}
           </p>
         </div>
@@ -131,13 +133,13 @@ const VendorProducts = () => {
       </div>
 
       {/* Search and Filters */}
-      <div className="bg-white rounded-lg p-6 border border-gray-200 mb-8">
+      <div className="bg-white dark:bg-slate-800 rounded-lg p-6 border border-gray-200 dark:border-slate-700 mb-8">
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           {/* Search */}
           <form onSubmit={handleSearch} className="relative">
             <div className="relative">
               <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                <Search className="h-5 w-5 text-gray-400" />
+                <Search className="h-5 w-5 text-gray-400 dark:text-slate-500" />
               </div>
               <input
                 type="text"
@@ -166,17 +168,17 @@ const VendorProducts = () => {
 
           {/* View Mode */}
           <div className="flex items-center space-x-4">
-            <span className="text-sm text-gray-600">View:</span>
-            <div className="flex items-center border border-gray-300 rounded-lg">
+            <span className="text-sm text-gray-600 dark:text-slate-400">View:</span>
+            <div className="flex items-center border border-gray-300 dark:border-slate-600 rounded-lg">
               <button
                 onClick={() => setViewMode('grid')}
-                className={`p-2 rounded-l-lg ${viewMode === 'grid' ? 'bg-primary-100 text-primary-600' : 'text-gray-600 hover:bg-gray-100'}`}
+                className={`p-2 rounded-l-lg ${viewMode === 'grid' ? 'bg-primary-100 dark:bg-primary-900/40 text-primary-600 dark:text-primary-400' : 'text-gray-600 dark:text-slate-400 hover:bg-gray-100 dark:hover:bg-slate-800/70'}`}
               >
                 <Grid className="w-4 h-4" />
               </button>
               <button
                 onClick={() => setViewMode('list')}
-                className={`p-2 rounded-r-lg ${viewMode === 'list' ? 'bg-primary-100 text-primary-600' : 'text-gray-600 hover:bg-gray-100'}`}
+                className={`p-2 rounded-r-lg ${viewMode === 'list' ? 'bg-primary-100 dark:bg-primary-900/40 text-primary-600 dark:text-primary-400' : 'text-gray-600 dark:text-slate-400 hover:bg-gray-100 dark:hover:bg-slate-800/70'}`}
               >
                 <List className="w-4 h-4" />
               </button>
@@ -194,12 +196,12 @@ const VendorProducts = () => {
               : 'space-y-4'
           }>
             {products.map((product) => (
-              <div key={product._id} className="bg-white rounded-lg border border-gray-200 overflow-hidden hover:shadow-lg transition-shadow">
+              <div key={product._id} className="bg-white dark:bg-slate-800 rounded-lg border border-gray-200 dark:border-slate-700 overflow-hidden hover:shadow-lg transition-shadow">
                 {viewMode === 'grid' ? (
                   // Grid View
                   <div className="p-4">
                     {/* Product Image */}
-                    <div className="relative aspect-square bg-gray-100 rounded-lg overflow-hidden mb-4">
+                    <div className="relative aspect-square bg-gray-100 dark:bg-slate-800/70 rounded-lg overflow-hidden mb-4">
                       <img
                         src={product.images?.[0]?.url || '/api/placeholder/300/300'}
                         alt={product.name}
@@ -215,16 +217,16 @@ const VendorProducts = () => {
 
                     {/* Product Info */}
                     <div className="space-y-2">
-                      <h3 className="font-semibold text-gray-900 line-clamp-2">
+                      <h3 className="font-semibold text-gray-900 dark:text-slate-100 line-clamp-2">
                         {product.name}
                       </h3>
                       
                       <div className="flex items-center justify-between">
-                        <span className="text-lg font-bold text-gray-900">
+                        <span className="text-lg font-bold text-gray-900 dark:text-slate-100">
                           ${product.price.toFixed(2)}
                         </span>
                         
-                        <div className="text-sm text-gray-600">
+                        <div className="text-sm text-gray-600 dark:text-slate-400">
                           <p>{product.stock} in stock</p>
                           <p>{product.soldCount} sold</p>
                         </div>
@@ -243,7 +245,7 @@ const VendorProducts = () => {
                         <button
                           onClick={() => handleDeleteProduct(product._id)}
                           disabled={deleteProductMutation.isLoading}
-                          className="btn-outline flex items-center space-x-2 text-sm text-error-600 hover:bg-error-50"
+                          className="btn-outline flex items-center space-x-2 text-sm text-error-600 dark:text-error-400 hover:bg-error-50 dark:hover:bg-error-950/40"
                         >
                           <Trash2 className="w-3 h-3" />
                           <span>Delete</span>
@@ -256,7 +258,7 @@ const VendorProducts = () => {
                   <div className="p-6">
                     <div className="flex items-center space-x-4">
                       {/* Product Image */}
-                      <div className="w-20 h-20 bg-gray-100 rounded-lg overflow-hidden flex-shrink-0">
+                      <div className="w-20 h-20 bg-gray-100 dark:bg-slate-800/70 rounded-lg overflow-hidden flex-shrink-0">
                         <img
                           src={product.images?.[0]?.url || '/api/placeholder/100/100'}
                           alt={product.name}
@@ -267,7 +269,7 @@ const VendorProducts = () => {
                       {/* Product Details */}
                       <div className="flex-1">
                         <div className="flex items-center justify-between mb-2">
-                          <h3 className="font-semibold text-gray-900">
+                          <h3 className="font-semibold text-gray-900 dark:text-slate-100">
                             {product.name}
                           </h3>
                           
@@ -277,22 +279,22 @@ const VendorProducts = () => {
                           </div>
                         </div>
                         
-                        <div className="grid grid-cols-3 gap-4 text-sm text-gray-600">
+                        <div className="grid grid-cols-3 gap-4 text-sm text-gray-600 dark:text-slate-400">
                           <div>
                             <p>Price</p>
-                            <p className="font-semibold text-gray-900">
+                            <p className="font-semibold text-gray-900 dark:text-slate-100">
                               ${product.price.toFixed(2)}
                             </p>
                           </div>
                           <div>
                             <p>Stock</p>
-                            <p className="font-semibold text-gray-900">
+                            <p className="font-semibold text-gray-900 dark:text-slate-100">
                               {product.stock}
                             </p>
                           </div>
                           <div>
                             <p>Sold</p>
-                            <p className="font-semibold text-gray-900">
+                            <p className="font-semibold text-gray-900 dark:text-slate-100">
                               {product.soldCount}
                             </p>
                           </div>
@@ -321,7 +323,7 @@ const VendorProducts = () => {
                         <button
                           onClick={() => handleDeleteProduct(product._id)}
                           disabled={deleteProductMutation.isLoading}
-                          className="btn-outline flex items-center space-x-2 text-error-600 hover:bg-error-50"
+                          className="btn-outline flex items-center space-x-2 text-error-600 dark:text-error-400 hover:bg-error-50 dark:hover:bg-error-950/40"
                         >
                           <Trash2 className="w-4 h-4" />
                           <span>Delete</span>
@@ -348,11 +350,11 @@ const VendorProducts = () => {
       ) : (
         // Empty State
         <div className="text-center py-16">
-          <Package className="w-16 h-16 text-gray-400 mx-auto mb-4" />
-          <h3 className="text-xl font-semibold text-gray-900 mb-2">
+          <Package className="w-16 h-16 text-gray-400 dark:text-slate-500 mx-auto mb-4" />
+          <h3 className="text-xl font-semibold text-gray-900 dark:text-slate-100 mb-2">
             No products found
           </h3>
-          <p className="text-gray-600 mb-8">
+          <p className="text-gray-600 dark:text-slate-400 mb-8">
             {statusFilter 
               ? `No ${statusFilter} products found.`
               : "You haven't added any products yet."

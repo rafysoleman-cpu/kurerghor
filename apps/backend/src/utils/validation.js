@@ -126,6 +126,13 @@ export const changePasswordSchema = Joi.object({
   newPassword: Joi.string().required().min(6)
 });
 
+// Interface theme preference. Kept out of updateProfileSchema on purpose: a
+// profile save must never be able to clobber the theme, and the theme must not
+// require a profile-shaped payload.
+export const updateThemeSchema = Joi.object({
+  theme: Joi.string().valid('light', 'dark', 'system').required()
+});
+
 // Product validation schemas
 export const createProductSchema = Joi.object({
   name: Joi.string().required().min(1).max(100),

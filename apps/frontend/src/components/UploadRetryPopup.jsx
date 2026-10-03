@@ -42,7 +42,7 @@ const UploadRetryPopup = ({
         message: 'Upload timed out. This might be due to a slow connection or large file size.',
         recoverable: true,
         icon: Clock,
-        color: 'text-orange-500'
+        color: 'text-orange-500 dark:text-orange-400'
       }
     }
     
@@ -52,7 +52,7 @@ const UploadRetryPopup = ({
         message: 'Network connection lost. Please check your internet connection.',
         recoverable: true,
         icon: WifiOff,
-        color: 'text-red-500'
+        color: 'text-red-500 dark:text-red-400'
       }
     }
     
@@ -62,7 +62,7 @@ const UploadRetryPopup = ({
         message: 'Server error occurred. Our team has been notified.',
         recoverable: true,
         icon: Server,
-        color: 'text-purple-500'
+        color: 'text-purple-500 dark:text-purple-400'
       }
     }
     
@@ -72,7 +72,7 @@ const UploadRetryPopup = ({
         message: 'File validation failed. Please check your file formats and sizes.',
         recoverable: false,
         icon: FileImage,
-        color: 'text-blue-500'
+        color: 'text-blue-500 dark:text-blue-400'
       }
     }
     
@@ -81,7 +81,7 @@ const UploadRetryPopup = ({
       message: message || 'An unexpected error occurred during upload.',
       recoverable: true,
       icon: AlertTriangle,
-      color: 'text-gray-500'
+      color: 'text-gray-500 dark:text-slate-400'
     }
   }
 
@@ -130,21 +130,21 @@ const UploadRetryPopup = ({
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-      <div className="bg-white rounded-xl shadow-2xl max-w-lg w-full max-h-[90vh] overflow-y-auto">
+      <div className="bg-white dark:bg-slate-800 rounded-xl shadow-2xl max-w-lg w-full max-h-[90vh] overflow-y-auto">
         {/* Header */}
-        <div className="flex items-center justify-between p-6 border-b border-gray-200">
+        <div className="flex items-center justify-between p-6 border-b border-gray-200 dark:border-slate-700">
           <div className="flex items-center space-x-3">
-            <div className={`p-2 rounded-lg bg-gray-50 ${errorDetails.color}`}>
+            <div className={`p-2 rounded-lg bg-gray-50 dark:bg-slate-900 ${errorDetails.color}`}>
               <AlertTriangle className="w-5 h-5" />
             </div>
             <div>
-              <h3 className="text-lg font-semibold text-gray-900">Upload Failed</h3>
-              <p className="text-sm text-gray-500 capitalize">{errorDetails.type} error</p>
+              <h3 className="text-lg font-semibold text-gray-900 dark:text-slate-100">Upload Failed</h3>
+              <p className="text-sm text-gray-500 dark:text-slate-400 capitalize">{errorDetails.type} error</p>
             </div>
           </div>
           <button
             onClick={handleClose}
-            className="text-gray-400 hover:text-gray-600 transition-colors"
+            className="text-gray-400 dark:text-slate-500 hover:text-gray-600 dark:hover:text-slate-400 transition-colors"
           >
             <X className="w-5 h-5" />
           </button>
@@ -154,19 +154,19 @@ const UploadRetryPopup = ({
         <div className="p-6">
           {/* Error Message */}
           <div className="mb-6">
-            <p className="text-gray-700 leading-relaxed">{errorDetails.message}</p>
+            <p className="text-gray-700 dark:text-slate-300 leading-relaxed">{errorDetails.message}</p>
             
             {/* Additional error details */}
             {error?.response?.data?.message && (
-              <div className="mt-3 p-3 bg-red-50 rounded-lg">
-                <p className="text-sm text-red-700">{error.response.data.message}</p>
+              <div className="mt-3 p-3 bg-red-50 dark:bg-red-950/40 rounded-lg">
+                <p className="text-sm text-red-700 dark:text-red-300">{error.response.data.message}</p>
               </div>
             )}
             
             {error?.response?.data?.errors && (
-              <div className="mt-3 p-3 bg-yellow-50 rounded-lg">
-                <p className="text-sm font-medium text-yellow-800 mb-2">Validation Errors:</p>
-                <ul className="text-sm text-yellow-700 space-y-1">
+              <div className="mt-3 p-3 bg-yellow-50 dark:bg-yellow-950/40 rounded-lg">
+                <p className="text-sm font-medium text-yellow-800 dark:text-yellow-300 mb-2">Validation Errors:</p>
+                <ul className="text-sm text-yellow-700 dark:text-yellow-300 space-y-1">
                   {Object.entries(error.response.data.errors).map(([field, message]) => (
                     <li key={field} className="flex items-start">
                       <span className="font-medium mr-2">{field}:</span>
@@ -204,7 +204,7 @@ const UploadRetryPopup = ({
                 
                 <button
                   onClick={handleEditRetry}
-                  className="w-full flex items-center justify-center space-x-2 px-4 py-3 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition-colors"
+                  className="w-full flex items-center justify-center space-x-2 px-4 py-3 bg-gray-100 dark:bg-slate-800/70 text-gray-700 dark:text-slate-300 rounded-lg hover:bg-gray-200 dark:hover:bg-slate-700 transition-colors"
                 >
                   <span>Edit & Retry</span>
                 </button>
@@ -222,16 +222,16 @@ const UploadRetryPopup = ({
           {/* Auto-dismiss countdown */}
           {countdown > 0 && (
             <div className="mt-4 text-center">
-              <p className="text-xs text-gray-500">
+              <p className="text-xs text-gray-500 dark:text-slate-400">
                 This popup will close automatically in {countdown} seconds
               </p>
             </div>
           )}
 
           {/* Help Section */}
-          <div className="mt-6 p-4 bg-blue-50 rounded-lg">
-            <h4 className="text-sm font-medium text-blue-900 mb-2">Need Help?</h4>
-            <ul className="text-xs text-blue-700 space-y-1">
+          <div className="mt-6 p-4 bg-blue-50 dark:bg-blue-950/40 rounded-lg">
+            <h4 className="text-sm font-medium text-blue-900 dark:text-blue-300 mb-2">Need Help?</h4>
+            <ul className="text-xs text-blue-700 dark:text-blue-300 space-y-1">
               <li>• Check your internet connection</li>
               <li>• Ensure files are under 5MB each</li>
               <li>• Try refreshing the page and retry</li>
@@ -241,13 +241,13 @@ const UploadRetryPopup = ({
         </div>
 
         {/* Footer */}
-        <div className="flex items-center justify-between p-4 border-t border-gray-200 bg-gray-50">
-          <p className="text-xs text-gray-500">
+        <div className="flex items-center justify-between p-4 border-t border-gray-200 dark:border-slate-700 bg-gray-50 dark:bg-slate-900">
+          <p className="text-xs text-gray-500 dark:text-slate-400">
             Your data is preserved and will be available for retry
           </p>
           <button
             onClick={handleClose}
-            className="text-sm text-gray-600 hover:text-gray-800 transition-colors"
+            className="text-sm text-gray-600 dark:text-slate-400 hover:text-gray-800 dark:hover:text-slate-200 transition-colors"
           >
             Close
           </button>

@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+﻿import { useState, useEffect } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
 import { 
   ArrowLeft,
@@ -7,8 +7,9 @@ import {
   X,
   Folder
 } from 'lucide-react'
-import { useMutation, useQuery } from 'react-query'
+import { useMutation, useQuery, useQueryClient } from 'react-query'
 import { adminAPI } from '../../services/api'
+import { invalidateCatalog } from '../../utils/queryKeys'
 import LoadingSpinner from '../../components/LoadingSpinner'
 import toast from 'react-hot-toast'
 
@@ -26,6 +27,7 @@ const AdminCategoryEdit = () => {
   const [previewImage, setPreviewImage] = useState(null)
   const [existingImage, setExistingImage] = useState(null)
   const [errors, setErrors] = useState({})
+  const queryClient = useQueryClient()
 
   const { data: categoriesData } = useQuery(
     'adminCategoriesForParent',
@@ -71,6 +73,13 @@ const AdminCategoryEdit = () => {
     {
       onSuccess: (data) => {
         console.log('Category updated successfully:', data)
+        // This handler previously invalidated nothing at all, so both the admin
+        // list and the storefront nav kept showing the pre-edit name/slug until
+        // a manual refresh.
+        invalidateCatalog(queryClient)
+        queryClient.invalidateQueries('adminCategories')
+        queryClient.invalidateQueries('adminCategoriesForProduct')
+        queryClient.refetchQueries('adminCategories')
         toast.success('Category updated successfully!')
         navigate('/admin/categories')
       },
@@ -188,25 +197,25 @@ const AdminCategoryEdit = () => {
       <div className="mb-8">
         <button
           onClick={() => navigate('/admin/categories')}
-          className="flex items-center text-gray-600 hover:text-gray-900 mb-4"
+          className="flex items-center text-gray-600 dark:text-slate-400 hover:text-gray-900 dark:hover:text-slate-100 mb-4"
         >
           <ArrowLeft className="w-4 h-4 mr-2" />
           Back to Categories
         </button>
         
-        <h1 className="text-3xl font-bold text-gray-900 mb-2">Edit Category</h1>
-        <p className="text-gray-600">Update category information</p>
+        <h1 className="text-3xl font-bold text-gray-900 dark:text-slate-100 mb-2">Edit Category</h1>
+        <p className="text-gray-600 dark:text-slate-400">Update category information</p>
       </div>
 
       <form onSubmit={handleSubmit} className="max-w-4xl mx-auto">
-        <div className="bg-white rounded-lg border border-gray-200 p-6 lg:p-8">
+        <div className="bg-white dark:bg-slate-800 rounded-lg border border-gray-200 dark:border-slate-700 p-6 lg:p-8">
           {/* Basic Information */}
           <div className="mb-8">
-            <h2 className="text-lg font-semibold text-gray-900 mb-4">Basic Information</h2>
+            <h2 className="text-lg font-semibold text-gray-900 dark:text-slate-100 mb-4">Basic Information</h2>
             
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 lg:gap-8">
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+                <label className="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-2">
                   Category Name *
                 </label>
                 <input
@@ -219,12 +228,12 @@ const AdminCategoryEdit = () => {
                   required
                 />
                 {errors.name && (
-                  <p className="mt-1 text-sm text-error-600">{errors.name}</p>
+                  <p className="mt-1 text-sm text-error-600 dark:text-error-400">{errors.name}</p>
                 )}
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+                <label className="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-2">
                   URL Slug *
                 </label>
                 <input
@@ -237,13 +246,13 @@ const AdminCategoryEdit = () => {
                   required
                 />
                 {errors.slug && (
-                  <p className="mt-1 text-sm text-error-600">{errors.slug}</p>
+                  <p className="mt-1 text-sm text-error-600 dark:text-error-400">{errors.slug}</p>
                 )}
               </div>
             </div>
 
             <div className="mt-6">
-              <label className="block text-sm font-medium text-gray-700 mb-2">
+              <label className="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-2">
                 Description
               </label>
               <textarea
@@ -259,11 +268,11 @@ const AdminCategoryEdit = () => {
 
           {/* Category Settings */}
           <div className="mb-8">
-            <h2 className="text-lg font-semibold text-gray-900 mb-4">Category Settings</h2>
+            <h2 className="text-lg font-semibold text-gray-900 dark:text-slate-100 mb-4">Category Settings</h2>
             
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 lg:gap-8">
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+                <label className="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-2">
                   Parent Category
                 </label>
                 <select
@@ -284,7 +293,7 @@ const AdminCategoryEdit = () => {
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+                <label className="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-2">
                   Status *
                 </label>
                 <select
@@ -303,11 +312,11 @@ const AdminCategoryEdit = () => {
 
           {/* Category Image */}
           <div className="mb-8">
-            <h2 className="text-lg font-semibold text-gray-900 mb-4">Category Image</h2>
+            <h2 className="text-lg font-semibold text-gray-900 dark:text-slate-100 mb-4">Category Image</h2>
             
             <div className="flex flex-col lg:flex-row lg:items-start lg:space-x-8 space-y-6 lg:space-y-0">
               <div className="flex-1 lg:max-w-md">
-                <div className="border-2 border-dashed border-gray-300 rounded-lg p-8 text-center hover:border-gray-400 transition-colors">
+                <div className="border-2 border-dashed border-gray-300 dark:border-slate-600 rounded-lg p-8 text-center hover:border-gray-400 dark:hover:border-slate-500 transition-colors">
                   <input
                     type="file"
                     id="category-image"
@@ -319,17 +328,17 @@ const AdminCategoryEdit = () => {
                     htmlFor="category-image"
                     className="cursor-pointer flex flex-col items-center"
                   >
-                    <Upload className="w-8 h-8 text-gray-400 mb-2" />
-                    <span className="text-sm text-gray-600">
+                    <Upload className="w-8 h-8 text-gray-400 dark:text-slate-500 mb-2" />
+                    <span className="text-sm text-gray-600 dark:text-slate-400">
                       Click to upload new image
                     </span>
-                    <span className="text-xs text-gray-500 mt-1">
+                    <span className="text-xs text-gray-500 dark:text-slate-400 mt-1">
                       PNG, JPG, GIF up to 5MB
                     </span>
                   </label>
                 </div>
                 {errors.image && (
-                  <p className="mt-2 text-sm text-error-600">{errors.image}</p>
+                  <p className="mt-2 text-sm text-error-600 dark:text-error-400">{errors.image}</p>
                 )}
               </div>
 
@@ -353,7 +362,7 @@ const AdminCategoryEdit = () => {
           </div>
 
           {/* Form Actions */}
-          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-end space-y-4 sm:space-y-0 sm:space-x-4 pt-6 lg:pt-8 border-t border-gray-200">
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-end space-y-4 sm:space-y-0 sm:space-x-4 pt-6 lg:pt-8 border-t border-gray-200 dark:border-slate-700">
             <button
               type="button"
               onClick={() => navigate('/admin/categories')}
@@ -378,3 +387,4 @@ const AdminCategoryEdit = () => {
 }
 
 export default AdminCategoryEdit
+

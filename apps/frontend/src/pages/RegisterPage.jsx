@@ -115,17 +115,17 @@ const RegisterPage = () => {
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
+    <div className="min-h-screen flex items-center justify-center bg-gray-50 dark:bg-slate-900 py-12 px-4 sm:px-6 lg:px-8">
       <div className="max-w-md w-full space-y-8">
         {/* Header */}
         <div className="text-center">
           <div className="mx-auto h-12 w-12 bg-primary-600 rounded-lg flex items-center justify-center">
             <span className="text-white font-bold text-xl">E</span>
           </div>
-          <h2 className="mt-6 text-3xl font-bold text-gray-900">
+          <h2 className="mt-6 text-3xl font-bold text-gray-900 dark:text-slate-100">
             Create your account
           </h2>
-          <p className="mt-2 text-sm text-gray-600">
+          <p className="mt-2 text-sm text-gray-600 dark:text-slate-400">
             Join thousands of satisfied customers
           </p>
         </div>
@@ -135,12 +135,12 @@ const RegisterPage = () => {
           <div className="space-y-6">
             {/* Name */}
             <div>
-              <label htmlFor="name" className="block text-sm font-medium text-gray-700">
+              <label htmlFor="name" className="block text-sm font-medium text-gray-700 dark:text-slate-300">
                 Full Name
               </label>
               <div className="mt-1 relative">
                 <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                  <User className="h-5 w-5 text-gray-400" />
+                  <User className="h-5 w-5 text-gray-400 dark:text-slate-500" />
                 </div>
                 <input
                   id="name"
@@ -155,18 +155,18 @@ const RegisterPage = () => {
                 />
               </div>
               {errors.name && (
-                <p className="mt-1 text-sm text-error-600">{errors.name}</p>
+                <p className="mt-1 text-sm text-error-600 dark:text-error-400">{errors.name}</p>
               )}
             </div>
 
             {/* Email */}
             <div>
-              <label htmlFor="email" className="block text-sm font-medium text-gray-700">
+              <label htmlFor="email" className="block text-sm font-medium text-gray-700 dark:text-slate-300">
                 Email address
               </label>
               <div className="mt-1 relative">
                 <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                  <Mail className="h-5 w-5 text-gray-400" />
+                  <Mail className="h-5 w-5 text-gray-400 dark:text-slate-500" />
                 </div>
                 <input
                   id="email"
@@ -181,18 +181,18 @@ const RegisterPage = () => {
                 />
               </div>
               {errors.email && (
-                <p className="mt-1 text-sm text-error-600">{errors.email}</p>
+                <p className="mt-1 text-sm text-error-600 dark:text-error-400">{errors.email}</p>
               )}
             </div>
 
             {/* Phone */}
             <div>
-              <label htmlFor="phone" className="block text-sm font-medium text-gray-700">
+              <label htmlFor="phone" className="block text-sm font-medium text-gray-700 dark:text-slate-300">
                 Phone Number (Optional)
               </label>
               <div className="mt-1 relative">
                 <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                  <Phone className="h-5 w-5 text-gray-400" />
+                  <Phone className="h-5 w-5 text-gray-400 dark:text-slate-500" />
                 </div>
                 <input
                   id="phone"
@@ -206,18 +206,18 @@ const RegisterPage = () => {
                 />
               </div>
               {errors.phone && (
-                <p className="mt-1 text-sm text-error-600">{errors.phone}</p>
+                <p className="mt-1 text-sm text-error-600 dark:text-error-400">{errors.phone}</p>
               )}
             </div>
 
             {/* Password */}
             <div>
-              <label htmlFor="password" className="block text-sm font-medium text-gray-700">
+              <label htmlFor="password" className="block text-sm font-medium text-gray-700 dark:text-slate-300">
                 Password
               </label>
               <div className="mt-1 relative">
                 <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                  <Lock className="h-5 w-5 text-gray-400" />
+                  <Lock className="h-5 w-5 text-gray-400 dark:text-slate-500" />
                 </div>
                 <input
                   id="password"
@@ -236,25 +236,25 @@ const RegisterPage = () => {
                   onClick={() => setShowPassword(!showPassword)}
                 >
                   {showPassword ? (
-                    <EyeOff className="h-5 w-5 text-gray-400" />
+                    <EyeOff className="h-5 w-5 text-gray-400 dark:text-slate-500" />
                   ) : (
-                    <Eye className="h-5 w-5 text-gray-400" />
+                    <Eye className="h-5 w-5 text-gray-400 dark:text-slate-500" />
                   )}
                 </button>
               </div>
               {errors.password && (
-                <p className="mt-1 text-sm text-error-600">{errors.password}</p>
+                <p className="mt-1 text-sm text-error-600 dark:text-error-400">{errors.password}</p>
               )}
             </div>
 
             {/* Confirm Password */}
             <div>
-              <label htmlFor="confirmPassword" className="block text-sm font-medium text-gray-700">
+              <label htmlFor="confirmPassword" className="block text-sm font-medium text-gray-700 dark:text-slate-300">
                 Confirm Password
               </label>
               <div className="mt-1 relative">
                 <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                  <Lock className="h-5 w-5 text-gray-400" />
+                  <Lock className="h-5 w-5 text-gray-400 dark:text-slate-500" />
                 </div>
                 <input
                   id="confirmPassword"
@@ -273,14 +273,14 @@ const RegisterPage = () => {
                   onClick={() => setShowConfirmPassword(!showConfirmPassword)}
                 >
                   {showConfirmPassword ? (
-                    <EyeOff className="h-5 w-5 text-gray-400" />
+                    <EyeOff className="h-5 w-5 text-gray-400 dark:text-slate-500" />
                   ) : (
-                    <Eye className="h-5 w-5 text-gray-400" />
+                    <Eye className="h-5 w-5 text-gray-400 dark:text-slate-500" />
                   )}
                 </button>
               </div>
               {errors.confirmPassword && (
-                <p className="mt-1 text-sm text-error-600">{errors.confirmPassword}</p>
+                <p className="mt-1 text-sm text-error-600 dark:text-error-400">{errors.confirmPassword}</p>
               )}
             </div>
           </div>
@@ -305,10 +305,10 @@ const RegisterPage = () => {
         <div className="mt-6">
           <div className="relative">
             <div className="absolute inset-0 flex items-center">
-              <div className="w-full border-t border-gray-300" />
+              <div className="w-full border-t border-gray-300 dark:border-slate-600" />
             </div>
             <div className="relative flex justify-center text-sm">
-              <span className="px-2 bg-gray-50 text-gray-500">Or sign up with</span>
+              <span className="px-2 bg-gray-50 dark:bg-slate-900 text-gray-500 dark:text-slate-400">Or sign up with</span>
             </div>
           </div>
         </div>
@@ -318,7 +318,7 @@ const RegisterPage = () => {
           <button
             type="button"
             onClick={handleGoogleLogin}
-            className="w-full inline-flex justify-center items-center py-3 px-4 border border-gray-300 rounded-lg shadow-sm bg-white text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500 transition-colors"
+            className="w-full inline-flex justify-center items-center py-3 px-4 border border-gray-300 dark:border-slate-600 rounded-lg shadow-sm bg-white dark:bg-slate-800 text-sm font-medium text-gray-700 dark:text-slate-300 hover:bg-gray-50 dark:hover:bg-slate-900 focus:outline-none focus:ring-2 focus:ring-offset-2 dark:focus:ring-offset-slate-900 focus:ring-primary-500 transition-colors"
           >
             <Chrome className="h-5 w-5 mr-2" />
             Sign up with Google
@@ -327,11 +327,11 @@ const RegisterPage = () => {
 
         {/* Login Link */}
         <div className="mt-6 text-center">
-          <p className="text-sm text-gray-600">
+          <p className="text-sm text-gray-600 dark:text-slate-400">
             Already have an account?{' '}
             <Link 
               to="/login" 
-              className="font-medium text-primary-600 hover:text-primary-500"
+              className="font-medium text-primary-600 dark:text-primary-400 hover:text-primary-500 dark:hover:text-primary-400"
             >
               Sign in
             </Link>
@@ -339,14 +339,14 @@ const RegisterPage = () => {
         </div>
 
         {/* Footer Links */}
-        <div className="mt-6 text-center text-sm text-gray-600">
+        <div className="mt-6 text-center text-sm text-gray-600 dark:text-slate-400">
           <p>
             By creating an account, you agree to our{' '}
-            <Link to="/terms" className="font-medium text-primary-600 hover:text-primary-500">
+            <Link to="/terms" className="font-medium text-primary-600 dark:text-primary-400 hover:text-primary-500 dark:hover:text-primary-400">
               Terms of Service
             </Link>{' '}
             and{' '}
-            <Link to="/privacy" className="font-medium text-primary-600 hover:text-primary-500">
+            <Link to="/privacy" className="font-medium text-primary-600 dark:text-primary-400 hover:text-primary-500 dark:hover:text-primary-400">
               Privacy Policy
             </Link>
           </p>

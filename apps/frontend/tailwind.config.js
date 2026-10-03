@@ -1,5 +1,10 @@
 /** @type {import('tailwindcss').Config} */
 export default {
+  // Class-based dark mode: the `dark` class is toggled on <html> by the inline
+  // script in index.html (before first paint, to avoid a flash) and kept in
+  // sync by store/themeStore.js. 'media' would ignore the user's explicit
+  // choice and force the OS preference.
+  darkMode: 'class',
   content: [
     "./index.html",
     "./src/**/*.{js,ts,jsx,tsx}",

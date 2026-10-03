@@ -4,10 +4,10 @@ import Product from '../models/Product.js';
 import Order from '../models/Order.js';
 import { protect, authorize } from '../middlewares/auth.js';
 import { validate, createProductSchema } from '../utils/validation.js';
-import { deleteCachePattern } from '../config/redis.js';
+import { invalidateProductCaches } from '../utils/cacheInvalidation.js';
 import { handleMultipleImageUpload } from '../middlewares/uploadMiddleware.js';
 import { getDefaultUploadService } from '../services/uploadService.js';
-import { emitUploadProgress } from '../sockets/socketHandler.js';
+import { emitUploadProgress, emitCatalogUpdate } from '../sockets/socketHandler.js';
 
 const router = express.Router();
 
@@ -246,8 +246,15 @@ router.post('/products', protect, authorize('vendor'), handleMultipleImageUpload
     const product = await Product.create(productData);
     console.log('✅ Vendor product created successfully:', product._id);
     
-    // Clear product cache
-    await deleteCachePattern('products:*');
+    // Clear every cache that can hold a copy of this product. This used to call
+    // deleteCachePattern('products:*') directly, which missed the `product:<id>`
+    // / `product:<slug>` detail keys and the `search:*` families.
+    await invalidateProductCaches(product._id, product.slug);
+
+    emitCatalogUpdate('product:created', {
+      productId: product._id,
+      slug: product.slug
+    });
 
     // Emit completion (100%)
     console.log('🎉 Emitting vendor completion progress...');

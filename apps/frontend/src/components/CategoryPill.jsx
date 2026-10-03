@@ -9,7 +9,7 @@ const CategoryPill = ({ category, onClick }) => {
   return (
     <Component
       {...props}
-      className="category-pill inline-flex items-center space-x-2 px-4 py-2 bg-gray-100 hover:bg-gray-200 rounded-full text-sm font-medium text-gray-700 hover:text-gray-900 transition-colors"
+      className="category-pill inline-flex items-center space-x-2 px-4 py-2 bg-gray-100 dark:bg-slate-800/70 hover:bg-gray-200 dark:hover:bg-slate-700 rounded-full text-sm font-medium text-gray-700 dark:text-slate-300 hover:text-gray-900 dark:hover:text-slate-100 transition-colors"
     >
       {category.image && (
         <img
@@ -20,7 +20,7 @@ const CategoryPill = ({ category, onClick }) => {
       )}
       <span>{category.name}</span>
       {category.productCount && (
-        <span className="text-xs text-gray-500">({category.productCount})</span>
+        <span className="text-xs text-gray-500 dark:text-slate-400">({category.productCount})</span>
       )}
     </Component>
   )

@@ -137,8 +137,8 @@ const FAQPage = () => {
     <div className="container mx-auto px-4 py-8">
       {/* Header */}
       <div className="text-center mb-12">
-        <h1 className="text-4xl font-bold text-gray-900 mb-4">Frequently Asked Questions</h1>
-        <p className="text-xl text-gray-600 max-w-2xl mx-auto">
+        <h1 className="text-4xl font-bold text-gray-900 dark:text-slate-100 mb-4">Frequently Asked Questions</h1>
+        <p className="text-xl text-gray-600 dark:text-slate-400 max-w-2xl mx-auto">
           Find answers to common questions about our platform
         </p>
       </div>
@@ -147,7 +147,7 @@ const FAQPage = () => {
       <div className="max-w-2xl mx-auto mb-12">
         <div className="relative">
           <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-            <Search className="h-5 w-5 text-gray-400" />
+            <Search className="h-5 w-5 text-gray-400 dark:text-slate-500" />
           </div>
           <input
             type="text"
@@ -164,21 +164,21 @@ const FAQPage = () => {
         {filteredQuestions.map((category, categoryIndex) => {
           const Icon = category.icon
           return (
-            <div key={categoryIndex} className="bg-white rounded-lg border border-gray-200 overflow-hidden">
+            <div key={categoryIndex} className="bg-white dark:bg-slate-800 rounded-lg border border-gray-200 dark:border-slate-700 overflow-hidden">
               {/* Category Header */}
-              <div className="p-6 bg-gray-50 border-b border-gray-200">
+              <div className="p-6 bg-gray-50 dark:bg-slate-900 border-b border-gray-200 dark:border-slate-700">
                 <div className="flex items-center space-x-3">
-                  <div className="w-10 h-10 bg-primary-100 rounded-lg flex items-center justify-center">
-                    <Icon className="w-5 h-5 text-primary-600" />
+                  <div className="w-10 h-10 bg-primary-100 dark:bg-primary-900/40 rounded-lg flex items-center justify-center">
+                    <Icon className="w-5 h-5 text-primary-600 dark:text-primary-400" />
                   </div>
-                  <h2 className="text-xl font-semibold text-gray-900">
+                  <h2 className="text-xl font-semibold text-gray-900 dark:text-slate-100">
                     {category.title}
                   </h2>
                 </div>
               </div>
 
               {/* Questions */}
-              <div className="divide-y divide-gray-200">
+              <div className="divide-y divide-gray-200 dark:divide-slate-700">
                 {category.questions.map((item) => (
                   <div key={item.id} className="p-6">
                     <button
@@ -186,14 +186,14 @@ const FAQPage = () => {
                       className="w-full text-left group"
                     >
                       <div className="flex items-center justify-between">
-                        <h3 className="font-medium text-gray-900 group-hover:text-primary-600 transition-colors pr-8">
+                        <h3 className="font-medium text-gray-900 dark:text-slate-100 group-hover:text-primary-600 dark:group-hover:text-primary-400 transition-colors pr-8">
                           {item.question}
                         </h3>
                         <div className="flex-shrink-0">
                           {expandedItems.has(item.id) ? (
-                            <ChevronUp className="w-5 h-5 text-gray-400 group-hover:text-primary-600 transition-colors" />
+                            <ChevronUp className="w-5 h-5 text-gray-400 dark:text-slate-500 group-hover:text-primary-600 dark:group-hover:text-primary-400 transition-colors" />
                           ) : (
-                            <ChevronDown className="w-5 h-5 text-gray-400 group-hover:text-primary-600 transition-colors" />
+                            <ChevronDown className="w-5 h-5 text-gray-400 dark:text-slate-500 group-hover:text-primary-600 dark:group-hover:text-primary-400 transition-colors" />
                           )}
                         </div>
                       </div>
@@ -201,7 +201,7 @@ const FAQPage = () => {
                     
                     {/* Answer */}
                     {expandedItems.has(item.id) && (
-                      <div className="mt-4 pl-4 text-gray-600 leading-relaxed animate-fade-in">
+                      <div className="mt-4 pl-4 text-gray-600 dark:text-slate-400 leading-relaxed animate-fade-in">
                         {item.answer}
                       </div>
                     )}
@@ -216,11 +216,11 @@ const FAQPage = () => {
       {/* No Results */}
       {filteredQuestions.every(category => category.questions.length === 0) && (
         <div className="text-center py-16">
-          <HelpCircle className="w-16 h-16 text-gray-400 mx-auto mb-4" />
-          <h3 className="text-xl font-semibold text-gray-900 mb-2">
+          <HelpCircle className="w-16 h-16 text-gray-400 dark:text-slate-500 mx-auto mb-4" />
+          <h3 className="text-xl font-semibold text-gray-900 dark:text-slate-100 mb-2">
             No results found
           </h3>
-          <p className="text-gray-600 mb-8">
+          <p className="text-gray-600 dark:text-slate-400 mb-8">
             Try searching with different keywords or browse our FAQ categories.
           </p>
           <button
@@ -233,12 +233,12 @@ const FAQPage = () => {
       )}
 
       {/* Contact Support */}
-      <div className="mt-16 bg-primary-50 rounded-lg p-8 border border-primary-200">
+      <div className="mt-16 bg-primary-50 dark:bg-primary-950/40 rounded-lg p-8 border border-primary-200 dark:border-primary-800">
         <div className="text-center">
-          <h2 className="text-2xl font-bold text-gray-900 mb-4">
+          <h2 className="text-2xl font-bold text-gray-900 dark:text-slate-100 mb-4">
             Still have questions?
           </h2>
-          <p className="text-gray-600 mb-8 max-w-2xl mx-auto">
+          <p className="text-gray-600 dark:text-slate-400 mb-8 max-w-2xl mx-auto">
             Can't find what you're looking for? Our customer support team is here to help!
           </p>
           
@@ -260,7 +260,7 @@ const FAQPage = () => {
             </a>
           </div>
           
-          <div className="mt-6 text-sm text-gray-600">
+          <div className="mt-6 text-sm text-gray-600 dark:text-slate-400">
             <p>Response time: Usually within 24 hours</p>
             <p>Available: Monday - Friday, 9 AM - 6 PM EST</p>
           </div>

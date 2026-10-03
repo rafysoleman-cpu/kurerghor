@@ -12,14 +12,7 @@ import {
 } from 'lucide-react'
 import { useQuery } from 'react-query'
 import { productAPI } from '../services/api'
-import { 
-  isDemoMode, 
-  getDemoFeaturedProducts, 
-  getDemoFlashSaleProducts, 
-  getDemoProducts,
-  demoHeroSlides,
-  demoReviews
-} from '../demo/services/index.js'
+import { demoHeroSlides, demoReviews } from '../demo/services/index.js'
 import { useCategories } from '../hooks/useCategories'
 import HeroSlider from '../components/HeroSlider'
 import ProductCard from '../components/ProductCard'
@@ -28,28 +21,39 @@ import FlashSaleTimer from '../components/FlashSaleTimer'
 import ReviewCard from '../components/ReviewCard'
 import LoadingSpinner from '../components/LoadingSpinner'
 
+/**
+ * `GET /products` and `GET /products/vendor/:id` answer
+ * `{ data: { products, pagination } }`, but the featured and flash-sale
+ * endpoints answer `{ data: [...] }`. ProductCard expects real Product
+ * documents either way, so unwrap each to a plain array.
+ */
+const selectProductList = (response) => {
+  const payload = response?.data?.data ?? response?.data
+  if (Array.isArray(payload)) return payload
+  return payload?.products || []
+}
+
 const HomePage = () => {
   const [currentSlide, setCurrentSlide] = useState(0)
   const [flashSaleTimeLeft, setFlashSaleTimeLeft] = useState(null)
-  const demoMode = isDemoMode()
 
   // Fetch featured products
   const { data: featuredProducts, isLoading: featuredLoading } = useQuery(
     'featuredProducts',
-    () => demoMode ? getDemoFeaturedProducts({ limit: 8 }) : productAPI.getFeaturedProducts({ limit: 8 }),
+    () => productAPI.getFeaturedProducts({ limit: 8 }),
     { 
       staleTime: 5 * 60 * 1000,
-      enabled: true
+      select: selectProductList
     }
   )
 
   // Fetch flash sale products
   const { data: flashSaleProducts, isLoading: flashLoading } = useQuery(
     'flashSaleProducts',
-    () => demoMode ? getDemoFlashSaleProducts({ limit: 4 }) : productAPI.getFlashSaleProducts({ limit: 4 }),
+    () => productAPI.getFlashSaleProducts({ limit: 4 }),
     { 
       staleTime: 60 * 1000,
-      enabled: true
+      select: selectProductList
     }
   )
 
@@ -59,17 +63,15 @@ const HomePage = () => {
   // Fetch top rated products
   const { data: topRatedProducts, isLoading: topRatedLoading } = useQuery(
     'topRatedProducts',
-    () => demoMode ? getDemoProducts({ sortBy: 'rating', limit: 8 }) : productAPI.getProducts({ sortBy: 'rating', limit: 8 }),
+    () => productAPI.getProducts({ sortBy: 'rating', limit: 8 }),
     { 
       staleTime: 5 * 60 * 1000,
-      enabled: true
+      select: selectProductList
     }
   )
 
-  // Use demo hero slides or fallback
+  // Static marketing content — no backend source exists for these.
   const heroSlides = demoHeroSlides
-
-  // Use demo reviews
   const reviews = demoReviews
 
   // Calculate flash sale time left
@@ -114,7 +116,7 @@ const HomePage = () => {
       </section>
 
       {/* Flash Sale Section */}
-      {flashSaleTimeLeft && flashSaleProducts?.data?.products?.length > 0 && (
+      {flashSaleTimeLeft && flashSaleProducts?.length > 0 && (
         <section className="container mx-auto px-4">
           <div className="bg-gradient-to-r from-error-500 to-warning-500 rounded-2xl p-8 text-white">
             <div className="flex items-center justify-between mb-6">
@@ -126,11 +128,10 @@ const HomePage = () => {
             </div>
             
             <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 xl:grid-cols-5 gap-4">
-              {flashSaleProducts.data.products.map((product) => (
+              {flashSaleProducts.map((product) => (
                 <ProductCard 
                   key={product._id} 
                   product={product}
-                  showFlashSale={true}
                 />
               ))}
             </div>
@@ -138,7 +139,7 @@ const HomePage = () => {
             <div className="text-center mt-6">
               <Link 
                 to="/products?flashSale=true" 
-                className="inline-flex items-center space-x-2 bg-white text-error-600 px-6 py-3 rounded-lg font-semibold hover:bg-gray-100 transition-colors"
+                className="inline-flex items-center space-x-2 bg-white dark:bg-slate-800 text-error-600 dark:text-error-400 px-6 py-3 rounded-lg font-semibold hover:bg-gray-100 dark:hover:bg-slate-800/70 transition-colors"
               >
                 <ShoppingBag className="w-5 h-5" />
                 <span>View All Flash Deals</span>
@@ -151,8 +152,8 @@ const HomePage = () => {
       {/* Categories Section */}
       <section className="container mx-auto px-4">
         <div className="text-center mb-8">
-          <h2 className="text-3xl font-bold text-gray-900 mb-2">Shop by Category</h2>
-          <p className="text-gray-600">Find what you're looking for</p>
+          <h2 className="text-3xl font-bold text-gray-900 dark:text-slate-100 mb-2">Shop by Category</h2>
+          <p className="text-gray-600 dark:text-slate-400">Find what you're looking for</p>
         </div>
         
         <div className="flex space-x-4 overflow-x-auto pb-4 scrollbar-hide">
@@ -169,8 +170,8 @@ const HomePage = () => {
       <section className="container mx-auto px-4">
         <div className="flex items-center justify-between mb-8">
           <div>
-            <h2 className="text-3xl font-bold text-gray-900 mb-2">Featured Products</h2>
-            <p className="text-gray-600">Handpicked by our team</p>
+            <h2 className="text-3xl font-bold text-gray-900 dark:text-slate-100 mb-2">Featured Products</h2>
+            <p className="text-gray-600 dark:text-slate-400">Handpicked by our team</p>
           </div>
           <Link 
             to="/products?featured=true" 
@@ -181,7 +182,7 @@ const HomePage = () => {
         </div>
         
         <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 xl:grid-cols-5 gap-4">
-          {featuredProducts?.data?.products?.map((product) => (
+          {featuredProducts?.map((product) => (
             <ProductCard key={product._id} product={product} />
           ))}
         </div>
@@ -191,8 +192,8 @@ const HomePage = () => {
       <section className="container mx-auto px-4">
         <div className="flex items-center justify-between mb-8">
           <div>
-            <h2 className="text-3xl font-bold text-gray-900 mb-2">Top Rated</h2>
-            <p className="text-gray-600">Highly rated by customers</p>
+            <h2 className="text-3xl font-bold text-gray-900 dark:text-slate-100 mb-2">Top Rated</h2>
+            <p className="text-gray-600 dark:text-slate-400">Highly rated by customers</p>
           </div>
           <Link 
             to="/products?sortBy=rating" 
@@ -203,18 +204,18 @@ const HomePage = () => {
         </div>
         
         <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 xl:grid-cols-5 gap-4">
-          {topRatedProducts?.data?.products?.map((product) => (
+          {topRatedProducts?.map((product) => (
             <ProductCard key={product._id} product={product} />
           ))}
         </div>
       </section>
 
       {/* Reviews Section */}
-      <section className="bg-gray-50 py-16">
+      <section className="bg-gray-50 dark:bg-slate-900 py-16">
         <div className="container mx-auto px-4">
           <div className="text-center mb-8">
-            <h2 className="text-3xl font-bold text-gray-900 mb-2">Customer Reviews</h2>
-            <p className="text-gray-600">What our customers are saying</p>
+            <h2 className="text-3xl font-bold text-gray-900 dark:text-slate-100 mb-2">Customer Reviews</h2>
+            <p className="text-gray-600 dark:text-slate-400">What our customers are saying</p>
           </div>
           
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
@@ -250,7 +251,7 @@ const HomePage = () => {
               placeholder="Enter your email"
               className="flex-1 px-4 py-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-300"
             />
-            <button className="btn bg-white text-primary-600 hover:bg-gray-100">
+            <button className="btn bg-white dark:bg-slate-800 text-primary-600 dark:text-primary-400 hover:bg-gray-100 dark:hover:bg-slate-800/70">
               Subscribe
             </button>
           </div>

@@ -45,12 +45,12 @@ const VendorOrders = () => {
 
   const getStatusIcon = (status) => {
     switch (status) {
-      case 'pending': return <Clock className="w-5 h-5 text-yellow-500" />
-      case 'paid': return <CheckCircle className="w-5 h-5 text-blue-500" />
-      case 'processing': return <Package className="w-5 h-5 text-purple-500" />
-      case 'shipped': return <Truck className="w-5 h-5 text-indigo-500" />
-      case 'delivered': return <CheckCircle className="w-5 h-5 text-green-500" />
-      default: return <Package className="w-5 h-5 text-gray-500" />
+      case 'pending': return <Clock className="w-5 h-5 text-yellow-500 dark:text-yellow-400" />
+      case 'paid': return <CheckCircle className="w-5 h-5 text-blue-500 dark:text-blue-400" />
+      case 'processing': return <Package className="w-5 h-5 text-purple-500 dark:text-purple-400" />
+      case 'shipped': return <Truck className="w-5 h-5 text-indigo-500 dark:text-indigo-400" />
+      case 'delivered': return <CheckCircle className="w-5 h-5 text-green-500 dark:text-green-400" />
+      default: return <Package className="w-5 h-5 text-gray-500 dark:text-slate-400" />
     }
   }
 
@@ -59,12 +59,12 @@ const VendorOrders = () => {
   return (
     <div className="container mx-auto px-4 py-8">
       <div className="mb-8">
-        <h1 className="text-3xl font-bold text-gray-900 mb-2">Vendor Orders</h1>
-        <p className="text-gray-600">{orders.length} orders</p>
+        <h1 className="text-3xl font-bold text-gray-900 dark:text-slate-100 mb-2">Vendor Orders</h1>
+        <p className="text-gray-600 dark:text-slate-400">{orders.length} orders</p>
       </div>
 
       {/* Filters */}
-      <div className="bg-white rounded-lg p-6 border border-gray-200 mb-8">
+      <div className="bg-white dark:bg-slate-800 rounded-lg p-6 border border-gray-200 dark:border-slate-700 mb-8">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div className="relative">
             <input
@@ -94,23 +94,23 @@ const VendorOrders = () => {
         <>
           <div className="space-y-4">
             {orders.map((order) => (
-              <div key={order._id} className="bg-white rounded-lg p-6 border border-gray-200">
+              <div key={order._id} className="bg-white dark:bg-slate-800 rounded-lg p-6 border border-gray-200 dark:border-slate-700">
                 <div className="flex items-center justify-between mb-4">
                   <div>
-                    <h3 className="font-semibold text-gray-900">#{order.orderNumber}</h3>
-                    <p className="text-sm text-gray-600">{order.createdAt}</p>
+                    <h3 className="font-semibold text-gray-900 dark:text-slate-100">#{order.orderNumber}</h3>
+                    <p className="text-sm text-gray-600 dark:text-slate-400">{order.createdAt}</p>
                   </div>
                   <div className="text-right">
-                    <p className="text-2xl font-bold text-gray-900">${order.total.toFixed(2)}</p>
+                    <p className="text-2xl font-bold text-gray-900 dark:text-slate-100">${order.total.toFixed(2)}</p>
                     <div className="flex items-center space-x-2">
                       {getStatusIcon(order.status)}
-                      <span className="text-sm text-gray-600">{order.status}</span>
+                      <span className="text-sm text-gray-600 dark:text-slate-400">{order.status}</span>
                     </div>
                   </div>
                 </div>
                 
                 <div className="flex justify-between items-center">
-                  <div className="text-sm text-gray-600">
+                  <div className="text-sm text-gray-600 dark:text-slate-400">
                     <p>{order.items.length} items</p>
                     <p>{order.customer?.name || 'Customer'}</p>
                   </div>
@@ -139,9 +139,9 @@ const VendorOrders = () => {
         </>
       ) : (
         <div className="text-center py-16">
-          <Package className="w-16 h-16 text-gray-400 mx-auto mb-4" />
-          <h3 className="text-xl font-semibold text-gray-900 mb-2">No orders found</h3>
-          <p className="text-gray-600">You don't have any orders yet.</p>
+          <Package className="w-16 h-16 text-gray-400 dark:text-slate-500 mx-auto mb-4" />
+          <h3 className="text-xl font-semibold text-gray-900 dark:text-slate-100 mb-2">No orders found</h3>
+          <p className="text-gray-600 dark:text-slate-400">You don't have any orders yet.</p>
         </div>
       )}
     </div>

@@ -32,9 +32,9 @@ const HeroSlider = ({ slides = [] }) => {
 
   if (slides.length === 0) {
     return (
-      <div className="relative aspect-video bg-gray-100 rounded-lg overflow-hidden">
+      <div className="relative aspect-video bg-gray-100 dark:bg-slate-800/70 rounded-lg overflow-hidden">
         <div className="absolute inset-0 flex items-center justify-center">
-          <p className="text-gray-500">No slides available</p>
+          <p className="text-gray-500 dark:text-slate-400">No slides available</p>
         </div>
       </div>
     )
@@ -43,7 +43,7 @@ const HeroSlider = ({ slides = [] }) => {
   const currentSlideData = slides[currentSlide]
 
   return (
-    <div className="relative aspect-video bg-gray-100 rounded-lg overflow-hidden group">
+    <div className="relative aspect-video bg-gray-100 dark:bg-slate-800/70 rounded-lg overflow-hidden group">
       {/* Slide Image */}
       <div className="absolute inset-0">
         <img
@@ -69,7 +69,7 @@ const HeroSlider = ({ slides = [] }) => {
             {currentSlideData.cta && currentSlideData.cta.link && (
               <a
                 href={currentSlideData.cta.link}
-                className="btn-primary bg-white text-gray-900 hover:bg-gray-100"
+                className="btn-primary bg-white dark:bg-slate-800 text-gray-900 dark:text-slate-100 hover:bg-gray-100 dark:hover:bg-slate-800/70"
               >
                 {currentSlideData.cta.text}
               </a>
@@ -106,7 +106,7 @@ const HeroSlider = ({ slides = [] }) => {
               onClick={() => goToSlide(index)}
               className={`w-3 h-3 rounded-full transition-all ${
                 index === currentSlide
-                  ? 'bg-white w-8'
+                  ? 'bg-white dark:bg-slate-800 w-8'
                   : 'bg-white/50 hover:bg-white/75'
               }`}
             />

@@ -39,6 +39,15 @@ const userSchema = new mongoose.Schema({
     enum: ['user', 'vendor', 'admin'],
     default: 'user'
   },
+  // Interface theme preference, so the choice follows the account to any
+  // device rather than living in one browser's localStorage. 'system' defers
+  // to the OS via prefers-color-scheme; 'dark' is the eye-protection slate
+  // palette.
+  themePreference: {
+    type: String,
+    enum: ['light', 'dark', 'system'],
+    default: 'system'
+  },
   isEmailVerified: {
     type: Boolean,
     default: false

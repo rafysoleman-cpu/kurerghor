@@ -76,14 +76,14 @@ const ProfilePage = () => {
   return (
     <div className="container mx-auto px-4 py-8">
       <div className="mb-8">
-        <h1 className="text-3xl font-bold text-gray-900 mb-2">My Profile</h1>
-        <p className="text-gray-600">Manage your profile information</p>
+        <h1 className="text-3xl font-bold text-gray-900 dark:text-slate-100 mb-2">My Profile</h1>
+        <p className="text-gray-600 dark:text-slate-400">Manage your profile information</p>
       </div>
 
       <div className="max-w-2xl">
-        <div className="bg-white rounded-lg p-6 border border-gray-200">
+        <div className="bg-white dark:bg-slate-800 rounded-lg p-6 border border-gray-200 dark:border-slate-700">
           <div className="flex items-center justify-between mb-6">
-            <h2 className="text-xl font-semibold text-gray-900">Profile Information</h2>
+            <h2 className="text-xl font-semibold text-gray-900 dark:text-slate-100">Profile Information</h2>
             <button
               onClick={() => setIsEditing(!isEditing)}
               className="btn-outline flex items-center space-x-2"
@@ -97,7 +97,7 @@ const ProfilePage = () => {
             {/* Avatar */}
             <div className="flex items-center space-x-6">
               <div className="relative">
-                <div className="w-24 h-24 bg-gray-200 rounded-full overflow-hidden">
+                <div className="w-24 h-24 bg-gray-200 dark:bg-slate-700 rounded-full overflow-hidden">
                   {formData.avatar ? (
                     <img
                       src={formData.avatar}
@@ -106,7 +106,7 @@ const ProfilePage = () => {
                     />
                   ) : (
                     <div className="w-full h-full flex items-center justify-center">
-                      <User className="w-12 h-12 text-gray-400" />
+                      <User className="w-12 h-12 text-gray-400 dark:text-slate-500" />
                     </div>
                   )}
                 </div>
@@ -123,7 +123,7 @@ const ProfilePage = () => {
               {isEditing && (
                 <div className="flex-1 space-y-4">
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                    <label className="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-1">
                       Full Name
                     </label>
                     <input
@@ -141,25 +141,25 @@ const ProfilePage = () => {
             {!isEditing ? (
               <div className="space-y-4">
                 <div className="flex items-center space-x-3">
-                  <Mail className="w-5 h-5 text-gray-400" />
+                  <Mail className="w-5 h-5 text-gray-400 dark:text-slate-500" />
                   <div>
                     <p className="font-medium">{formData.email}</p>
-                    <p className="text-sm text-gray-600">Email Address</p>
+                    <p className="text-sm text-gray-600 dark:text-slate-400">Email Address</p>
                   </div>
                 </div>
                 
                 <div className="flex items-center space-x-3">
-                  <Phone className="w-5 h-5 text-gray-400" />
+                  <Phone className="w-5 h-5 text-gray-400 dark:text-slate-500" />
                   <div>
                     <p className="font-medium">{formData.phone || 'Not provided'}</p>
-                    <p className="text-sm text-gray-600">Phone Number</p>
+                    <p className="text-sm text-gray-600 dark:text-slate-400">Phone Number</p>
                   </div>
                 </div>
               </div>
             ) : (
               <div className="space-y-4">
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                  <label className="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-1">
                     Phone Number
                   </label>
                   <input

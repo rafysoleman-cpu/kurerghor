@@ -99,15 +99,15 @@ const CategoriesMenu = ({ variant = 'inline', onNavigate, pathname = '', search 
           aria-expanded={isOpen}
           aria-controls={panelId}
           className={`flex w-full items-center justify-between rounded-xl px-3 py-2.5 text-sm font-medium transition-colors duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500 ${
-            isActive ? 'bg-primary-50 text-primary-600 font-semibold' : 'text-gray-700 hover:bg-gray-50'
+            isActive ? 'bg-primary-50 dark:bg-primary-950/40 text-primary-600 dark:text-primary-400 font-semibold' : 'text-gray-700 dark:text-slate-300 hover:bg-gray-50 dark:hover:bg-slate-900'
           }`}
         >
           <span className="flex items-center gap-3">
-            <LayoutGrid className={`h-5 w-5 ${isActive ? 'text-primary-600' : 'text-gray-400'}`} aria-hidden="true" />
+            <LayoutGrid className={`h-5 w-5 ${isActive ? 'text-primary-600 dark:text-primary-400' : 'text-gray-400 dark:text-slate-500'}`} aria-hidden="true" />
             Categories
           </span>
           <ChevronRight
-            className={`h-4 w-4 shrink-0 text-gray-300 transition-transform duration-200 ${
+            className={`h-4 w-4 shrink-0 text-gray-300 dark:text-slate-600 transition-transform duration-200 ${
               isOpen ? 'rotate-90' : ''
             }`}
             aria-hidden="true"
@@ -117,10 +117,10 @@ const CategoriesMenu = ({ variant = 'inline', onNavigate, pathname = '', search 
         {isOpen && (
           <div
             id={panelId}
-            className="animate-fade-in mt-1 space-y-0.5 rounded-xl bg-gray-50 p-1.5"
+            className="animate-fade-in mt-1 space-y-0.5 rounded-xl bg-gray-50 dark:bg-slate-900 p-1.5"
           >
             {statusText && (
-              <p className="px-3 py-2 text-xs text-gray-500">{statusText}</p>
+              <p className="px-3 py-2 text-xs text-gray-500 dark:text-slate-400">{statusText}</p>
             )}
             {renderRows()}
           </div>
@@ -144,21 +144,21 @@ const CategoriesMenu = ({ variant = 'inline', onNavigate, pathname = '', search 
           aria-controls={panelId}
           role="menuitem"
           className={`flex w-full items-center justify-between gap-3 rounded-lg px-3 py-2 text-left transition-colors duration-150 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500 ${
-            isActive ? 'bg-primary-50' : 'hover:bg-gray-50'
+            isActive ? 'bg-primary-50 dark:bg-primary-950/40' : 'hover:bg-gray-50 dark:hover:bg-slate-900'
           }`}
         >
           <span className="flex items-center gap-3">
-            <span className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-gray-100 text-gray-500 ${
-              isActive ? 'bg-primary-100 text-primary-600' : ''
+            <span className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-gray-100 dark:bg-slate-800/70 text-gray-500 dark:text-slate-400 ${
+              isActive ? 'bg-primary-100 dark:bg-primary-900/40 text-primary-600 dark:text-primary-400' : ''
             }`}>
               <LayoutGrid className="h-4 w-4" aria-hidden="true" />
             </span>
-            <span className={`min-w-0 flex-1 truncate text-sm font-medium text-gray-900 ${
-              isActive ? 'text-primary-600 font-semibold' : ''
+            <span className={`min-w-0 flex-1 truncate text-sm font-medium text-gray-900 dark:text-slate-100 ${
+              isActive ? 'text-primary-600 dark:text-primary-400 font-semibold' : ''
             }`}>Categories</span>
           </span>
           <ChevronRight
-            className={`h-4 w-4 shrink-0 text-gray-300 transition-transform duration-200 ${
+            className={`h-4 w-4 shrink-0 text-gray-300 dark:text-slate-600 transition-transform duration-200 ${
               isOpen ? 'rotate-90' : ''
             }`}
             aria-hidden="true"
@@ -170,9 +170,9 @@ const CategoriesMenu = ({ variant = 'inline', onNavigate, pathname = '', search 
             id={panelId}
             role="menu"
             aria-label="Product categories"
-            className="animate-fade-in mt-1 max-h-[70vh] space-y-0.5 overflow-y-auto overscroll-contain rounded-xl bg-gray-50 p-1.5"
+            className="animate-fade-in mt-1 max-h-[70vh] space-y-0.5 overflow-y-auto overscroll-contain rounded-xl bg-gray-50 dark:bg-slate-900 p-1.5"
           >
-            {statusText && <p className="px-3 py-2 text-xs text-gray-500">{statusText}</p>}
+            {statusText && <p className="px-3 py-2 text-xs text-gray-500 dark:text-slate-400">{statusText}</p>}
             {renderRows()}
           </div>
         )}
@@ -195,8 +195,8 @@ const CategoriesMenu = ({ variant = 'inline', onNavigate, pathname = '', search 
         aria-haspopup="true"
         aria-expanded={isOpen}
         aria-controls={panelId}
-        className={`flex items-center gap-1 rounded-lg px-3 py-2 text-sm font-medium transition-colors duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500 focus-visible:ring-offset-2 ${
-          isActive || isOpen ? 'bg-primary-50 text-primary-600 font-semibold' : 'text-gray-600 hover:text-primary-600'
+        className={`flex items-center gap-1 rounded-lg px-3 py-2 text-sm font-medium transition-colors duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500 focus-visible:ring-offset-2 dark:ring-offset-slate-900 ${
+          isActive || isOpen ? 'bg-primary-50 dark:bg-primary-950/40 text-primary-600 dark:text-primary-400 font-semibold' : 'text-gray-600 dark:text-slate-400 hover:text-primary-600 dark:hover:text-primary-400'
         }`}
       >
         Categories
@@ -213,9 +213,9 @@ const CategoriesMenu = ({ variant = 'inline', onNavigate, pathname = '', search 
           id={panelId}
           role="menu"
           aria-label="Product categories"
-          className="animate-scale-in absolute left-0 top-full z-50 mt-2 max-h-[70vh] w-72 origin-top-left overflow-y-auto overscroll-contain rounded-xl border border-gray-200 bg-white p-1.5 shadow-xl"
+          className="animate-scale-in absolute left-0 top-full z-50 mt-2 max-h-[70vh] w-72 origin-top-left overflow-y-auto overscroll-contain rounded-xl border border-gray-200 dark:border-slate-700 bg-white dark:bg-slate-800 p-1.5 shadow-xl"
         >
-          {statusText && <p className="px-3 py-3 text-sm text-gray-500">{statusText}</p>}
+          {statusText && <p className="px-3 py-3 text-sm text-gray-500 dark:text-slate-400">{statusText}</p>}
           {renderRows()}
         </div>
       )}

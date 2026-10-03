@@ -41,8 +41,8 @@ const VendorEarnings = () => {
     <div className="container mx-auto px-4 py-8">
       <div className="flex items-center justify-between mb-8">
         <div>
-          <h1 className="text-3xl font-bold text-gray-900 mb-2">Earnings</h1>
-          <p className="text-gray-600">Track your revenue and payments</p>
+          <h1 className="text-3xl font-bold text-gray-900 dark:text-slate-100 mb-2">Earnings</h1>
+          <p className="text-gray-600 dark:text-slate-400">Track your revenue and payments</p>
         </div>
         
         <div className="flex items-center space-x-4">
@@ -67,85 +67,85 @@ const VendorEarnings = () => {
 
       {/* Stats Cards */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-        <div className="bg-white rounded-lg p-6 border border-gray-200">
+        <div className="bg-white dark:bg-slate-800 rounded-lg p-6 border border-gray-200 dark:border-slate-700">
           <div className="flex items-center justify-between mb-4">
-            <div className="p-3 bg-success-100 rounded-lg">
-              <DollarSign className="w-6 h-6 text-success-600" />
+            <div className="p-3 bg-success-100 dark:bg-success-900/40 rounded-lg">
+              <DollarSign className="w-6 h-6 text-success-600 dark:text-success-400" />
             </div>
-            <span className="text-sm text-success-600 font-medium">
+            <span className="text-sm text-success-600 dark:text-success-400 font-medium">
               +{earnings?.revenueChange || 0}%
             </span>
           </div>
-          <h3 className="text-2xl font-bold text-gray-900 mb-2">
+          <h3 className="text-2xl font-bold text-gray-900 dark:text-slate-100 mb-2">
             {formatCurrency(earnings?.totalRevenue || 0)}
           </h3>
-          <p className="text-gray-600">Total Revenue</p>
+          <p className="text-gray-600 dark:text-slate-400">Total Revenue</p>
         </div>
 
-        <div className="bg-white rounded-lg p-6 border border-gray-200">
+        <div className="bg-white dark:bg-slate-800 rounded-lg p-6 border border-gray-200 dark:border-slate-700">
           <div className="flex items-center justify-between mb-4">
-            <div className="p-3 bg-primary-100 rounded-lg">
-              <TrendingUp className="w-6 h-6 text-primary-600" />
+            <div className="p-3 bg-primary-100 dark:bg-primary-900/40 rounded-lg">
+              <TrendingUp className="w-6 h-6 text-primary-600 dark:text-primary-400" />
             </div>
-            <span className="text-sm text-primary-600 font-medium">
+            <span className="text-sm text-primary-600 dark:text-primary-400 font-medium">
               +{earnings?.ordersChange || 0}%
             </span>
           </div>
-          <h3 className="text-2xl font-bold text-gray-900 mb-2">
+          <h3 className="text-2xl font-bold text-gray-900 dark:text-slate-100 mb-2">
             {earnings?.totalOrders || 0}
           </h3>
-          <p className="text-gray-600">Total Orders</p>
+          <p className="text-gray-600 dark:text-slate-400">Total Orders</p>
         </div>
 
-        <div className="bg-white rounded-lg p-6 border border-gray-200">
+        <div className="bg-white dark:bg-slate-800 rounded-lg p-6 border border-gray-200 dark:border-slate-700">
           <div className="flex items-center justify-between mb-4">
-            <div className="p-3 bg-warning-100 rounded-lg">
-              <Calendar className="w-6 h-6 text-warning-600" />
+            <div className="p-3 bg-warning-100 dark:bg-warning-900/40 rounded-lg">
+              <Calendar className="w-6 h-6 text-warning-600 dark:text-warning-400" />
             </div>
-            <span className="text-sm text-gray-600 font-medium">
+            <span className="text-sm text-gray-600 dark:text-slate-400 font-medium">
               Pending
             </span>
           </div>
-          <h3 className="text-2xl font-bold text-gray-900 mb-2">
+          <h3 className="text-2xl font-bold text-gray-900 dark:text-slate-100 mb-2">
             {formatCurrency(earnings?.pendingPayments || 0)}
           </h3>
-          <p className="text-gray-600">Pending Payments</p>
+          <p className="text-gray-600 dark:text-slate-400">Pending Payments</p>
         </div>
       </div>
 
       {/* Earnings Chart */}
-      <div className="bg-white rounded-lg p-6 border border-gray-200 mb-8">
-        <h2 className="text-xl font-semibold text-gray-900 mb-6">Revenue Overview</h2>
-        <div className="h-64 flex items-center justify-center bg-gray-50 rounded-lg">
-          <p className="text-gray-600">Chart placeholder - Revenue over time</p>
+      <div className="bg-white dark:bg-slate-800 rounded-lg p-6 border border-gray-200 dark:border-slate-700 mb-8">
+        <h2 className="text-xl font-semibold text-gray-900 dark:text-slate-100 mb-6">Revenue Overview</h2>
+        <div className="h-64 flex items-center justify-center bg-gray-50 dark:bg-slate-900 rounded-lg">
+          <p className="text-gray-600 dark:text-slate-400">Chart placeholder - Revenue over time</p>
         </div>
       </div>
 
       {/* Recent Transactions */}
-      <div className="bg-white rounded-lg p-6 border border-gray-200">
-        <h2 className="text-xl font-semibold text-gray-900 mb-6">Recent Transactions</h2>
+      <div className="bg-white dark:bg-slate-800 rounded-lg p-6 border border-gray-200 dark:border-slate-700">
+        <h2 className="text-xl font-semibold text-gray-900 dark:text-slate-100 mb-6">Recent Transactions</h2>
         
         {earnings?.recentTransactions?.length > 0 ? (
           <div className="space-y-4">
             {earnings.recentTransactions.map((transaction) => (
-              <div key={transaction._id} className="flex items-center justify-between py-3 border-b border-gray-100 last:border-b-0">
+              <div key={transaction._id} className="flex items-center justify-between py-3 border-b border-gray-100 dark:border-slate-800 last:border-b-0">
                 <div>
-                  <p className="font-medium text-gray-900">#{transaction.orderNumber}</p>
-                  <p className="text-sm text-gray-600">{transaction.date}</p>
+                  <p className="font-medium text-gray-900 dark:text-slate-100">#{transaction.orderNumber}</p>
+                  <p className="text-sm text-gray-600 dark:text-slate-400">{transaction.date}</p>
                 </div>
                 
                 <div className="text-right">
-                  <p className="font-semibold text-gray-900">
+                  <p className="font-semibold text-gray-900 dark:text-slate-100">
                     {formatCurrency(transaction.amount)}
                   </p>
-                  <p className="text-sm text-gray-600">{transaction.status}</p>
+                  <p className="text-sm text-gray-600 dark:text-slate-400">{transaction.status}</p>
                 </div>
               </div>
             ))}
           </div>
         ) : (
           <div className="text-center py-8">
-            <p className="text-gray-600">No recent transactions</p>
+            <p className="text-gray-600 dark:text-slate-400">No recent transactions</p>
           </div>
         )}
       </div>

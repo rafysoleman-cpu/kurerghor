@@ -89,10 +89,10 @@ const AboutPage = () => {
     <div className="container mx-auto px-4 py-8">
       {/* Hero Section */}
       <div className="text-center mb-16">
-        <h1 className="text-4xl lg:text-5xl font-bold text-gray-900 mb-6">
+        <h1 className="text-4xl lg:text-5xl font-bold text-gray-900 dark:text-slate-100 mb-6">
           About Ecommerce Platform
         </h1>
-        <p className="text-xl text-gray-600 max-w-3xl mx-auto leading-relaxed">
+        <p className="text-xl text-gray-600 dark:text-slate-400 max-w-3xl mx-auto leading-relaxed">
           We're on a mission to revolutionize online shopping by connecting customers with amazing products from trusted vendors around the world.
         </p>
       </div>
@@ -103,14 +103,14 @@ const AboutPage = () => {
           {stats.map((stat, index) => {
             const Icon = stat.icon
             return (
-              <div key={index} className="bg-white rounded-lg p-6 border border-gray-200 text-center">
-                <div className="inline-flex items-center justify-center w-12 h-12 bg-primary-100 rounded-full mb-4">
-                  <Icon className="w-6 h-6 text-primary-600" />
+              <div key={index} className="bg-white dark:bg-slate-800 rounded-lg p-6 border border-gray-200 dark:border-slate-700 text-center">
+                <div className="inline-flex items-center justify-center w-12 h-12 bg-primary-100 dark:bg-primary-900/40 rounded-full mb-4">
+                  <Icon className="w-6 h-6 text-primary-600 dark:text-primary-400" />
                 </div>
-                <div className="text-3xl font-bold text-gray-900 mb-2">
+                <div className="text-3xl font-bold text-gray-900 dark:text-slate-100 mb-2">
                   {stat.value}
                 </div>
-                <p className="text-gray-600">
+                <p className="text-gray-600 dark:text-slate-400">
                   {stat.label}
                 </p>
               </div>
@@ -120,13 +120,13 @@ const AboutPage = () => {
       </div>
 
       {/* Story Section */}
-      <div className="bg-white rounded-lg p-8 lg:p-12 border border-gray-200 mb-16">
+      <div className="bg-white dark:bg-slate-800 rounded-lg p-8 lg:p-12 border border-gray-200 dark:border-slate-700 mb-16">
         <div className="max-w-4xl mx-auto">
-          <h2 className="text-3xl font-bold text-gray-900 mb-6 text-center">
+          <h2 className="text-3xl font-bold text-gray-900 dark:text-slate-100 mb-6 text-center">
             Our Story
           </h2>
           
-          <div className="prose prose-lg max-w-none text-gray-700 text-center">
+          <div className="prose prose-lg max-w-none text-gray-700 dark:text-slate-300 text-center">
             <p className="mb-6">
               Founded in 2020, Ecommerce Platform started as a simple idea: create a marketplace where quality products meet exceptional service. What began as a small startup has grown into a thriving community of shoppers and vendors.
             </p>
@@ -144,24 +144,24 @@ const AboutPage = () => {
 
       {/* Mission & Vision */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-16">
-        <div className="bg-white rounded-lg p-8 border border-gray-200">
+        <div className="bg-white dark:bg-slate-800 rounded-lg p-8 border border-gray-200 dark:border-slate-700">
           <div className="flex items-center space-x-3 mb-4">
-            <Target className="w-8 h-8 text-primary-600" />
-            <h2 className="text-2xl font-bold text-gray-900">Our Mission</h2>
+            <Target className="w-8 h-8 text-primary-600 dark:text-primary-400" />
+            <h2 className="text-2xl font-bold text-gray-900 dark:text-slate-100">Our Mission</h2>
           </div>
           
-          <p className="text-gray-700 leading-relaxed">
+          <p className="text-gray-700 dark:text-slate-300 leading-relaxed">
             To provide a trusted, innovative, and user-friendly e-commerce platform that connects customers with quality products while empowering vendors to grow their businesses.
           </p>
         </div>
         
-        <div className="bg-white rounded-lg p-8 border border-gray-200">
+        <div className="bg-white dark:bg-slate-800 rounded-lg p-8 border border-gray-200 dark:border-slate-700">
           <div className="flex items-center space-x-3 mb-4">
-            <Globe className="w-8 h-8 text-primary-600" />
-            <h2 className="text-2xl font-bold text-gray-900">Our Vision</h2>
+            <Globe className="w-8 h-8 text-primary-600 dark:text-primary-400" />
+            <h2 className="text-2xl font-bold text-gray-900 dark:text-slate-100">Our Vision</h2>
           </div>
           
-          <p className="text-gray-700 leading-relaxed">
+          <p className="text-gray-700 dark:text-slate-300 leading-relaxed">
             To become the world's most customer-centric e-commerce platform, where shopping is not just a transaction but an experience to be enjoyed.
           </p>
         </div>
@@ -169,7 +169,7 @@ const AboutPage = () => {
 
       {/* Values Section */}
       <div className="mb-16">
-        <h2 className="text-3xl font-bold text-gray-900 text-center mb-12">
+        <h2 className="text-3xl font-bold text-gray-900 dark:text-slate-100 text-center mb-12">
           Our Values
         </h2>
         
@@ -178,13 +178,13 @@ const AboutPage = () => {
             const Icon = value.icon
             return (
               <div key={index} className="text-center">
-                <div className="inline-flex items-center justify-center w-16 h-16 bg-primary-100 rounded-full mb-4">
-                  <Icon className="w-8 h-8 text-primary-600" />
+                <div className="inline-flex items-center justify-center w-16 h-16 bg-primary-100 dark:bg-primary-900/40 rounded-full mb-4">
+                  <Icon className="w-8 h-8 text-primary-600 dark:text-primary-400" />
                 </div>
-                <h3 className="text-lg font-semibold text-gray-900 mb-3">
+                <h3 className="text-lg font-semibold text-gray-900 dark:text-slate-100 mb-3">
                   {value.title}
                 </h3>
-                <p className="text-gray-600 text-sm leading-relaxed">
+                <p className="text-gray-600 dark:text-slate-400 text-sm leading-relaxed">
                   {value.description}
                 </p>
               </div>
@@ -195,14 +195,14 @@ const AboutPage = () => {
 
       {/* Team Section */}
       <div className="mb-16">
-        <h2 className="text-3xl font-bold text-gray-900 text-center mb-12">
+        <h2 className="text-3xl font-bold text-gray-900 dark:text-slate-100 text-center mb-12">
           Meet Our Team
         </h2>
         
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
           {team.map((member, index) => (
             <div key={index} className="text-center">
-              <div className="w-24 h-24 bg-gray-200 rounded-full overflow-hidden mx-auto mb-4">
+              <div className="w-24 h-24 bg-gray-200 dark:bg-slate-700 rounded-full overflow-hidden mx-auto mb-4">
                 <img
                   src={member.image}
                   alt={member.name}
@@ -210,15 +210,15 @@ const AboutPage = () => {
                 />
               </div>
               
-              <h3 className="font-semibold text-gray-900 mb-2">
+              <h3 className="font-semibold text-gray-900 dark:text-slate-100 mb-2">
                 {member.name}
               </h3>
               
-              <p className="text-primary-600 font-medium mb-3">
+              <p className="text-primary-600 dark:text-primary-400 font-medium mb-3">
                 {member.role}
               </p>
               
-              <p className="text-gray-600 text-sm leading-relaxed">
+              <p className="text-gray-600 dark:text-slate-400 text-sm leading-relaxed">
                 {member.bio}
               </p>
             </div>
@@ -239,14 +239,14 @@ const AboutPage = () => {
         <div className="flex flex-col sm:flex-row gap-4 justify-center">
           <Link 
             to="/products" 
-            className="btn bg-white text-primary-600 hover:bg-gray-100 font-medium"
+            className="btn bg-white dark:bg-slate-800 text-primary-600 dark:text-primary-400 hover:bg-gray-100 dark:hover:bg-slate-800/70 font-medium"
           >
             Start Shopping
           </Link>
           
           <Link 
             to="/vendors" 
-            className="btn-outline border-white text-white hover:bg-white hover:text-primary-600 font-medium"
+            className="btn-outline border-white text-white hover:bg-white dark:hover:bg-slate-700 hover:text-primary-600 dark:hover:text-primary-400 font-medium"
           >
             Become a Vendor
           </Link>

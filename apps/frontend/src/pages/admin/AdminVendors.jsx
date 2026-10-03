@@ -134,10 +134,10 @@ const AdminVendors = () => {
 
   const getStatusColor = (status) => {
     switch (status) {
-      case 'pending': return 'text-warning-600 bg-warning-50'
-      case 'approved': return 'text-success-600 bg-success-50'
-      case 'rejected': return 'text-error-600 bg-error-50'
-      default: return 'text-gray-600 bg-gray-50'
+      case 'pending': return 'text-warning-600 dark:text-warning-400 bg-warning-50 dark:bg-warning-950/40'
+      case 'approved': return 'text-success-600 dark:text-success-400 bg-success-50 dark:bg-success-950/40'
+      case 'rejected': return 'text-error-600 dark:text-error-400 bg-error-50 dark:bg-error-950/40'
+      default: return 'text-gray-600 dark:text-slate-400 bg-gray-50 dark:bg-slate-900'
     }
   }
 
@@ -182,33 +182,33 @@ const AdminVendors = () => {
   return (
     <div className="container mx-auto px-4 py-8">
       <div className="mb-8">
-        <h1 className="text-3xl font-bold text-gray-900 mb-2">Vendor Requests</h1>
-        <p className="text-gray-600">{vendorRequests.length} requests</p>
+        <h1 className="text-3xl font-bold text-gray-900 dark:text-slate-100 mb-2">Vendor Requests</h1>
+        <p className="text-gray-600 dark:text-slate-400">{vendorRequests.length} requests</p>
         
         {stats && (
           <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mt-6">
-            <div className="bg-white p-4 rounded-lg border border-gray-200">
-              <div className="text-2xl font-bold text-gray-900">{stats.data.data.total}</div>
-              <div className="text-sm text-gray-500">Total Requests</div>
+            <div className="bg-white dark:bg-slate-800 p-4 rounded-lg border border-gray-200 dark:border-slate-700">
+              <div className="text-2xl font-bold text-gray-900 dark:text-slate-100">{stats.data.data.total}</div>
+              <div className="text-sm text-gray-500 dark:text-slate-400">Total Requests</div>
             </div>
-            <div className="bg-white p-4 rounded-lg border border-gray-200">
-              <div className="text-2xl font-bold text-warning-600">{stats.data.data.pending}</div>
-              <div className="text-sm text-gray-500">Pending</div>
+            <div className="bg-white dark:bg-slate-800 p-4 rounded-lg border border-gray-200 dark:border-slate-700">
+              <div className="text-2xl font-bold text-warning-600 dark:text-warning-400">{stats.data.data.pending}</div>
+              <div className="text-sm text-gray-500 dark:text-slate-400">Pending</div>
             </div>
-            <div className="bg-white p-4 rounded-lg border border-gray-200">
-              <div className="text-2xl font-bold text-success-600">{stats.data.data.approved}</div>
-              <div className="text-sm text-gray-500">Approved</div>
+            <div className="bg-white dark:bg-slate-800 p-4 rounded-lg border border-gray-200 dark:border-slate-700">
+              <div className="text-2xl font-bold text-success-600 dark:text-success-400">{stats.data.data.approved}</div>
+              <div className="text-sm text-gray-500 dark:text-slate-400">Approved</div>
             </div>
-            <div className="bg-white p-4 rounded-lg border border-gray-200">
-              <div className="text-2xl font-bold text-error-600">{stats.data.data.rejected}</div>
-              <div className="text-sm text-gray-500">Rejected</div>
+            <div className="bg-white dark:bg-slate-800 p-4 rounded-lg border border-gray-200 dark:border-slate-700">
+              <div className="text-2xl font-bold text-error-600 dark:text-error-400">{stats.data.data.rejected}</div>
+              <div className="text-sm text-gray-500 dark:text-slate-400">Rejected</div>
             </div>
           </div>
         )}
       </div>
 
       {/* Filters */}
-      <div className="bg-white rounded-lg p-6 border border-gray-200 mb-8">
+      <div className="bg-white dark:bg-slate-800 rounded-lg p-6 border border-gray-200 dark:border-slate-700 mb-8">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div className="relative">
             <Search className="search-icon" />
@@ -241,43 +241,43 @@ const AdminVendors = () => {
       {/* Vendor Requests Table */}
       {vendorRequests.length > 0 ? (
         <>
-          <div className="bg-white rounded-lg border border-gray-200 overflow-hidden">
+          <div className="bg-white dark:bg-slate-800 rounded-lg border border-gray-200 dark:border-slate-700 overflow-hidden">
             <div className="overflow-x-auto">
-              <table className="min-w-full divide-y divide-gray-200">
-                <thead className="bg-gray-50">
+              <table className="min-w-full divide-y divide-gray-200 dark:divide-slate-700">
+                <thead className="bg-gray-50 dark:bg-slate-900">
                   <tr>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-slate-400 uppercase tracking-wider">
                       Shop Details
                     </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-slate-400 uppercase tracking-wider">
                       Owner
                     </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-slate-400 uppercase tracking-wider">
                       Status
                     </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-slate-400 uppercase tracking-wider">
                       Applied
                     </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-slate-400 uppercase tracking-wider">
                       Actions
                     </th>
                   </tr>
                 </thead>
-                <tbody className="bg-white divide-y divide-gray-200">
+                <tbody className="bg-white dark:bg-slate-800 divide-y divide-gray-200 dark:divide-slate-700">
                   {vendorRequests.map((request) => (
-                    <tr key={request._id} className="hover:bg-gray-50">
+                    <tr key={request._id} className="hover:bg-gray-50 dark:hover:bg-slate-900">
                       <td className="px-6 py-4 whitespace-nowrap">
                         <div className="flex items-center">
-                          <div className="w-10 h-10 bg-gray-200 rounded-lg overflow-hidden">
-                            <div className="w-full h-full flex items-center justify-center bg-primary-100">
-                              <Store className="w-5 h-5 text-primary-600" />
+                          <div className="w-10 h-10 bg-gray-200 dark:bg-slate-700 rounded-lg overflow-hidden">
+                            <div className="w-full h-full flex items-center justify-center bg-primary-100 dark:bg-primary-900/40">
+                              <Store className="w-5 h-5 text-primary-600 dark:text-primary-400" />
                             </div>
                           </div>
                           <div className="ml-4">
-                            <div className="text-sm font-medium text-gray-900">
+                            <div className="text-sm font-medium text-gray-900 dark:text-slate-100">
                               {request.shopName}
                             </div>
-                            <div className="text-sm text-gray-500">
+                            <div className="text-sm text-gray-500 dark:text-slate-400">
                               {request.businessType}
                             </div>
                           </div>
@@ -285,10 +285,10 @@ const AdminVendors = () => {
                       </td>
                       
                       <td className="px-6 py-4 whitespace-nowrap">
-                        <div className="text-sm text-gray-900">
+                        <div className="text-sm text-gray-900 dark:text-slate-100">
                           {request.user?.name || 'N/A'}
                         </div>
-                        <div className="text-sm text-gray-500">
+                        <div className="text-sm text-gray-500 dark:text-slate-400">
                           {request.user?.email || request.shopEmail}
                         </div>
                       </td>
@@ -300,7 +300,7 @@ const AdminVendors = () => {
                         </span>
                       </td>
                       
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-slate-400">
                         {new Date(request.requestedAt).toLocaleDateString()}
                       </td>
                       
@@ -338,26 +338,26 @@ const AdminVendors = () => {
         </>
       ) : (
         <div className="text-center py-16">
-          <Store className="w-16 h-16 text-gray-400 mx-auto mb-4" />
-          <h3 className="text-xl font-semibold text-gray-900 mb-2">No vendor requests found</h3>
-          <p className="text-gray-600">Try adjusting your filters or search terms.</p>
+          <Store className="w-16 h-16 text-gray-400 dark:text-slate-500 mx-auto mb-4" />
+          <h3 className="text-xl font-semibold text-gray-900 dark:text-slate-100 mb-2">No vendor requests found</h3>
+          <p className="text-gray-600 dark:text-slate-400">Try adjusting your filters or search terms.</p>
         </div>
       )}
 
       {/* Details Modal */}
       {showDetailsModal && selectedRequest && (
         <div className="fixed inset-0 bg-black bg-opacity-60 backdrop-blur-sm flex items-center justify-center z-50 p-4">
-          <div className="bg-white rounded-2xl shadow-2xl max-w-5xl w-full max-h-[95vh] overflow-hidden transform transition-all duration-300 scale-100" ref={modalRef}>
+          <div className="bg-white dark:bg-slate-800 rounded-2xl shadow-2xl max-w-5xl w-full max-h-[95vh] overflow-hidden transform transition-all duration-300 scale-100" ref={modalRef}>
             {/* Header with gradient and status */}
             <div className="bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-600 text-white p-8 relative overflow-hidden">
-              <div className="absolute top-0 right-0 w-64 h-64 bg-white opacity-10 rounded-full -mr-32 -mt-32"></div>
-              <div className="absolute bottom-0 left-0 w-48 h-48 bg-white opacity-10 rounded-full -ml-24 -mb-24"></div>
+              <div className="absolute top-0 right-0 w-64 h-64 bg-white dark:bg-slate-800 opacity-10 rounded-full -mr-32 -mt-32"></div>
+              <div className="absolute bottom-0 left-0 w-48 h-48 bg-white dark:bg-slate-800 opacity-10 rounded-full -ml-24 -mb-24"></div>
               
               <div className="relative z-10">
                 <div className="flex items-center justify-between">
                   <div>
                     <div className="flex items-center space-x-4 mb-3">
-                      <div className="w-12 h-12 bg-white bg-opacity-20 rounded-xl flex items-center justify-center backdrop-blur-sm">
+                      <div className="w-12 h-12 bg-white dark:bg-slate-800 bg-opacity-20 rounded-xl flex items-center justify-center backdrop-blur-sm">
                         <Store className="w-6 h-6" />
                       </div>
                       <div>
@@ -368,9 +368,9 @@ const AdminVendors = () => {
                     
                     <div className="flex items-center space-x-4">
                       <span className={`px-4 py-2 rounded-full text-sm font-semibold flex items-center space-x-2 backdrop-blur-sm ${
-                        selectedRequest.status === 'pending' ? 'bg-yellow-400 text-yellow-900' :
-                        selectedRequest.status === 'approved' ? 'bg-green-400 text-green-900' :
-                        'bg-red-400 text-red-900'
+                        selectedRequest.status === 'pending' ? 'bg-yellow-400 text-yellow-900 dark:text-yellow-300' :
+                        selectedRequest.status === 'approved' ? 'bg-green-400 text-green-900 dark:text-green-300' :
+                        'bg-red-400 text-red-900 dark:text-red-300'
                       }`}>
                         {getStatusIcon(selectedRequest.status)}
                         <span>{selectedRequest.status.charAt(0).toUpperCase() + selectedRequest.status.slice(1)}</span>
@@ -411,7 +411,7 @@ const AdminVendors = () => {
                     )}
                     <button
                       onClick={() => setShowDetailsModal(false)}
-                      className="p-3 hover:bg-white hover:bg-opacity-20 rounded-xl transition-all duration-200 backdrop-blur-sm"
+                      className="p-3 hover:bg-white dark:hover:bg-slate-800 hover:bg-opacity-20 rounded-xl transition-all duration-200 backdrop-blur-sm"
                     >
                       <XCircle className="w-6 h-6" />
                     </button>
@@ -423,9 +423,9 @@ const AdminVendors = () => {
             {/* Content with tabs */}
             <div className="flex flex-col h-[calc(95vh-200px)]">
               {/* Tab Navigation */}
-              <div className="border-b border-gray-200 bg-gray-50 px-8">
+              <div className="border-b border-gray-200 dark:border-slate-700 bg-gray-50 dark:bg-slate-900 px-8">
                 <div className="flex space-x-8">
-                  <button className="py-4 px-2 border-b-2 border-indigo-600 text-indigo-600 font-medium text-sm">
+                  <button className="py-4 px-2 border-b-2 border-indigo-600 text-indigo-600 dark:text-indigo-400 font-medium text-sm">
                     Application Details
                   </button>
                 </div>
@@ -442,41 +442,41 @@ const AdminVendors = () => {
                         <div className="w-10 h-10 bg-blue-600 rounded-xl flex items-center justify-center mr-4">
                           <Store className="w-5 h-5 text-white" />
                         </div>
-                        <h4 className="text-xl font-bold text-gray-900">Business Information</h4>
+                        <h4 className="text-xl font-bold text-gray-900 dark:text-slate-100">Business Information</h4>
                       </div>
                       
                       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                         <div className="space-y-4">
                           <div>
-                            <label className="text-xs font-semibold text-gray-500 uppercase tracking-wider">Shop Name</label>
-                            <p className="text-lg font-semibold text-gray-900 mt-1">{selectedRequest.shopName}</p>
+                            <label className="text-xs font-semibold text-gray-500 dark:text-slate-400 uppercase tracking-wider">Shop Name</label>
+                            <p className="text-lg font-semibold text-gray-900 dark:text-slate-100 mt-1">{selectedRequest.shopName}</p>
                           </div>
                           <div>
-                            <label className="text-xs font-semibold text-gray-500 uppercase tracking-wider">Business Type</label>
-                            <p className="text-gray-900 mt-1">{selectedRequest.businessType}</p>
+                            <label className="text-xs font-semibold text-gray-500 dark:text-slate-400 uppercase tracking-wider">Business Type</label>
+                            <p className="text-gray-900 dark:text-slate-100 mt-1">{selectedRequest.businessType}</p>
                           </div>
                           <div>
-                            <label className="text-xs font-semibold text-gray-500 uppercase tracking-wider">Phone Number</label>
-                            <p className="text-gray-900 mt-1">{selectedRequest.shopPhone}</p>
+                            <label className="text-xs font-semibold text-gray-500 dark:text-slate-400 uppercase tracking-wider">Phone Number</label>
+                            <p className="text-gray-900 dark:text-slate-100 mt-1">{selectedRequest.shopPhone}</p>
                           </div>
                         </div>
                         
                         <div className="space-y-4">
                           <div>
-                            <label className="text-xs font-semibold text-gray-500 uppercase tracking-wider">Email Address</label>
-                            <p className="text-gray-900 mt-1">{selectedRequest.shopEmail}</p>
+                            <label className="text-xs font-semibold text-gray-500 dark:text-slate-400 uppercase tracking-wider">Email Address</label>
+                            <p className="text-gray-900 dark:text-slate-100 mt-1">{selectedRequest.shopEmail}</p>
                           </div>
                           <div>
-                            <label className="text-xs font-semibold text-gray-500 uppercase tracking-wider">Business Address</label>
-                            <p className="text-gray-900 mt-1">{selectedRequest.shopAddress}</p>
+                            <label className="text-xs font-semibold text-gray-500 dark:text-slate-400 uppercase tracking-wider">Business Address</label>
+                            <p className="text-gray-900 dark:text-slate-100 mt-1">{selectedRequest.shopAddress}</p>
                           </div>
                         </div>
                       </div>
                       
                       <div className="mt-6">
-                        <label className="text-xs font-semibold text-gray-500 uppercase tracking-wider">Business Description</label>
-                        <div className="mt-2 p-4 bg-white rounded-xl border border-gray-200">
-                          <p className="text-gray-900 leading-relaxed">{selectedRequest.shopDescription}</p>
+                        <label className="text-xs font-semibold text-gray-500 dark:text-slate-400 uppercase tracking-wider">Business Description</label>
+                        <div className="mt-2 p-4 bg-white dark:bg-slate-800 rounded-xl border border-gray-200 dark:border-slate-700">
+                          <p className="text-gray-900 dark:text-slate-100 leading-relaxed">{selectedRequest.shopDescription}</p>
                         </div>
                       </div>
                     </div>
@@ -487,46 +487,46 @@ const AdminVendors = () => {
                         <div className="w-10 h-10 bg-green-600 rounded-xl flex items-center justify-center mr-4">
                           <Clock className="w-5 h-5 text-white" />
                         </div>
-                        <h4 className="text-xl font-bold text-gray-900">Application Timeline</h4>
+                        <h4 className="text-xl font-bold text-gray-900 dark:text-slate-100">Application Timeline</h4>
                       </div>
                       
                       <div className="space-y-4">
-                        <div className="flex items-center justify-between p-4 bg-white rounded-xl border border-gray-200">
+                        <div className="flex items-center justify-between p-4 bg-white dark:bg-slate-800 rounded-xl border border-gray-200 dark:border-slate-700">
                           <div className="flex items-center space-x-3">
-                            <div className="w-8 h-8 bg-green-100 rounded-full flex items-center justify-center">
+                            <div className="w-8 h-8 bg-green-100 dark:bg-green-900/40 rounded-full flex items-center justify-center">
                               <div className="w-3 h-3 bg-green-600 rounded-full"></div>
                             </div>
                             <div>
-                              <p className="font-semibold text-gray-900">Application Submitted</p>
-                              <p className="text-sm text-gray-500">Initial application received</p>
+                              <p className="font-semibold text-gray-900 dark:text-slate-100">Application Submitted</p>
+                              <p className="text-sm text-gray-500 dark:text-slate-400">Initial application received</p>
                             </div>
                           </div>
                           <div className="text-right">
-                            <p className="font-semibold text-gray-900">
+                            <p className="font-semibold text-gray-900 dark:text-slate-100">
                               {new Date(selectedRequest.requestedAt).toLocaleDateString()}
                             </p>
-                            <p className="text-sm text-gray-500">
+                            <p className="text-sm text-gray-500 dark:text-slate-400">
                               {new Date(selectedRequest.requestedAt).toLocaleTimeString()}
                             </p>
                           </div>
                         </div>
                         
                         {selectedRequest.reviewedAt && (
-                          <div className="flex items-center justify-between p-4 bg-white rounded-xl border border-gray-200">
+                          <div className="flex items-center justify-between p-4 bg-white dark:bg-slate-800 rounded-xl border border-gray-200 dark:border-slate-700">
                             <div className="flex items-center space-x-3">
-                              <div className="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center">
+                              <div className="w-8 h-8 bg-blue-100 dark:bg-blue-900/40 rounded-full flex items-center justify-center">
                                 <div className="w-3 h-3 bg-blue-600 rounded-full"></div>
                               </div>
                               <div>
-                                <p className="font-semibold text-gray-900">Last Reviewed</p>
-                                <p className="text-sm text-gray-500">Application processed</p>
+                                <p className="font-semibold text-gray-900 dark:text-slate-100">Last Reviewed</p>
+                                <p className="text-sm text-gray-500 dark:text-slate-400">Application processed</p>
                               </div>
                             </div>
                             <div className="text-right">
-                              <p className="font-semibold text-gray-900">
+                              <p className="font-semibold text-gray-900 dark:text-slate-100">
                                 {new Date(selectedRequest.reviewedAt).toLocaleDateString()}
                               </p>
-                              <p className="text-sm text-gray-500">
+                              <p className="text-sm text-gray-500 dark:text-slate-400">
                                 {new Date(selectedRequest.reviewedAt).toLocaleTimeString()}
                               </p>
                             </div>
@@ -535,16 +535,16 @@ const AdminVendors = () => {
                       </div>
                       
                       {selectedRequest.reviewNotes && (
-                        <div className="mt-6 p-4 bg-blue-50 rounded-xl border border-blue-200">
-                          <label className="text-xs font-semibold text-blue-900 uppercase tracking-wider">Review Notes</label>
-                          <p className="text-blue-900 mt-2 leading-relaxed">{selectedRequest.reviewNotes}</p>
+                        <div className="mt-6 p-4 bg-blue-50 dark:bg-blue-950/40 rounded-xl border border-blue-200 dark:border-blue-800">
+                          <label className="text-xs font-semibold text-blue-900 dark:text-blue-300 uppercase tracking-wider">Review Notes</label>
+                          <p className="text-blue-900 dark:text-blue-300 mt-2 leading-relaxed">{selectedRequest.reviewNotes}</p>
                         </div>
                       )}
                       
                       {selectedRequest.rejectionReason && (
-                        <div className="mt-6 p-4 bg-red-50 rounded-xl border border-red-200">
-                          <label className="text-xs font-semibold text-red-900 uppercase tracking-wider">Rejection Reason</label>
-                          <p className="text-red-900 mt-2 leading-relaxed">{selectedRequest.rejectionReason}</p>
+                        <div className="mt-6 p-4 bg-red-50 dark:bg-red-950/40 rounded-xl border border-red-200 dark:border-red-800">
+                          <label className="text-xs font-semibold text-red-900 dark:text-red-300 uppercase tracking-wider">Rejection Reason</label>
+                          <p className="text-red-900 dark:text-red-300 mt-2 leading-relaxed">{selectedRequest.rejectionReason}</p>
                         </div>
                       )}
                     </div>
@@ -558,7 +558,7 @@ const AdminVendors = () => {
                         <div className="w-10 h-10 bg-purple-600 rounded-xl flex items-center justify-center mr-4">
                           <User className="w-5 h-5 text-white" />
                         </div>
-                        <h4 className="text-xl font-bold text-gray-900">Owner Details</h4>
+                        <h4 className="text-xl font-bold text-gray-900 dark:text-slate-100">Owner Details</h4>
                       </div>
                       
                       <div className="space-y-4">
@@ -566,18 +566,18 @@ const AdminVendors = () => {
                           <div className="w-20 h-20 bg-gradient-to-br from-purple-400 to-pink-400 rounded-full mx-auto mb-4 flex items-center justify-center">
                             <User className="w-10 h-10 text-white" />
                           </div>
-                          <p className="font-bold text-lg text-gray-900">{selectedRequest.user?.name || 'N/A'}</p>
-                          <p className="text-sm text-gray-500">Account Owner</p>
+                          <p className="font-bold text-lg text-gray-900 dark:text-slate-100">{selectedRequest.user?.name || 'N/A'}</p>
+                          <p className="text-sm text-gray-500 dark:text-slate-400">Account Owner</p>
                         </div>
                         
-                        <div className="space-y-3 pt-4 border-t border-purple-200">
+                        <div className="space-y-3 pt-4 border-t border-purple-200 dark:border-purple-800">
                           <div>
-                            <label className="text-xs font-semibold text-gray-500 uppercase tracking-wider">Email Address</label>
-                            <p className="text-gray-900 mt-1">{selectedRequest.user?.email || 'N/A'}</p>
+                            <label className="text-xs font-semibold text-gray-500 dark:text-slate-400 uppercase tracking-wider">Email Address</label>
+                            <p className="text-gray-900 dark:text-slate-100 mt-1">{selectedRequest.user?.email || 'N/A'}</p>
                           </div>
                           <div>
-                            <label className="text-xs font-semibold text-gray-500 uppercase tracking-wider">User ID</label>
-                            <p className="text-xs font-mono text-gray-900 bg-gray-100 p-2 rounded-lg mt-1">
+                            <label className="text-xs font-semibold text-gray-500 dark:text-slate-400 uppercase tracking-wider">User ID</label>
+                            <p className="text-xs font-mono text-gray-900 dark:text-slate-100 bg-gray-100 dark:bg-slate-800/70 p-2 rounded-lg mt-1">
                               {selectedRequest.user?._id || 'N/A'}
                             </p>
                           </div>
@@ -591,15 +591,15 @@ const AdminVendors = () => {
             </div>
 
             {/* Footer */}
-            <div className="border-t border-gray-200 bg-gray-50 px-8 py-4">
+            <div className="border-t border-gray-200 dark:border-slate-700 bg-gray-50 dark:bg-slate-900 px-8 py-4">
               <div className="flex justify-between items-center">
-                <p className="text-sm text-gray-500">
+                <p className="text-sm text-gray-500 dark:text-slate-400">
                   Last updated: {new Date(selectedRequest.updatedAt).toLocaleDateString()}
                 </p>
                 <div className="flex space-x-3">
                   <button
                     onClick={() => setShowDetailsModal(false)}
-                    className="px-6 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-xl hover:bg-gray-50 transition-colors"
+                    className="px-6 py-2 text-sm font-medium text-gray-700 dark:text-slate-300 bg-white dark:bg-slate-800 border border-gray-300 dark:border-slate-600 rounded-xl hover:bg-gray-50 dark:hover:bg-slate-900 transition-colors"
                   >
                     Close
                   </button>
@@ -613,20 +613,20 @@ const AdminVendors = () => {
       {/* Review Modal */}
       {showReviewModal && selectedRequest && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-          <div className="bg-white rounded-lg p-6 max-w-md w-full mx-4">
+          <div className="bg-white dark:bg-slate-800 rounded-lg p-6 max-w-md w-full mx-4">
             <h3 className="text-lg font-semibold mb-4">
               {reviewData.isApproval ? 'Approve Vendor Request' : 'Reject Vendor Request'}
             </h3>
             
             <div className="space-y-4">
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
+                <label className="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-1">
                   {reviewData.isApproval ? 'Approval Notes (Optional)' : 'Rejection Reason (Required)'}
                 </label>
                 <textarea
                   value={reviewData.rejectionReason}
                   onChange={(e) => setReviewData(prev => ({ ...prev, rejectionReason: e.target.value }))}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-red-500"
+                  className="w-full px-3 py-2 border border-gray-300 dark:border-slate-600 rounded-md focus:outline-none focus:ring-2 focus:ring-red-500"
                   rows="3"
                   placeholder={reviewData.isApproval ? 'Add approval notes (optional)' : 'Required: Please provide rejection reason'}
                 />
@@ -636,7 +636,7 @@ const AdminVendors = () => {
             <div className="mt-6 flex justify-end space-x-3">
               <button
                 onClick={() => setShowReviewModal(false)}
-                className="px-4 py-2 text-sm font-medium text-gray-700 bg-gray-100 rounded-md hover:bg-gray-200"
+                className="px-4 py-2 text-sm font-medium text-gray-700 dark:text-slate-300 bg-gray-100 dark:bg-slate-800/70 rounded-md hover:bg-gray-200 dark:hover:bg-slate-700"
               >
                 Cancel
               </button>

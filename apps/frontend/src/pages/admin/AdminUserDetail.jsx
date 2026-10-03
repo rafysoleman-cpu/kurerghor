@@ -85,12 +85,12 @@ const AdminUserDetail = () => {
   if (error) {
     return (
       <div className="container mx-auto px-4 py-8">
-        <div className="bg-red-50 border border-red-200 rounded-lg p-6">
-          <h3 className="text-red-800 font-semibold mb-2">Error Loading User</h3>
-          <p className="text-red-600">{error.message || 'Failed to load user details'}</p>
+        <div className="bg-red-50 dark:bg-red-950/40 border border-red-200 dark:border-red-800 rounded-lg p-6">
+          <h3 className="text-red-800 dark:text-red-300 font-semibold mb-2">Error Loading User</h3>
+          <p className="text-red-600 dark:text-red-400">{error.message || 'Failed to load user details'}</p>
           <Link 
             to="/admin/users" 
-            className="inline-flex items-center mt-4 text-primary-600 hover:text-primary-800"
+            className="inline-flex items-center mt-4 text-primary-600 dark:text-primary-400 hover:text-primary-800 dark:hover:text-primary-300"
           >
             <ArrowLeft className="w-4 h-4 mr-2" />
             Back to Users
@@ -103,12 +103,12 @@ const AdminUserDetail = () => {
   if (!user) {
     return (
       <div className="container mx-auto px-4 py-8">
-        <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-6">
-          <h3 className="text-yellow-800 font-semibold mb-2">User Not Found</h3>
-          <p className="text-yellow-600">The user you're looking for doesn't exist.</p>
+        <div className="bg-yellow-50 dark:bg-yellow-950/40 border border-yellow-200 dark:border-yellow-800 rounded-lg p-6">
+          <h3 className="text-yellow-800 dark:text-yellow-300 font-semibold mb-2">User Not Found</h3>
+          <p className="text-yellow-600 dark:text-yellow-400">The user you're looking for doesn't exist.</p>
           <Link 
             to="/admin/users" 
-            className="inline-flex items-center mt-4 text-primary-600 hover:text-primary-800"
+            className="inline-flex items-center mt-4 text-primary-600 dark:text-primary-400 hover:text-primary-800 dark:hover:text-primary-300"
           >
             <ArrowLeft className="w-4 h-4 mr-2" />
             Back to Users
@@ -126,12 +126,12 @@ const AdminUserDetail = () => {
           <div className="flex items-center space-x-4">
             <Link 
               to="/admin/users"
-              className="inline-flex items-center text-gray-600 hover:text-gray-900"
+              className="inline-flex items-center text-gray-600 dark:text-slate-400 hover:text-gray-900 dark:hover:text-slate-100"
             >
               <ArrowLeft className="w-5 h-5 mr-2" />
               Back to Users
             </Link>
-            <h1 className="text-3xl font-bold text-gray-900">User Details</h1>
+            <h1 className="text-3xl font-bold text-gray-900 dark:text-slate-100">User Details</h1>
           </div>
           <div className="flex items-center space-x-3">
             {!isEditing ? (
@@ -146,7 +146,7 @@ const AdminUserDetail = () => {
               <>
                 <button
                   onClick={() => setIsEditing(false)}
-                  className="inline-flex items-center px-4 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300"
+                  className="inline-flex items-center px-4 py-2 bg-gray-200 dark:bg-slate-700 text-gray-700 dark:text-slate-300 rounded-lg hover:bg-gray-300 dark:hover:bg-slate-600"
                 >
                   <X className="w-4 h-4 mr-2" />
                   Cancel
@@ -168,9 +168,9 @@ const AdminUserDetail = () => {
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
         {/* User Info Card */}
         <div className="lg:col-span-1">
-          <div className="bg-white rounded-lg p-6 border border-gray-200">
+          <div className="bg-white dark:bg-slate-800 rounded-lg p-6 border border-gray-200 dark:border-slate-700">
             <div className="text-center">
-              <div className="w-24 h-24 bg-gray-200 rounded-full mx-auto mb-4 overflow-hidden">
+              <div className="w-24 h-24 bg-gray-200 dark:bg-slate-700 rounded-full mx-auto mb-4 overflow-hidden">
                 {user.avatar ? (
                   <img
                     src={user.avatar}
@@ -178,8 +178,8 @@ const AdminUserDetail = () => {
                     className="w-full h-full object-cover"
                   />
                 ) : (
-                  <div className="w-full h-full flex items-center justify-center bg-primary-100">
-                    <User className="w-12 h-12 text-primary-600" />
+                  <div className="w-full h-full flex items-center justify-center bg-primary-100 dark:bg-primary-900/40">
+                    <User className="w-12 h-12 text-primary-600 dark:text-primary-400" />
                   </div>
                 )}
               </div>
@@ -187,29 +187,29 @@ const AdminUserDetail = () => {
               {isEditing ? (
                 <div className="space-y-4">
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">Name</label>
+                    <label className="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-1">Name</label>
                     <input
                       type="text"
                       value={editForm.name}
                       onChange={(e) => handleInputChange('name', e.target.value)}
-                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
+                      className="w-full px-3 py-2 border border-gray-300 dark:border-slate-600 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
                     />
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">Email</label>
+                    <label className="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-1">Email</label>
                     <input
                       type="email"
                       value={editForm.email}
                       onChange={(e) => handleInputChange('email', e.target.value)}
-                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
+                      className="w-full px-3 py-2 border border-gray-300 dark:border-slate-600 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
                     />
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">Role</label>
+                    <label className="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-1">Role</label>
                     <select
                       value={editForm.role}
                       onChange={(e) => handleInputChange('role', e.target.value)}
-                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
+                      className="w-full px-3 py-2 border border-gray-300 dark:border-slate-600 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
                     >
                       <option value="user">User</option>
                       <option value="vendor">Vendor</option>
@@ -219,15 +219,15 @@ const AdminUserDetail = () => {
                 </div>
               ) : (
                 <>
-                  <h2 className="text-xl font-semibold text-gray-900 mb-2">{user.name}</h2>
-                  <p className="text-gray-600 mb-4">{user.email}</p>
+                  <h2 className="text-xl font-semibold text-gray-900 dark:text-slate-100 mb-2">{user.name}</h2>
+                  <p className="text-gray-600 dark:text-slate-400 mb-4">{user.email}</p>
                   
                   <div className="space-y-3">
                     <div className="flex items-center justify-center">
                       <span className={`px-3 py-1 rounded-full text-sm font-medium ${
-                        user.role === 'admin' ? 'bg-error-100 text-error-800' :
-                        user.role === 'vendor' ? 'bg-warning-100 text-warning-800' :
-                        'bg-primary-100 text-primary-800'
+                        user.role === 'admin' ? 'bg-error-100 dark:bg-error-900/40 text-error-800 dark:text-error-300' :
+                        user.role === 'vendor' ? 'bg-warning-100 dark:bg-warning-900/40 text-warning-800 dark:text-warning-300' :
+                        'bg-primary-100 dark:bg-primary-900/40 text-primary-800 dark:text-primary-300'
                       }`}>
                         {user.role.charAt(0).toUpperCase() + user.role.slice(1)}
                       </span>
@@ -235,7 +235,7 @@ const AdminUserDetail = () => {
                     
                     <div className="flex items-center justify-center">
                       <span className={`px-3 py-1 rounded-full text-sm font-medium ${
-                        user.isActive ? 'bg-success-100 text-success-800' : 'bg-gray-100 text-gray-800'
+                        user.isActive ? 'bg-success-100 dark:bg-success-900/40 text-success-800 dark:text-success-300' : 'bg-gray-100 dark:bg-slate-800/70 text-gray-800 dark:text-slate-200'
                       }`}>
                         {user.isActive ? 'Active' : 'Inactive'}
                       </span>
@@ -249,39 +249,39 @@ const AdminUserDetail = () => {
 
         {/* Details Card */}
         <div className="lg:col-span-2">
-          <div className="bg-white rounded-lg p-6 border border-gray-200">
-            <h3 className="text-lg font-semibold text-gray-900 mb-6">User Information</h3>
+          <div className="bg-white dark:bg-slate-800 rounded-lg p-6 border border-gray-200 dark:border-slate-700">
+            <h3 className="text-lg font-semibold text-gray-900 dark:text-slate-100 mb-6">User Information</h3>
             
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div className="space-y-4">
                 <div>
-                  <label className="block text-sm font-medium text-gray-500 mb-1">User ID</label>
-                  <p className="text-gray-900 font-mono text-sm">{user._id}</p>
+                  <label className="block text-sm font-medium text-gray-500 dark:text-slate-400 mb-1">User ID</label>
+                  <p className="text-gray-900 dark:text-slate-100 font-mono text-sm">{user._id}</p>
                 </div>
                 
                 <div>
-                  <label className="block text-sm font-medium text-gray-500 mb-1">Email Address</label>
-                  <div className="flex items-center text-gray-900">
-                    <Mail className="w-4 h-4 mr-2 text-gray-400" />
+                  <label className="block text-sm font-medium text-gray-500 dark:text-slate-400 mb-1">Email Address</label>
+                  <div className="flex items-center text-gray-900 dark:text-slate-100">
+                    <Mail className="w-4 h-4 mr-2 text-gray-400 dark:text-slate-500" />
                     {user.email}
                   </div>
                 </div>
 
                 {user.phone && (
                   <div>
-                    <label className="block text-sm font-medium text-gray-500 mb-1">Phone Number</label>
-                    <div className="flex items-center text-gray-900">
-                      <Phone className="w-4 h-4 mr-2 text-gray-400" />
+                    <label className="block text-sm font-medium text-gray-500 dark:text-slate-400 mb-1">Phone Number</label>
+                    <div className="flex items-center text-gray-900 dark:text-slate-100">
+                      <Phone className="w-4 h-4 mr-2 text-gray-400 dark:text-slate-500" />
                       {user.phone}
                     </div>
                   </div>
                 )}
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-500 mb-1">Account Status</label>
+                  <label className="block text-sm font-medium text-gray-500 dark:text-slate-400 mb-1">Account Status</label>
                   <div className="flex items-center">
                     <span className={`px-2 py-1 rounded-full text-xs font-medium ${
-                      user.isActive ? 'bg-success-100 text-success-800' : 'bg-gray-100 text-gray-800'
+                      user.isActive ? 'bg-success-100 dark:bg-success-900/40 text-success-800 dark:text-success-300' : 'bg-gray-100 dark:bg-slate-800/70 text-gray-800 dark:text-slate-200'
                     }`}>
                       {user.isActive ? 'Active' : 'Inactive'}
                     </span>
@@ -291,13 +291,13 @@ const AdminUserDetail = () => {
 
               <div className="space-y-4">
                 <div>
-                  <label className="block text-sm font-medium text-gray-500 mb-1">Role</label>
+                  <label className="block text-sm font-medium text-gray-500 dark:text-slate-400 mb-1">Role</label>
                   <div className="flex items-center">
-                    <Shield className="w-4 h-4 mr-2 text-gray-400" />
+                    <Shield className="w-4 h-4 mr-2 text-gray-400 dark:text-slate-500" />
                     <span className={`px-2 py-1 rounded-full text-xs font-medium ${
-                      user.role === 'admin' ? 'bg-error-100 text-error-800' :
-                      user.role === 'vendor' ? 'bg-warning-100 text-warning-800' :
-                      'bg-primary-100 text-primary-800'
+                      user.role === 'admin' ? 'bg-error-100 dark:bg-error-900/40 text-error-800 dark:text-error-300' :
+                      user.role === 'vendor' ? 'bg-warning-100 dark:bg-warning-900/40 text-warning-800 dark:text-warning-300' :
+                      'bg-primary-100 dark:bg-primary-900/40 text-primary-800 dark:text-primary-300'
                     }`}>
                       {user.role.charAt(0).toUpperCase() + user.role.slice(1)}
                     </span>
@@ -305,26 +305,26 @@ const AdminUserDetail = () => {
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-500 mb-1">Member Since</label>
-                  <div className="flex items-center text-gray-900">
-                    <Calendar className="w-4 h-4 mr-2 text-gray-400" />
+                  <label className="block text-sm font-medium text-gray-500 dark:text-slate-400 mb-1">Member Since</label>
+                  <div className="flex items-center text-gray-900 dark:text-slate-100">
+                    <Calendar className="w-4 h-4 mr-2 text-gray-400 dark:text-slate-500" />
                     {new Date(user.createdAt).toLocaleDateString()}
                   </div>
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-500 mb-1">Last Updated</label>
-                  <div className="flex items-center text-gray-900">
-                    <Calendar className="w-4 h-4 mr-2 text-gray-400" />
+                  <label className="block text-sm font-medium text-gray-500 dark:text-slate-400 mb-1">Last Updated</label>
+                  <div className="flex items-center text-gray-900 dark:text-slate-100">
+                    <Calendar className="w-4 h-4 mr-2 text-gray-400 dark:text-slate-500" />
                     {new Date(user.updatedAt).toLocaleDateString()}
                   </div>
                 </div>
 
                 {user.address && (
                   <div>
-                    <label className="block text-sm font-medium text-gray-500 mb-1">Address</label>
-                    <div className="flex items-start text-gray-900">
-                      <MapPin className="w-4 h-4 mr-2 text-gray-400 mt-0.5" />
+                    <label className="block text-sm font-medium text-gray-500 dark:text-slate-400 mb-1">Address</label>
+                    <div className="flex items-start text-gray-900 dark:text-slate-100">
+                      <MapPin className="w-4 h-4 mr-2 text-gray-400 dark:text-slate-500 mt-0.5" />
                       <span className="text-sm">{user.address}</span>
                     </div>
                   </div>
@@ -333,7 +333,7 @@ const AdminUserDetail = () => {
             </div>
 
             {/* Action Buttons */}
-            <div className="mt-8 pt-6 border-t border-gray-200">
+            <div className="mt-8 pt-6 border-t border-gray-200 dark:border-slate-700">
               <div className="flex items-center justify-between">
                 <div className="flex items-center space-x-3">
                   <button
@@ -359,7 +359,7 @@ const AdminUserDetail = () => {
                   </button>
                 </div>
                 
-                <div className="text-sm text-gray-500">
+                <div className="text-sm text-gray-500 dark:text-slate-400">
                   Last login: {user.lastLogin ? new Date(user.lastLogin).toLocaleDateString() : 'Never'}
                 </div>
               </div>

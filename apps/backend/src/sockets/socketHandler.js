@@ -180,6 +180,30 @@ export const emitNewOrder = (orderData) => {
   }
 };
 
+/**
+ * Tell every connected client that the shared catalog changed.
+ *
+ * This is a broadcast rather than a room emit on purpose: `emitProductUpdate`
+ * targets `product:<id>`, which only reaches clients that emitted
+ * `subscribe:product` — nothing in the storefront does that. A new product, a
+ * renamed category or a price edit is not scoped to one product room, it changes
+ * the list every shopper is looking at, so it goes to everyone.
+ *
+ * The payload is deliberately just a reason plus identifiers: it is a "your
+ * cached copy is stale, refetch" signal and carries no catalogue data. That is
+ * also why this needs no socket auth — the listeners only refetch public
+ * endpoints that enforce their own access rules.
+ */
+export const emitCatalogUpdate = (reason, meta = {}) => {
+  if (io) {
+    io.emit('catalog:update', {
+      reason,
+      ...meta,
+      timestamp: new Date().toISOString()
+    });
+  }
+};
+
 export const emitProductUpdate = (productId, productData) => {
   if (io) {
     io.to(`product:${productId}`).emit('product:update', {

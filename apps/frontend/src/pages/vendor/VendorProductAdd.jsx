@@ -11,8 +11,9 @@ import {
   AlertCircle,
   RefreshCw
 } from 'lucide-react'
-import { useMutation, useQuery } from 'react-query'
+import { useMutation, useQuery, useQueryClient } from 'react-query'
 import { vendorAPI } from '../../services/api'
+import { invalidateCatalog } from '../../utils/queryKeys'
 import uploadService from '../../services/uploadService'
 import uploadRecoveryService from '../../services/uploadRecoveryService'
 import LoadingSpinner from '../../components/LoadingSpinner'
@@ -66,6 +67,8 @@ const VendorProductAdd = () => {
     uploadStartTime: null
   })
 
+  const queryClient = useQueryClient()
+
   const { data: categoriesData } = useQuery(
     'vendorCategoriesForProduct',
     () => vendorAPI.getCategories({ page: 1, limit: 100 }),
@@ -82,8 +85,10 @@ const VendorProductAdd = () => {
         console.log('✅ Product created successfully:', data)
         // Clear any recovery data on success
         uploadRecoveryService.clearAllRecoveryData()
-        // Don't navigate here since we already navigated in handleSubmit
-        // The vendor products page will handle the success via custom event or reload
+          // Don't navigate here since we already navigated in handleSubmit
+          // The vendor products page will handle the success via custom event or reload
+          // Invalidate here too in case that event never fires.
+          invalidateCatalog(queryClient)
       },
       onError: (error) => {
         console.error('❌ Product upload failed:', error)
@@ -442,25 +447,25 @@ const VendorProductAdd = () => {
       <div className="mb-8">
         <button
           onClick={() => navigate('/vendor/products')}
-          className="flex items-center text-gray-600 hover:text-gray-900 mb-4"
+          className="flex items-center text-gray-600 dark:text-slate-400 hover:text-gray-900 dark:hover:text-slate-100 mb-4"
         >
           <ArrowLeft className="w-4 h-4 mr-2" />
           Back to Products
         </button>
         
-        <h1 className="text-3xl font-bold text-gray-900 mb-2">Add New Product</h1>
-        <p className="text-gray-600">Create a new product for your store</p>
+        <h1 className="text-3xl font-bold text-gray-900 dark:text-slate-100 mb-2">Add New Product</h1>
+        <p className="text-gray-600 dark:text-slate-400">Create a new product for your store</p>
       </div>
 
       <form onSubmit={handleSubmit} className="max-w-4xl">
         <div className="space-y-8">
           {/* Basic Information */}
-          <div className="bg-white rounded-lg border border-gray-200 p-6">
-            <h2 className="text-lg font-semibold text-gray-900 mb-4">Basic Information</h2>
+          <div className="bg-white dark:bg-slate-800 rounded-lg border border-gray-200 dark:border-slate-700 p-6">
+            <h2 className="text-lg font-semibold text-gray-900 dark:text-slate-100 mb-4">Basic Information</h2>
             
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+                <label className="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-2">
                   Product Name *
                 </label>
                 <input
@@ -473,12 +478,12 @@ const VendorProductAdd = () => {
                   required
                 />
                 {errors.name && (
-                  <p className="mt-1 text-sm text-error-600">{errors.name}</p>
+                  <p className="mt-1 text-sm text-error-600 dark:text-error-400">{errors.name}</p>
                 )}
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+                <label className="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-2">
                   URL Slug *
                 </label>
                 <input
@@ -491,13 +496,13 @@ const VendorProductAdd = () => {
                   required
                 />
                 {errors.slug && (
-                  <p className="mt-1 text-sm text-error-600">{errors.slug}</p>
+                  <p className="mt-1 text-sm text-error-600 dark:text-error-400">{errors.slug}</p>
                 )}
               </div>
             </div>
 
             <div className="mt-6">
-              <label className="block text-sm font-medium text-gray-700 mb-2">
+              <label className="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-2">
                 Description
               </label>
               <textarea
@@ -512,16 +517,16 @@ const VendorProductAdd = () => {
           </div>
 
           {/* Pricing */}
-          <div className="bg-white rounded-lg border border-gray-200 p-6">
-            <h2 className="text-lg font-semibold text-gray-900 mb-4">Pricing</h2>
+          <div className="bg-white dark:bg-slate-800 rounded-lg border border-gray-200 dark:border-slate-700 p-6">
+            <h2 className="text-lg font-semibold text-gray-900 dark:text-slate-100 mb-4">Pricing</h2>
             
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+                <label className="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-2">
                   Price *
                 </label>
                 <div className="relative">
-                  <span className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500">$</span>
+                  <span className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500 dark:text-slate-400">$</span>
                   <input
                     type="number"
                     name="price"
@@ -535,16 +540,16 @@ const VendorProductAdd = () => {
                   />
                 </div>
                 {errors.price && (
-                  <p className="mt-1 text-sm text-error-600">{errors.price}</p>
+                  <p className="mt-1 text-sm text-error-600 dark:text-error-400">{errors.price}</p>
                 )}
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+                <label className="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-2">
                   Compare at Price
                 </label>
                 <div className="relative">
-                  <span className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500">$</span>
+                  <span className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500 dark:text-slate-400">$</span>
                   <input
                     type="number"
                     name="comparePrice"
@@ -559,11 +564,11 @@ const VendorProductAdd = () => {
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+                <label className="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-2">
                   Cost Price
                 </label>
                 <div className="relative">
-                  <span className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500">$</span>
+                  <span className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500 dark:text-slate-400">$</span>
                   <input
                     type="number"
                     name="costPrice"
@@ -580,12 +585,12 @@ const VendorProductAdd = () => {
           </div>
 
           {/* Inventory */}
-          <div className="bg-white rounded-lg border border-gray-200 p-6">
-            <h2 className="text-lg font-semibold text-gray-900 mb-4">Inventory</h2>
+          <div className="bg-white dark:bg-slate-800 rounded-lg border border-gray-200 dark:border-slate-700 p-6">
+            <h2 className="text-lg font-semibold text-gray-900 dark:text-slate-100 mb-4">Inventory</h2>
             
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+                <label className="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-2">
                   SKU
                 </label>
                 <input
@@ -599,7 +604,7 @@ const VendorProductAdd = () => {
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+                <label className="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-2">
                   Barcode
                 </label>
                 <input
@@ -623,13 +628,13 @@ const VendorProductAdd = () => {
                     onChange={handleInputChange}
                     className="mr-2"
                   />
-                  <span className="text-sm font-medium text-gray-700">Track quantity</span>
+                  <span className="text-sm font-medium text-gray-700 dark:text-slate-300">Track quantity</span>
                 </label>
               </div>
 
               {formData.trackQuantity && (
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                  <label className="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-2">
                     Quantity *
                   </label>
                   <input
@@ -655,17 +660,17 @@ const VendorProductAdd = () => {
                   onChange={handleInputChange}
                   className="mr-2"
                 />
-                <span className="text-sm font-medium text-gray-700">Allow backorder</span>
+                <span className="text-sm font-medium text-gray-700 dark:text-slate-300">Allow backorder</span>
               </label>
             </div>
           </div>
 
           {/* Product Organization */}
-          <div className="bg-white rounded-lg border border-gray-200 p-6">
-            <h2 className="text-lg font-semibold text-gray-900 mb-4">Product Organization</h2>
+          <div className="bg-white dark:bg-slate-800 rounded-lg border border-gray-200 dark:border-slate-700 p-6">
+            <h2 className="text-lg font-semibold text-gray-900 dark:text-slate-100 mb-4">Product Organization</h2>
             
             <div className="mb-6">
-              <label className="block text-sm font-medium text-gray-700 mb-2">
+              <label className="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-2">
                 Category *
               </label>
               <select
@@ -683,12 +688,12 @@ const VendorProductAdd = () => {
                 ))}
               </select>
               {errors.categoryId && (
-                <p className="mt-1 text-sm text-error-600">{errors.categoryId}</p>
+                <p className="mt-1 text-sm text-error-600 dark:text-error-400">{errors.categoryId}</p>
               )}
             </div>
 
             <div className="mb-6">
-              <label className="block text-sm font-medium text-gray-700 mb-2">
+              <label className="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-2">
                 Status *
               </label>
               <select
@@ -702,14 +707,14 @@ const VendorProductAdd = () => {
                 <option value="active">Active</option>
                 <option value="inactive">Inactive</option>
               </select>
-              <p className="mt-1 text-sm text-gray-500">
+              <p className="mt-1 text-sm text-gray-500 dark:text-slate-400">
                 Note: New products will be reviewed by administrators before being published
               </p>
             </div>
 
             {/* Tags */}
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
+              <label className="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-2">
                 Tags
               </label>
               <div className="flex items-center space-x-2 mb-3">
@@ -734,13 +739,13 @@ const VendorProductAdd = () => {
                   {formData.tags.map((tag, index) => (
                     <span
                       key={index}
-                      className="inline-flex items-center px-3 py-1 rounded-full text-sm bg-primary-100 text-primary-800"
+                      className="inline-flex items-center px-3 py-1 rounded-full text-sm bg-primary-100 dark:bg-primary-900/40 text-primary-800 dark:text-primary-300"
                     >
                       {tag}
                       <button
                         type="button"
                         onClick={() => handleTagRemove(tag)}
-                        className="ml-2 text-primary-600 hover:text-primary-800"
+                        className="ml-2 text-primary-600 dark:text-primary-400 hover:text-primary-800 dark:hover:text-primary-300"
                       >
                         <X className="w-3 h-3" />
                       </button>
@@ -752,12 +757,12 @@ const VendorProductAdd = () => {
           </div>
 
           {/* Shipping */}
-          <div className="bg-white rounded-lg border border-gray-200 p-6">
-            <h2 className="text-lg font-semibold text-gray-900 mb-4">Shipping</h2>
+          <div className="bg-white dark:bg-slate-800 rounded-lg border border-gray-200 dark:border-slate-700 p-6">
+            <h2 className="text-lg font-semibold text-gray-900 dark:text-slate-100 mb-4">Shipping</h2>
             
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+                <label className="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-2">
                   Weight (kg)
                 </label>
                 <input
@@ -773,7 +778,7 @@ const VendorProductAdd = () => {
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+                <label className="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-2">
                   Dimensions (cm)
                 </label>
                 <div className="grid grid-cols-3 gap-2">
@@ -810,10 +815,10 @@ const VendorProductAdd = () => {
           </div>
 
           {/* Images */}
-          <div className="bg-white rounded-lg border border-gray-200 p-6">
-            <h2 className="text-lg font-semibold text-gray-900 mb-4">Product Images</h2>
+          <div className="bg-white dark:bg-slate-800 rounded-lg border border-gray-200 dark:border-slate-700 p-6">
+            <h2 className="text-lg font-semibold text-gray-900 dark:text-slate-100 mb-4">Product Images</h2>
             
-            <div className="border-2 border-dashed border-gray-300 rounded-lg p-6 text-center hover:border-gray-400 transition-colors">
+            <div className="border-2 border-dashed border-gray-300 dark:border-slate-600 rounded-lg p-6 text-center hover:border-gray-400 dark:hover:border-slate-500 transition-colors">
               <input
                 type="file"
                 id="product-images"
@@ -826,17 +831,17 @@ const VendorProductAdd = () => {
                 htmlFor="product-images"
                 className="cursor-pointer flex flex-col items-center"
               >
-                <Upload className="w-8 h-8 text-gray-400 mb-2" />
-                <span className="text-sm text-gray-600">
+                <Upload className="w-8 h-8 text-gray-400 dark:text-slate-500 mb-2" />
+                <span className="text-sm text-gray-600 dark:text-slate-400">
                   Click to upload images
                 </span>
-                <span className="text-xs text-gray-500 mt-1">
+                <span className="text-xs text-gray-500 dark:text-slate-400 mt-1">
                   PNG, JPG, GIF up to 5MB each
                 </span>
               </label>
             </div>
             {errors.images && (
-              <p className="mt-2 text-sm text-error-600">{errors.images}</p>
+              <p className="mt-2 text-sm text-error-600 dark:text-error-400">{errors.images}</p>
             )}
 
             {previewImages.length > 0 && (
@@ -862,12 +867,12 @@ const VendorProductAdd = () => {
           </div>
 
           {/* SEO */}
-          <div className="bg-white rounded-lg border border-gray-200 p-6">
-            <h2 className="text-lg font-semibold text-gray-900 mb-4">SEO</h2>
+          <div className="bg-white dark:bg-slate-800 rounded-lg border border-gray-200 dark:border-slate-700 p-6">
+            <h2 className="text-lg font-semibold text-gray-900 dark:text-slate-100 mb-4">SEO</h2>
             
             <div className="space-y-4">
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+                <label className="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-2">
                   SEO Title
                 </label>
                 <input
@@ -881,7 +886,7 @@ const VendorProductAdd = () => {
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+                <label className="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-2">
                   SEO Description
                 </label>
                 <textarea
@@ -897,9 +902,9 @@ const VendorProductAdd = () => {
           </div>
 
           {/* Form Actions */}
-          <div className="bg-white rounded-lg border border-gray-200 p-6">
+          <div className="bg-white dark:bg-slate-800 rounded-lg border border-gray-200 dark:border-slate-700 p-6">
             <div className="flex items-center justify-between">
-              <div className="text-xs text-gray-500">
+              <div className="text-xs text-gray-500 dark:text-slate-400">
                 <p>💡 Hold Shift + Click "Create Product" to force fail for testing</p>
               </div>
               <div className="flex items-center space-x-4">

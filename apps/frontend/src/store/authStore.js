@@ -1,6 +1,7 @@
 import { create } from 'zustand'
 import { persist } from 'zustand/middleware'
 import api from '../services/api'
+import { useThemeStore } from './themeStore'
 
 const useAuthStore = create(
   persist(
@@ -31,6 +32,10 @@ const useAuthStore = create(
           // Set default auth header
           api.defaults.headers.common['Authorization'] = `Bearer ${accessToken}`
 
+          // Adopt the account's saved theme so it follows the user to this
+          // device instead of inheriting whatever the previous visitor chose.
+          useThemeStore.getState().syncFromUser(user?.themePreference)
+
           return { success: true }
         } catch (error) {
           set({ isLoading: false })
@@ -57,6 +62,10 @@ const useAuthStore = create(
 
           // Set default auth header
           api.defaults.headers.common['Authorization'] = `Bearer ${accessToken}`
+
+          // New accounts carry the schema default ('system'); syncing keeps a
+          // re-registered email from inheriting a stale local choice.
+          useThemeStore.getState().syncFromUser(user?.themePreference)
 
           return { success: true }
         } catch (error) {
@@ -88,6 +97,11 @@ const useAuthStore = create(
 
           // Remove auth header
           delete api.defaults.headers.common['Authorization']
+
+          // The theme is intentionally left alone: it is a display preference,
+          // not session data, so signing out should not flip the screen back
+          // to light under a guest. The next sign-in re-applies that account's
+          // preference via syncFromUser.
         }
       },
 
@@ -156,14 +170,18 @@ const useAuthStore = create(
 
       initializeAuth: () => {
         const { token, refreshToken, user } = get()
-        
+
         if (token && refreshToken && user) {
           set({
             isAuthenticated: true
           })
-          
+
           // Set auth header
           api.defaults.headers.common['Authorization'] = `Bearer ${token}`
+
+          // Re-apply the account's theme on reload, so the server copy wins
+          // over a stale value left in localStorage by a previous session.
+          useThemeStore.getState().syncFromUser(user?.themePreference)
         }
       },
 

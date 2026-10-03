@@ -9,7 +9,7 @@ import VendorRequest from '../models/VendorRequest.js';
 
 import { protect, authorize } from '../middlewares/auth.js';
 
-import { deleteCachePattern } from '../config/redis.js';
+import { invalidateProductCaches, invalidateCategoryCaches } from '../utils/cacheInvalidation.js';
 
 import { handleCategoryImageUpload } from '../middlewares/categoryUpload.js';
 
@@ -23,11 +23,10 @@ import { destroyProductImages, uploadProductImages } from '../services/productIm
 
 import { buildProductUpdate } from '../utils/productPayload.js';                                      
 
-import { invalidateProductCaches } from '../utils/cacheInvalidation.js';                                                      
 
 import { ImageKitService } from '../services/imagekitService.js';
 
-import { emitVendorUpdate, emitUploadProgress } from '../sockets/socketHandler.js';
+import { emitVendorUpdate, emitUploadProgress, emitCatalogUpdate } from '../sockets/socketHandler.js';
 
 
 
@@ -710,8 +709,13 @@ router.put('/products/:productId/status', async (req, res, next) => {
 
 
     // Clear every cache that can hold a copy of this product
+    await invalidateProductCaches(productId, product.slug);
 
-    await invalidateProductCaches(productId);
+    emitCatalogUpdate('product:status', {
+      productId: product._id,
+      status: product.status,
+      featured: product.featured
+    });
 
 
 
@@ -801,6 +805,10 @@ router.put('/products/:id', handleMultipleImageUpload, validate(updateProductSch
 
     const previousImages = Array.isArray(product.images) ? [...product.images] : [];
     const previousVideoUrl = product.video?.url || null;
+    // Captured before `product.set(update)` overwrites it: the storefront caches
+    // detail pages by slug, so the pre-update slug may already be cached and
+    // has to be cleared alongside the new one.
+    const previousSlug = product.slug;
 
     if (req.files && req.files.length > 0) {
       newImages = await uploadProductImages(req.files, {
@@ -849,7 +857,13 @@ router.put('/products/:id', handleMultipleImageUpload, validate(updateProductSch
       }
     }
 
-    await invalidateProductCaches(id);
+    await invalidateProductCaches(id, [previousSlug, product.slug]);
+
+    emitCatalogUpdate('product:updated', {
+      productId: product._id,
+      slug: product.slug,
+      previousSlug: previousSlug !== product.slug ? previousSlug : undefined
+    });
 
     const populated = await Product.findById(id)
 
@@ -899,7 +913,9 @@ router.delete('/products/:id', async (req, res, next) => {
     await product.save();
 
     // Clear every cache that can hold a copy of this product
-    await invalidateProductCaches(id);
+    await invalidateProductCaches(id, product.slug);
+
+    emitCatalogUpdate('product:deleted', { productId: product._id });
 
     res.json({
       success: true,
@@ -1087,14 +1103,16 @@ router.post('/categories', handleCategoryImageUpload, async (req, res, next) => 
       }
     }
 
-    const category = await Category.create(categoryData);
+      const category = await Category.create(categoryData);
+  
+      // Clear cache
+      await invalidateCategoryCaches();
 
-    // Clear cache
-    await deleteCachePattern('categories:*');
-
-    res.status(201).json({
-      success: true,
-      data: category
+      emitCatalogUpdate('category:created', { categoryId: category._id });
+  
+      res.status(201).json({
+        success: true,
+        data: category
     });
 
   } catch (error) {
@@ -1160,12 +1178,14 @@ router.delete('/categories/bulk', async (req, res, next) => {
       { isActive: false }
     );
 
-    // Clear cache
-    await deleteCachePattern('categories:*');
+      // Clear cache
+      await invalidateCategoryCaches();
 
-    res.json({
-      success: true,
-      message: `${result.modifiedCount} categories deleted successfully`,
+      emitCatalogUpdate('category:deleted', { categoryIds: categoryIds, count: result.modifiedCount });
+  
+      res.json({
+        success: true,
+        message: `${result.modifiedCount} categories deleted successfully`,
       data: {
         deletedCount: result.modifiedCount,
         requestedCount: categoryIds.length
@@ -1224,12 +1244,14 @@ router.put('/categories/:id', handleCategoryImageUpload, async (req, res, next) 
       runValidators: true
     });
 
-    // Clear cache
-    await deleteCachePattern('categories:*');
+      // Clear cache
+      await invalidateCategoryCaches();
 
-    res.json({
-      success: true,
-      data: category
+      emitCatalogUpdate('category:updated', { categoryId: category._id });
+  
+      res.json({
+        success: true,
+        data: category
     });
 
   } catch (error) {
@@ -2496,7 +2518,12 @@ router.post('/products', protect, authorize('admin'), handleMultipleImageUpload,
     const product = await Product.create(productData)
 
     // Clear every cache that can hold a copy of this product
-    await invalidateProductCaches(product._id);
+    await invalidateProductCaches(product._id, product.slug);
+
+    emitCatalogUpdate('product:created', {
+      productId: product._id,
+      slug: product.slug
+    });
 
     // Success notification
     emitUploadProgress(userId, {

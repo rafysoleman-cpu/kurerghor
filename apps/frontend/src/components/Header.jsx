@@ -51,8 +51,8 @@ const Header = () => {
     <>
       <header
         className={`fixed inset-x-0 top-0 z-40 border-b transition-all duration-300 ${isScrolled
-            ? 'border-gray-200 bg-white/95 shadow-md backdrop-blur-md'
-            : 'border-gray-100 bg-white/80 backdrop-blur-sm'
+            ? 'border-gray-200 dark:border-slate-700 bg-white/95 dark:bg-slate-800/95 shadow-md backdrop-blur-md'
+            : 'border-gray-100 dark:border-slate-800 bg-white/80 dark:bg-slate-800/80 backdrop-blur-sm'
           }`}
       >
         <div className="container mx-auto px-4">
@@ -62,7 +62,7 @@ const Header = () => {
             <div className="flex shrink-0 items-center">
               <Link
                 to="/"
-                className="flex items-center gap-1.5 text-lg font-bold text-primary-600 transition-colors hover:text-primary-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500 focus-visible:ring-offset-2 sm:gap-2 sm:text-xl lg:text-2xl"
+                className="flex items-center gap-1.5 text-lg font-bold text-primary-600 dark:text-primary-400 transition-colors hover:text-primary-700 dark:hover:text-primary-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500 focus-visible:ring-offset-2 dark:ring-offset-slate-900 sm:gap-2 sm:text-xl lg:text-2xl"
               >
                 <span className="flex h-7 w-7 items-center justify-center rounded-lg bg-primary-600 sm:h-8 sm:w-8">
                   <span className="text-xs font-bold text-white sm:text-sm">E</span>
@@ -97,7 +97,7 @@ const Header = () => {
                 type="button"
                 onClick={openCart}
                 aria-label={itemCount > 0 ? `Cart, ${itemCount} items` : 'Cart'}
-                className="relative rounded-lg p-2 text-gray-600 transition-colors duration-200 hover:bg-gray-100 hover:text-primary-600 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500 focus-visible:ring-offset-2"
+                className="relative rounded-lg p-2 text-gray-600 dark:text-slate-400 transition-colors duration-200 hover:bg-gray-100 dark:hover:bg-slate-800/70 hover:text-primary-600 dark:hover:text-primary-400 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500 focus-visible:ring-offset-2 dark:ring-offset-slate-900"
               >
                 <ShoppingCart className="h-5 w-5" aria-hidden="true" />
                 {itemCount > 0 && (
@@ -126,7 +126,7 @@ const Header = () => {
                   </Link>
                   <Link
                     to="/register"
-                    className="btn-primary rounded-lg px-2 py-2 text-sm font-medium focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500 focus-visible:ring-offset-2 sm:px-3"
+                    className="btn-primary rounded-lg px-2 py-2 text-sm font-medium focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500 focus-visible:ring-offset-2 dark:ring-offset-slate-900 sm:px-3"
                   >
                     Sign Up
                   </Link>
@@ -139,7 +139,7 @@ const Header = () => {
                 aria-expanded={isMobileMenuOpen}
                 aria-controls="mobile-menu"
                 aria-label={isMobileMenuOpen ? 'Close menu' : 'Open menu'}
-                className="rounded-lg p-2 text-gray-600 transition-colors duration-200 hover:bg-gray-100 hover:text-primary-600 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500 focus-visible:ring-offset-2 md:hidden"
+                className="rounded-lg p-2 text-gray-600 dark:text-slate-400 transition-colors duration-200 hover:bg-gray-100 dark:hover:bg-slate-800/70 hover:text-primary-600 dark:hover:text-primary-400 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500 focus-visible:ring-offset-2 dark:ring-offset-slate-900 md:hidden"
               >
                 {isMobileMenuOpen ? (
                   <X className="h-5 w-5" aria-hidden="true" />

@@ -141,13 +141,13 @@ const SearchPage = () => {
     <div className="container mx-auto px-4 py-8">
       {/* Search Header */}
       <div className="mb-8">
-        <h1 className="text-3xl font-bold text-gray-900 mb-6">Search Products</h1>
+        <h1 className="text-3xl font-bold text-gray-900 dark:text-slate-100 mb-6">Search Products</h1>
         
         {/* Search Bar */}
         <form onSubmit={handleSearch} className="relative max-w-2xl mx-auto">
           <div className="relative">
             <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-              <Search className="h-5 w-5 text-gray-400" />
+              <Search className="h-5 w-5 text-gray-400 dark:text-slate-500" />
             </div>
             <input
               type="text"
@@ -163,22 +163,22 @@ const SearchPage = () => {
                 onClick={() => setQuery('')}
                 className="absolute inset-y-0 right-0 pr-3 flex items-center"
               >
-                <X className="h-5 w-5 text-gray-400" />
+                <X className="h-5 w-5 text-gray-400 dark:text-slate-500" />
               </button>
             )}
           </div>
 
           {/* Search Suggestions */}
           {showSuggestions && suggestions.length > 0 && (
-            <div className="absolute top-full left-0 right-0 mt-2 bg-white border border-gray-200 rounded-lg shadow-lg z-50 max-h-96 overflow-y-auto">
+            <div className="absolute top-full left-0 right-0 mt-2 bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-700 rounded-lg shadow-lg z-50 max-h-96 overflow-y-auto">
               <div className="p-4">
-                <h3 className="font-medium text-gray-900 mb-3">Suggestions</h3>
+                <h3 className="font-medium text-gray-900 dark:text-slate-100 mb-3">Suggestions</h3>
                 <div className="space-y-2">
                   {suggestions.map((suggestion, index) => (
                     <button
                       key={index}
                       onClick={() => handleSuggestionClick(suggestion)}
-                      className="w-full text-left px-3 py-2 rounded hover:bg-gray-100 transition-colors"
+                      className="w-full text-left px-3 py-2 rounded hover:bg-gray-100 dark:hover:bg-slate-800/70 transition-colors"
                     >
                       {suggestion}
                     </button>
@@ -193,9 +193,9 @@ const SearchPage = () => {
       <div className="flex gap-8">
         {/* Filters Sidebar */}
         <aside className={`${showFilters ? 'block' : 'hidden'} lg:block w-64 flex-shrink-0`}>
-          <div className="bg-white rounded-lg p-6 border border-gray-200">
+          <div className="bg-white dark:bg-slate-800 rounded-lg p-6 border border-gray-200 dark:border-slate-700">
             <div className="flex items-center justify-between mb-6">
-              <h3 className="font-semibold text-gray-900">Filters</h3>
+              <h3 className="font-semibold text-gray-900 dark:text-slate-100">Filters</h3>
               <button
                 onClick={() => setShowFilters(!showFilters)}
                 className="lg:hidden"
@@ -207,7 +207,7 @@ const SearchPage = () => {
             <div className="space-y-6">
               {/* Category Filter */}
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+                <label className="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-2">
                   Category
                 </label>
                 <select
@@ -226,7 +226,7 @@ const SearchPage = () => {
 
               {/* Price Range */}
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+                <label className="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-2">
                   Price Range
                 </label>
                 <div className="space-y-2">
@@ -249,7 +249,7 @@ const SearchPage = () => {
 
               {/* Rating Filter */}
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+                <label className="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-2">
                   Minimum Rating
                 </label>
                 <select
@@ -267,7 +267,7 @@ const SearchPage = () => {
 
               {/* Sort */}
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+                <label className="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-2">
                   Sort By
                 </label>
                 <select
@@ -312,10 +312,10 @@ const SearchPage = () => {
           {query && (
             <div className="flex items-center justify-between mb-6">
               <div>
-                <h2 className="text-xl font-semibold text-gray-900">
+                <h2 className="text-xl font-semibold text-gray-900 dark:text-slate-100">
                   {products.length} results for "{query}"
                 </h2>
-                <p className="text-gray-600">
+                <p className="text-gray-600 dark:text-slate-400">
                   Showing {pagination?.page || 1} of {pagination?.pages || 1} pages
                 </p>
               </div>
@@ -336,16 +336,16 @@ const SearchPage = () => {
                 </select>
                 
                 {/* View Mode */}
-                <div className="flex items-center space-x-2 border border-gray-300 rounded-lg">
+                <div className="flex items-center space-x-2 border border-gray-300 dark:border-slate-600 rounded-lg">
                   <button
                     onClick={() => setViewMode('grid')}
-                    className={`p-2 rounded-l-lg ${viewMode === 'grid' ? 'bg-primary-100 text-primary-600' : 'text-gray-600 hover:bg-gray-100'}`}
+                    className={`p-2 rounded-l-lg ${viewMode === 'grid' ? 'bg-primary-100 dark:bg-primary-900/40 text-primary-600 dark:text-primary-400' : 'text-gray-600 dark:text-slate-400 hover:bg-gray-100 dark:hover:bg-slate-800/70'}`}
                   >
                     <Grid className="w-4 h-4" />
                   </button>
                   <button
                     onClick={() => setViewMode('list')}
-                    className={`p-2 rounded-r-lg ${viewMode === 'list' ? 'bg-primary-100 text-primary-600' : 'text-gray-600 hover:bg-gray-100'}`}
+                    className={`p-2 rounded-r-lg ${viewMode === 'list' ? 'bg-primary-100 dark:bg-primary-900/40 text-primary-600 dark:text-primary-400' : 'text-gray-600 dark:text-slate-400 hover:bg-gray-100 dark:hover:bg-slate-800/70'}`}
                   >
                     <List className="w-4 h-4" />
                   </button>
@@ -357,7 +357,7 @@ const SearchPage = () => {
           {/* Popular Searches */}
           {!query && popularSearches.length > 0 && (
             <div className="mb-8">
-              <h3 className="text-lg font-semibold text-gray-900 mb-4">Popular Searches</h3>
+              <h3 className="text-lg font-semibold text-gray-900 dark:text-slate-100 mb-4">Popular Searches</h3>
               <div className="flex flex-wrap gap-2">
                 {popularSearches.map((item, index) => (
                   <button
@@ -406,11 +406,11 @@ const SearchPage = () => {
           ) : query ? (
             // No Results
             <div className="text-center py-16">
-              <Search className="w-16 h-16 text-gray-400 mx-auto mb-4" />
-              <h3 className="text-xl font-semibold text-gray-900 mb-2">
+              <Search className="w-16 h-16 text-gray-400 dark:text-slate-500 mx-auto mb-4" />
+              <h3 className="text-xl font-semibold text-gray-900 dark:text-slate-100 mb-2">
                 No results found for "{query}"
               </h3>
-              <p className="text-gray-600 mb-6">
+              <p className="text-gray-600 dark:text-slate-400 mb-6">
                 Try adjusting your search terms or browse our popular categories
               </p>
               <div className="space-y-4">
@@ -428,17 +428,17 @@ const SearchPage = () => {
           ) : (
             // Initial State
             <div className="text-center py-16">
-              <Search className="w-16 h-16 text-gray-400 mx-auto mb-4" />
-              <h3 className="text-xl font-semibold text-gray-900 mb-2">
+              <Search className="w-16 h-16 text-gray-400 dark:text-slate-500 mx-auto mb-4" />
+              <h3 className="text-xl font-semibold text-gray-900 dark:text-slate-100 mb-2">
                 Search for products
               </h3>
-              <p className="text-gray-600 mb-8 max-w-md mx-auto">
+              <p className="text-gray-600 dark:text-slate-400 mb-8 max-w-md mx-auto">
                 Find exactly what you're looking for from our extensive collection
               </p>
               
               {/* Quick Search Categories */}
               <div className="space-y-4">
-                <h4 className="font-medium text-gray-900">Popular Categories</h4>
+                <h4 className="font-medium text-gray-900 dark:text-slate-100">Popular Categories</h4>
                 <div className="flex flex-wrap gap-2 justify-center">
                   {categories.slice(0, 6).map((category) => (
                     <button

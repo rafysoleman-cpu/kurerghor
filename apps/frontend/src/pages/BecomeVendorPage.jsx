@@ -164,7 +164,7 @@ const BecomeVendorPage = () => {
   // Show loading state while checking vendor request status
   if (statusLoading) {
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+      <div className="min-h-screen bg-gray-50 dark:bg-slate-900 flex items-center justify-center">
         <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary-600"></div>
       </div>
     )
@@ -182,23 +182,23 @@ const BecomeVendorPage = () => {
     
     if (request.status === 'pending') {
       return (
-        <div className="min-h-screen bg-gray-50 py-12">
+        <div className="min-h-screen bg-gray-50 dark:bg-slate-900 py-12">
           <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-8 text-center">
-              <div className="mx-auto h-16 w-16 bg-yellow-100 rounded-full flex items-center justify-center mb-4">
-                <Clock className="h-8 w-8 text-yellow-600" />
+            <div className="bg-white dark:bg-slate-800 rounded-lg shadow-sm border border-gray-200 dark:border-slate-700 p-8 text-center">
+              <div className="mx-auto h-16 w-16 bg-yellow-100 dark:bg-yellow-900/40 rounded-full flex items-center justify-center mb-4">
+                <Clock className="h-8 w-8 text-yellow-600 dark:text-yellow-400" />
               </div>
-              <h1 className="text-3xl font-bold text-gray-900 mb-4">
+              <h1 className="text-3xl font-bold text-gray-900 dark:text-slate-100 mb-4">
                 Your vendor application is pending
               </h1>
-              <p className="text-lg text-gray-600 mb-6">
+              <p className="text-lg text-gray-600 dark:text-slate-400 mb-6">
                 Your application is currently under review. We'll notify you once a decision has been made.
               </p>
-              <div className="bg-gray-50 rounded-lg p-4 mb-6">
-                <p className="text-sm text-gray-600">
+              <div className="bg-gray-50 dark:bg-slate-900 rounded-lg p-4 mb-6">
+                <p className="text-sm text-gray-600 dark:text-slate-400">
                   <strong>Application submitted:</strong> {new Date(request.requestedAt).toLocaleDateString()}
                 </p>
-                <p className="text-sm text-gray-600">
+                <p className="text-sm text-gray-600 dark:text-slate-400">
                   <strong>Shop name:</strong> {request.shopName}
                 </p>
               </div>
@@ -216,36 +216,36 @@ const BecomeVendorPage = () => {
     
     if (request.status === 'rejected') {
       return (
-        <div className="min-h-screen bg-gray-50 py-12">
+        <div className="min-h-screen bg-gray-50 dark:bg-slate-900 py-12">
           <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-8">
+            <div className="bg-white dark:bg-slate-800 rounded-lg shadow-sm border border-gray-200 dark:border-slate-700 p-8">
               <div className="text-center mb-6">
-                <div className="mx-auto h-16 w-16 bg-red-100 rounded-full flex items-center justify-center mb-4">
-                  <XCircle className="h-8 w-8 text-red-600" />
+                <div className="mx-auto h-16 w-16 bg-red-100 dark:bg-red-900/40 rounded-full flex items-center justify-center mb-4">
+                  <XCircle className="h-8 w-8 text-red-600 dark:text-red-400" />
                 </div>
-                <h1 className="text-3xl font-bold text-gray-900 mb-4">
+                <h1 className="text-3xl font-bold text-gray-900 dark:text-slate-100 mb-4">
                   Your vendor application was rejected
                 </h1>
-                <p className="text-lg text-gray-600 mb-4">
+                <p className="text-lg text-gray-600 dark:text-slate-400 mb-4">
                   We're sorry, but your application was not approved at this time.
                 </p>
                 {request.rejectionReason && (
-                  <div className="bg-red-50 border border-red-200 rounded-lg p-4 mb-6">
-                    <p className="text-sm text-red-800">
+                  <div className="bg-red-50 dark:bg-red-950/40 border border-red-200 dark:border-red-800 rounded-lg p-4 mb-6">
+                    <p className="text-sm text-red-800 dark:text-red-300">
                       <strong>Reason:</strong> {request.rejectionReason}
                     </p>
                   </div>
                 )}
               </div>
               
-              <div className="bg-gray-50 rounded-lg p-4 mb-6">
-                <p className="text-sm text-gray-600 mb-2">
+              <div className="bg-gray-50 dark:bg-slate-900 rounded-lg p-4 mb-6">
+                <p className="text-sm text-gray-600 dark:text-slate-400 mb-2">
                   <strong>Application submitted:</strong> {new Date(request.requestedAt).toLocaleDateString()}
                 </p>
-                <p className="text-sm text-gray-600 mb-2">
+                <p className="text-sm text-gray-600 dark:text-slate-400 mb-2">
                   <strong>Shop name:</strong> {request.shopName}
                 </p>
-                <p className="text-sm text-gray-600">
+                <p className="text-sm text-gray-600 dark:text-slate-400">
                   <strong>Reviewed on:</strong> {new Date(request.reviewedAt).toLocaleDateString()}
                 </p>
               </div>
@@ -296,57 +296,57 @@ const BecomeVendorPage = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 py-12">
+    <div className="min-h-screen bg-gray-50 dark:bg-slate-900 py-12">
       <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Header */}
         <div className="text-center mb-8">
           <div className="mx-auto h-16 w-16 bg-primary-600 rounded-full flex items-center justify-center mb-4">
             <Store className="h-8 w-8 text-white" />
           </div>
-          <h1 className="text-3xl font-bold text-gray-900 mb-4">
+          <h1 className="text-3xl font-bold text-gray-900 dark:text-slate-100 mb-4">
             Become a Vendor
           </h1>
-          <p className="text-lg text-gray-600 max-w-2xl mx-auto">
+          <p className="text-lg text-gray-600 dark:text-slate-400 max-w-2xl mx-auto">
             Start selling your products on our platform. Join thousands of successful vendors.
           </p>
         </div>
 
         {/* Benefits */}
-        <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6 mb-8">
-          <h2 className="text-xl font-semibold text-gray-900 mb-4">Why sell with us?</h2>
+        <div className="bg-white dark:bg-slate-800 rounded-lg shadow-sm border border-gray-200 dark:border-slate-700 p-6 mb-8">
+          <h2 className="text-xl font-semibold text-gray-900 dark:text-slate-100 mb-4">Why sell with us?</h2>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             <div className="flex items-start space-x-3">
-              <CheckCircle className="h-6 w-6 text-green-500 mt-1 flex-shrink-0" />
+              <CheckCircle className="h-6 w-6 text-green-500 dark:text-green-400 mt-1 flex-shrink-0" />
               <div>
-                <h3 className="font-medium text-gray-900">Low Fees</h3>
-                <p className="text-sm text-gray-600">Competitive commission rates</p>
+                <h3 className="font-medium text-gray-900 dark:text-slate-100">Low Fees</h3>
+                <p className="text-sm text-gray-600 dark:text-slate-400">Competitive commission rates</p>
               </div>
             </div>
             <div className="flex items-start space-x-3">
-              <CheckCircle className="h-6 w-6 text-green-500 mt-1 flex-shrink-0" />
+              <CheckCircle className="h-6 w-6 text-green-500 dark:text-green-400 mt-1 flex-shrink-0" />
               <div>
-                <h3 className="font-medium text-gray-900">Wide Reach</h3>
-                <p className="text-sm text-gray-600">Access to thousands of customers</p>
+                <h3 className="font-medium text-gray-900 dark:text-slate-100">Wide Reach</h3>
+                <p className="text-sm text-gray-600 dark:text-slate-400">Access to thousands of customers</p>
               </div>
             </div>
             <div className="flex items-start space-x-3">
-              <CheckCircle className="h-6 w-6 text-green-500 mt-1 flex-shrink-0" />
+              <CheckCircle className="h-6 w-6 text-green-500 dark:text-green-400 mt-1 flex-shrink-0" />
               <div>
-                <h3 className="font-medium text-gray-900">Easy Management</h3>
-                <p className="text-sm text-gray-600">Simple dashboard to manage sales</p>
+                <h3 className="font-medium text-gray-900 dark:text-slate-100">Easy Management</h3>
+                <p className="text-sm text-gray-600 dark:text-slate-400">Simple dashboard to manage sales</p>
               </div>
             </div>
           </div>
         </div>
 
         {/* Application Form */}
-        <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
-          <h2 className="text-xl font-semibold text-gray-900 mb-6">Vendor Application</h2>
+        <div className="bg-white dark:bg-slate-800 rounded-lg shadow-sm border border-gray-200 dark:border-slate-700 p-6">
+          <h2 className="text-xl font-semibold text-gray-900 dark:text-slate-100 mb-6">Vendor Application</h2>
           
           <form onSubmit={handleSubmit} className="space-y-6">
             {/* Store Name */}
             <div>
-              <label htmlFor="storeName" className="block text-sm font-medium text-gray-700 mb-2">
+              <label htmlFor="storeName" className="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-2">
                 Store Name *
               </label>
               <input
@@ -360,13 +360,13 @@ const BecomeVendorPage = () => {
                 required
               />
               {errors.shopName && (
-                <p className="mt-1 text-sm text-error-600">{errors.shopName}</p>
+                <p className="mt-1 text-sm text-error-600 dark:text-error-400">{errors.shopName}</p>
               )}
             </div>
 
             {/* Business Type */}
             <div>
-              <label htmlFor="businessType" className="block text-sm font-medium text-gray-700 mb-2">
+              <label htmlFor="businessType" className="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-2">
                 Business Type
               </label>
               <select
@@ -386,7 +386,7 @@ const BecomeVendorPage = () => {
 
             {/* Description */}
             <div>
-              <label htmlFor="description" className="block text-sm font-medium text-gray-700 mb-2">
+              <label htmlFor="description" className="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-2">
                 Business Description *
               </label>
               <textarea
@@ -400,16 +400,16 @@ const BecomeVendorPage = () => {
                 required
               />
               {errors.shopDescription && (
-                <p className="mt-1 text-sm text-error-600">{errors.shopDescription}</p>
+                <p className="mt-1 text-sm text-error-600 dark:text-error-400">{errors.shopDescription}</p>
               )}
-              <p className="mt-1 text-sm text-gray-500">
+              <p className="mt-1 text-sm text-gray-500 dark:text-slate-400">
                 Minimum 50 characters. Tell us about your business and what makes you unique.
               </p>
             </div>
 
             {/* Email */}
             <div>
-              <label htmlFor="shopEmail" className="block text-sm font-medium text-gray-700 mb-2">
+              <label htmlFor="shopEmail" className="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-2">
                 Business Email *
               </label>
               <input
@@ -423,13 +423,13 @@ const BecomeVendorPage = () => {
                 required
               />
               {errors.shopEmail && (
-                <p className="mt-1 text-sm text-error-600">{errors.shopEmail}</p>
+                <p className="mt-1 text-sm text-error-600 dark:text-error-400">{errors.shopEmail}</p>
               )}
             </div>
 
             {/* Phone */}
             <div>
-              <label htmlFor="shopPhone" className="block text-sm font-medium text-gray-700 mb-2">
+              <label htmlFor="shopPhone" className="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-2">
                 Business Phone *
               </label>
               <input
@@ -446,7 +446,7 @@ const BecomeVendorPage = () => {
 
             {/* Address */}
             <div>
-              <label htmlFor="shopAddress" className="block text-sm font-medium text-gray-700 mb-2">
+              <label htmlFor="shopAddress" className="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-2">
                 Business Address *
               </label>
               <textarea
@@ -460,13 +460,13 @@ const BecomeVendorPage = () => {
                 required
               />
               {errors.shopAddress && (
-                <p className="mt-1 text-sm text-error-600">{errors.shopAddress}</p>
+                <p className="mt-1 text-sm text-error-600 dark:text-error-400">{errors.shopAddress}</p>
               )}
             </div>
 
             {/* Terms */}
-            <div className="bg-gray-50 p-4 rounded-lg">
-              <p className="text-sm text-gray-600">
+            <div className="bg-gray-50 dark:bg-slate-900 p-4 rounded-lg">
+              <p className="text-sm text-gray-600 dark:text-slate-400">
                 By submitting this application, you agree to our vendor terms and conditions. 
                 Your application will be reviewed by our team within 3-5 business days.
               </p>

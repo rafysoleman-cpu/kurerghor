@@ -143,6 +143,7 @@ export const authAPI = {
 
 export const userAPI = {
   updateProfile: (userData) => api.put('/users/profile', userData),
+  updateTheme: (theme) => api.put('/users/theme', { theme }),
   changePassword: (passwordData) => api.put('/users/password', passwordData),
   getAddresses: () => api.get('/users/addresses'),
   addAddress: (addressData) => api.post('/users/addresses', addressData),
@@ -151,6 +152,7 @@ export const userAPI = {
   getWishlist: () => api.get('/users/wishlist'),
   addToWishlist: (productId) => api.post('/users/wishlist', { productId }),
   removeFromWishlist: (productId) => api.delete(`/users/wishlist/${productId}`),
+  clearWishlist: () => api.delete('/users/wishlist'),
   // Vendor request APIs
   requestVendorAccess: (vendorData) => api.post('/users/request-vendor', vendorData),
   getVendorRequestStatus: () => api.get('/users/vendor-request-status')

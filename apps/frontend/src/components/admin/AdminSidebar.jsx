@@ -121,7 +121,7 @@ const AdminSidebar = () => {
                       className={`w-full flex items-center justify-between px-4 py-3 rounded-lg transition-colors ${
                         isSubActive
                           ? 'bg-gray-800 text-white'
-                          : 'text-gray-300 hover:bg-gray-800 hover:text-white'
+                          : 'text-gray-300 dark:text-slate-600 hover:bg-gray-800 hover:text-white'
                       }`}
                     >
                       <div className="flex items-center space-x-3">
@@ -144,7 +144,7 @@ const AdminSidebar = () => {
                               className={`block px-4 py-2 rounded-lg transition-colors ${
                                 isActive(subItem.href)
                                   ? 'bg-gray-800 text-white'
-                                  : 'text-gray-400 hover:bg-gray-800 hover:text-white'
+                                  : 'text-gray-400 dark:text-slate-500 hover:bg-gray-800 hover:text-white'
                               }`}
                             >
                               {subItem.title}
@@ -161,7 +161,7 @@ const AdminSidebar = () => {
                       className={`flex items-center space-x-3 px-4 py-3 rounded-lg transition-colors ${
                         isItemActive
                           ? 'bg-gray-800 text-white'
-                          : 'text-gray-300 hover:bg-gray-800 hover:text-white'
+                          : 'text-gray-300 dark:text-slate-600 hover:bg-gray-800 hover:text-white'
                       }`}
                     >
                       <Icon className="w-5 h-5" />
@@ -173,7 +173,7 @@ const AdminSidebar = () => {
                       className={`flex items-center space-x-3 px-4 py-3 rounded-lg transition-colors ${
                         isItemActive
                           ? 'bg-gray-800 text-white'
-                          : 'text-gray-300 hover:bg-gray-800 hover:text-white'
+                          : 'text-gray-300 dark:text-slate-600 hover:bg-gray-800 hover:text-white'
                       }`}
                     >
                       <Icon className="w-5 h-5" />

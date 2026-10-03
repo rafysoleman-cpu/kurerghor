@@ -1,7 +1,9 @@
 import React, { createContext, useContext, useEffect, useState } from 'react'
 import { io } from 'socket.io-client'
+import { useQueryClient } from 'react-query'
 import { useAuthStore } from '../store/authStore'
 import { envConfig } from '../config/env.js'
+import { invalidateCatalog } from '../utils/queryKeys'
 
 const SocketContext = createContext()
 
@@ -17,6 +19,36 @@ export const SocketProvider = ({ children }) => {
   const [socket, setSocket] = useState(null)
   const [connected, setConnected] = useState(false)
   const token = useAuthStore((state) => state.token)
+  const queryClient = useQueryClient()
+
+  /**
+   * A product or category was created, edited, unpublished or deleted
+   * somewhere else. Every open tab shows a stale catalog until it is manually
+   * reloaded, so drop the cached list/detail/category entries and let
+   * react-query refetch whatever is actually mounted.
+   *
+   * This is a cache-invalidation signal, not a data push: the payload carries no
+   * catalogue data, and the refetch goes through the normal API which applies its
+   * own access rules. That is also why it works with socket auth disabled.
+   */
+  useEffect(() => {
+    if (!socket || typeof socket.on !== 'function') {
+      return
+    }
+
+    const handleCatalogUpdate = (payload) => {
+      console.log('📦 Catalog changed, invalidating cached queries:', payload?.reason)
+      invalidateCatalog(queryClient)
+    }
+
+    socket.on('catalog:update', handleCatalogUpdate)
+
+    return () => {
+      if (typeof socket.off === 'function') {
+        socket.off('catalog:update', handleCatalogUpdate)
+      }
+    }
+  }, [socket, queryClient])
 
   useEffect(() => {
     console.log('🔌 Initializing socket connection...');

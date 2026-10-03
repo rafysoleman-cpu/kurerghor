@@ -60,7 +60,7 @@ const HeaderSearch = ({ variant = 'inline', onNavigate }) => {
       </label>
       <div className="relative">
         <Search
-          className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400"
+          className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400 dark:text-slate-500"
           aria-hidden="true"
         />
         <input
@@ -71,7 +71,7 @@ const HeaderSearch = ({ variant = 'inline', onNavigate }) => {
           onChange={(event) => setQuery(event.target.value)}
           placeholder="Search products…"
           autoComplete="off"
-          className={`w-full rounded-lg border border-gray-300 bg-gray-100 pl-9 pr-3 text-gray-700 placeholder:text-gray-400 transition-colors duration-200 hover:border-gray-400 focus:border-primary-500 focus:bg-white focus:outline-none focus:ring-2 focus:ring-primary-500/20 ${sizeClass}`}
+          className={`w-full rounded-lg border border-gray-300 dark:border-slate-600 bg-gray-100 dark:bg-slate-800/70 pl-9 pr-3 text-gray-700 dark:text-slate-300 placeholder:text-gray-400 dark:placeholder:text-slate-500 transition-colors duration-200 hover:border-gray-400 dark:hover:border-slate-500 focus:border-primary-500 focus:bg-white dark:focus:bg-slate-800 focus:outline-none focus:ring-2 focus:ring-primary-500/20 ${sizeClass}`}
         />
       </div>
       <p className="sr-only">Press slash or Control plus K to focus the search field.</p>

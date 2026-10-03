@@ -85,8 +85,8 @@ const BlogDetailPage = () => {
   if (!post) {
     return (
       <div className="container mx-auto px-4 py-16 text-center">
-        <h2 className="text-2xl font-bold text-gray-900 mb-4">Blog post not found</h2>
-        <p className="text-gray-600 mb-6">The blog post you're looking for doesn't exist.</p>
+        <h2 className="text-2xl font-bold text-gray-900 dark:text-slate-100 mb-4">Blog post not found</h2>
+        <p className="text-gray-600 dark:text-slate-400 mb-6">The blog post you're looking for doesn't exist.</p>
         <Link to="/blog" className="btn-primary">
           Back to Blog
         </Link>
@@ -109,10 +109,10 @@ const BlogDetailPage = () => {
         {/* Main Content */}
         <div className="lg:col-span-2">
           {/* Article Header */}
-          <article className="bg-white rounded-lg border border-gray-200 overflow-hidden">
+          <article className="bg-white dark:bg-slate-800 rounded-lg border border-gray-200 dark:border-slate-700 overflow-hidden">
             {/* Featured Image */}
             {post.featuredImage && (
-              <div className="aspect-video bg-gray-100 overflow-hidden">
+              <div className="aspect-video bg-gray-100 dark:bg-slate-800/70 overflow-hidden">
                 <img
                   src={post.featuredImage}
                   alt={post.title}
@@ -123,7 +123,7 @@ const BlogDetailPage = () => {
 
             <div className="p-6 lg:p-8">
               {/* Post Meta */}
-              <div className="flex flex-wrap items-center gap-4 text-sm text-gray-600 mb-6">
+              <div className="flex flex-wrap items-center gap-4 text-sm text-gray-600 dark:text-slate-400 mb-6">
                 <div className="flex items-center space-x-1">
                   <Calendar className="w-4 h-4" />
                   <span>{formatDate(post.createdAt)}</span>
@@ -141,25 +141,25 @@ const BlogDetailPage = () => {
               </div>
 
               {/* Title */}
-              <h1 className="text-3xl lg:text-4xl font-bold text-gray-900 mb-6 leading-tight">
+              <h1 className="text-3xl lg:text-4xl font-bold text-gray-900 dark:text-slate-100 mb-6 leading-tight">
                 {post.title}
               </h1>
 
               {/* Content */}
               <div 
-                className="prose prose-lg max-w-none text-gray-700"
+                className="prose prose-lg max-w-none text-gray-700 dark:text-slate-300"
                 dangerouslySetInnerHTML={{ __html: post.content }}
               />
 
               {/* Tags */}
               {post.tags && post.tags.length > 0 && (
-                <div className="mt-8 pt-6 border-t border-gray-200">
-                  <h3 className="text-sm font-medium text-gray-900 mb-3">Tags</h3>
+                <div className="mt-8 pt-6 border-t border-gray-200 dark:border-slate-700">
+                  <h3 className="text-sm font-medium text-gray-900 dark:text-slate-100 mb-3">Tags</h3>
                   <div className="flex flex-wrap gap-2">
                     {post.tags.map((tag, index) => (
                       <span 
                         key={index}
-                        className="px-3 py-1 bg-gray-100 text-gray-700 rounded-full text-sm"
+                        className="px-3 py-1 bg-gray-100 dark:bg-slate-800/70 text-gray-700 dark:text-slate-300 rounded-full text-sm"
                       >
                         {tag}
                       </span>
@@ -173,12 +173,12 @@ const BlogDetailPage = () => {
           {/* Related Posts */}
           {post.relatedPosts && post.relatedPosts.length > 0 && (
             <div className="mt-8">
-              <h2 className="text-2xl font-bold text-gray-900 mb-6">Related Posts</h2>
+              <h2 className="text-2xl font-bold text-gray-900 dark:text-slate-100 mb-6">Related Posts</h2>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 {post.relatedPosts.map((relatedPost) => (
-                  <div key={relatedPost._id} className="bg-white rounded-lg border border-gray-200 overflow-hidden hover:shadow-lg transition-shadow">
+                  <div key={relatedPost._id} className="bg-white dark:bg-slate-800 rounded-lg border border-gray-200 dark:border-slate-700 overflow-hidden hover:shadow-lg transition-shadow">
                     {relatedPost.featuredImage && (
-                      <div className="aspect-video bg-gray-100 overflow-hidden">
+                      <div className="aspect-video bg-gray-100 dark:bg-slate-800/70 overflow-hidden">
                         <img
                           src={relatedPost.featuredImage}
                           alt={relatedPost.title}
@@ -192,10 +192,10 @@ const BlogDetailPage = () => {
                         to={`/blog/${relatedPost.slug}`}
                         className="block group"
                       >
-                        <h3 className="font-medium text-gray-900 group-hover:text-primary-600 transition-colors line-clamp-2 mb-2">
+                        <h3 className="font-medium text-gray-900 dark:text-slate-100 group-hover:text-primary-600 dark:group-hover:text-primary-400 transition-colors line-clamp-2 mb-2">
                           {relatedPost.title}
                         </h3>
-                        <p className="text-sm text-gray-600">
+                        <p className="text-sm text-gray-600 dark:text-slate-400">
                           {formatDate(relatedPost.createdAt)}
                         </p>
                       </Link>
@@ -210,8 +210,8 @@ const BlogDetailPage = () => {
         {/* Sidebar */}
         <div className="space-y-8">
           {/* Share Article */}
-          <div className="bg-white rounded-lg p-6 border border-gray-200">
-            <h3 className="text-lg font-semibold text-gray-900 mb-4">Share Article</h3>
+          <div className="bg-white dark:bg-slate-800 rounded-lg p-6 border border-gray-200 dark:border-slate-700">
+            <h3 className="text-lg font-semibold text-gray-900 dark:text-slate-100 mb-4">Share Article</h3>
             
             <div className="space-y-3">
               {/* Social Share Buttons */}
@@ -253,11 +253,11 @@ const BlogDetailPage = () => {
           </div>
 
           {/* Author Info */}
-          <div className="bg-white rounded-lg p-6 border border-gray-200">
-            <h3 className="text-lg font-semibold text-gray-900 mb-4">About Author</h3>
+          <div className="bg-white dark:bg-slate-800 rounded-lg p-6 border border-gray-200 dark:border-slate-700">
+            <h3 className="text-lg font-semibold text-gray-900 dark:text-slate-100 mb-4">About Author</h3>
             
             <div className="flex items-center space-x-4 mb-4">
-              <div className="w-16 h-16 bg-gray-200 rounded-full overflow-hidden">
+              <div className="w-16 h-16 bg-gray-200 dark:bg-slate-700 rounded-full overflow-hidden">
                 {post.author?.avatar ? (
                   <img
                     src={post.author.avatar}
@@ -265,23 +265,23 @@ const BlogDetailPage = () => {
                     className="w-full h-full object-cover"
                   />
                 ) : (
-                  <div className="w-full h-full flex items-center justify-center bg-primary-100">
-                    <User className="w-8 h-8 text-primary-600" />
+                  <div className="w-full h-full flex items-center justify-center bg-primary-100 dark:bg-primary-900/40">
+                    <User className="w-8 h-8 text-primary-600 dark:text-primary-400" />
                   </div>
                 )}
               </div>
               
               <div>
-                <h4 className="font-medium text-gray-900">
+                <h4 className="font-medium text-gray-900 dark:text-slate-100">
                   {post.author?.name || 'Admin'}
                 </h4>
-                <p className="text-sm text-gray-600">
+                <p className="text-sm text-gray-600 dark:text-slate-400">
                   {post.author?.bio || 'Ecommerce Platform Team Member'}
                 </p>
               </div>
             </div>
             
-            <div className="space-y-2 text-sm text-gray-600">
+            <div className="space-y-2 text-sm text-gray-600 dark:text-slate-400">
               {post.author?.email && (
                 <p>Email: {post.author.email}</p>
               )}
@@ -290,14 +290,14 @@ const BlogDetailPage = () => {
           </div>
 
           {/* Actions */}
-          <div className="bg-white rounded-lg p-6 border border-gray-200">
-            <h3 className="text-lg font-semibold text-gray-900 mb-4">Actions</h3>
+          <div className="bg-white dark:bg-slate-800 rounded-lg p-6 border border-gray-200 dark:border-slate-700">
+            <h3 className="text-lg font-semibold text-gray-900 dark:text-slate-100 mb-4">Actions</h3>
             
             <div className="space-y-3">
               <button
                 onClick={handleBookmark}
                 className={`w-full btn-outline flex items-center justify-center space-x-2 ${
-                  isBookmarked ? 'bg-primary-50 text-primary-700 border-primary-300' : ''
+                  isBookmarked ? 'bg-primary-50 dark:bg-primary-950/40 text-primary-700 dark:text-primary-300 border-primary-300 dark:border-primary-700' : ''
                 }`}
               >
                 <Bookmark className={`w-4 h-4 ${isBookmarked ? 'fill-current' : ''}`} />
@@ -322,11 +322,11 @@ const BlogDetailPage = () => {
               <input
                 type="email"
                 placeholder="Enter your email"
-                className="w-full px-4 py-2 rounded-lg text-gray-900 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-primary-300"
+                className="w-full px-4 py-2 rounded-lg text-gray-900 dark:text-slate-100 placeholder-gray-500 dark:placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-primary-300"
               />
               <button
                 type="submit"
-                className="w-full bg-white text-primary-600 font-medium py-2 rounded-lg hover:bg-gray-100 transition-colors"
+                className="w-full bg-white dark:bg-slate-800 text-primary-600 dark:text-primary-400 font-medium py-2 rounded-lg hover:bg-gray-100 dark:hover:bg-slate-800/70 transition-colors"
               >
                 Subscribe Now
               </button>

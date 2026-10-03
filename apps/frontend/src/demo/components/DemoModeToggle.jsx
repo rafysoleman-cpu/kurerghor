@@ -25,34 +25,34 @@ const DemoModeToggle = () => {
 
       {/* Settings Panel */}
       {isOpen && (
-        <div className="absolute bottom-16 right-0 bg-white rounded-lg shadow-xl border border-gray-200 p-4 w-64">
-          <h3 className="font-semibold text-gray-900 mb-3">Demo Mode</h3>
+        <div className="absolute bottom-16 right-0 bg-white dark:bg-slate-800 rounded-lg shadow-xl border border-gray-200 dark:border-slate-700 p-4 w-64">
+          <h3 className="font-semibold text-gray-900 dark:text-slate-100 mb-3">Demo Mode</h3>
           
           <div className="space-y-3">
             <div className="flex items-center justify-between">
-              <span className="text-sm text-gray-600">Use Demo Data</span>
+              <span className="text-sm text-gray-600 dark:text-slate-400">Use Demo Data</span>
               <button
                 onClick={handleToggle}
                 className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${
-                  demoMode ? 'bg-primary-600' : 'bg-gray-200'
+                  demoMode ? 'bg-primary-600' : 'bg-gray-200 dark:bg-slate-700'
                 }`}
               >
                 <span
-                  className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${
+                  className={`inline-block h-4 w-4 transform rounded-full bg-white dark:bg-slate-800 transition-transform ${
                     demoMode ? 'translate-x-6' : 'translate-x-1'
                   }`}
                 />
               </button>
             </div>
 
-            <div className="text-xs text-gray-500 space-y-1">
+            <div className="text-xs text-gray-500 dark:text-slate-400 space-y-1">
               <p>• Demo mode uses mock data</p>
               <p>• No backend connection needed</p>
               <p>• Perfect for testing UI</p>
             </div>
 
             <div className={`text-xs px-2 py-1 rounded text-center ${
-              demoMode ? 'bg-green-100 text-green-700' : 'bg-gray-100 text-gray-600'
+              demoMode ? 'bg-green-100 dark:bg-green-900/40 text-green-700 dark:text-green-300' : 'bg-gray-100 dark:bg-slate-800/70 text-gray-600 dark:text-slate-400'
             }`}>
               {demoMode ? 'Demo Mode ON' : 'Live Mode'}
             </div>
@@ -60,7 +60,7 @@ const DemoModeToggle = () => {
 
           <button
             onClick={() => setIsOpen(false)}
-            className="absolute top-2 right-2 text-gray-400 hover:text-gray-600"
+            className="absolute top-2 right-2 text-gray-400 dark:text-slate-500 hover:text-gray-600 dark:hover:text-slate-400"
           >
             <EyeOff className="w-4 h-4" />
           </button>

@@ -46,25 +46,25 @@ const AdminOrders = () => {
 
   const getStatusIcon = (status) => {
     switch (status) {
-      case 'pending': return <Package className="w-4 h-4 text-yellow-500" />
-      case 'paid': return <CheckCircle className="w-4 h-4 text-blue-500" />
-      case 'processing': return <Package className="w-4 h-4 text-purple-500" />
-      case 'shipped': return <Truck className="w-4 h-4 text-indigo-500" />
-      case 'delivered': return <CheckCircle className="w-4 h-4 text-green-500" />
-      case 'cancelled': return <XCircle className="w-4 h-4 text-red-500" />
-      default: return <Package className="w-4 h-4 text-gray-500" />
+      case 'pending': return <Package className="w-4 h-4 text-yellow-500 dark:text-yellow-400" />
+      case 'paid': return <CheckCircle className="w-4 h-4 text-blue-500 dark:text-blue-400" />
+      case 'processing': return <Package className="w-4 h-4 text-purple-500 dark:text-purple-400" />
+      case 'shipped': return <Truck className="w-4 h-4 text-indigo-500 dark:text-indigo-400" />
+      case 'delivered': return <CheckCircle className="w-4 h-4 text-green-500 dark:text-green-400" />
+      case 'cancelled': return <XCircle className="w-4 h-4 text-red-500 dark:text-red-400" />
+      default: return <Package className="w-4 h-4 text-gray-500 dark:text-slate-400" />
     }
   }
 
   const getStatusColor = (status) => {
     switch (status) {
-      case 'pending': return 'text-yellow-600 bg-yellow-50'
-      case 'paid': return 'text-blue-600 bg-blue-50'
-      case 'processing': return 'text-purple-600 bg-purple-50'
-      case 'shipped': return 'text-indigo-600 bg-indigo-50'
-      case 'delivered': return 'text-green-600 bg-green-50'
-      case 'cancelled': return 'text-red-600 bg-red-50'
-      default: return 'text-gray-600 bg-gray-50'
+      case 'pending': return 'text-yellow-600 dark:text-yellow-400 bg-yellow-50 dark:bg-yellow-950/40'
+      case 'paid': return 'text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-blue-950/40'
+      case 'processing': return 'text-purple-600 dark:text-purple-400 bg-purple-50 dark:bg-purple-950/40'
+      case 'shipped': return 'text-indigo-600 dark:text-indigo-400 bg-indigo-50 dark:bg-indigo-950/40'
+      case 'delivered': return 'text-green-600 dark:text-green-400 bg-green-50 dark:bg-green-950/40'
+      case 'cancelled': return 'text-red-600 dark:text-red-400 bg-red-50 dark:bg-red-950/40'
+      default: return 'text-gray-600 dark:text-slate-400 bg-gray-50 dark:bg-slate-900'
     }
   }
 
@@ -73,12 +73,12 @@ const AdminOrders = () => {
   return (
     <div className="container mx-auto px-4 py-8">
       <div className="mb-8">
-        <h1 className="text-3xl font-bold text-gray-900 mb-2">Manage Orders</h1>
-        <p className="text-gray-600">{orders.length} orders</p>
+        <h1 className="text-3xl font-bold text-gray-900 dark:text-slate-100 mb-2">Manage Orders</h1>
+        <p className="text-gray-600 dark:text-slate-400">{orders.length} orders</p>
       </div>
 
       {/* Filters */}
-      <div className="bg-white rounded-lg p-6 border border-gray-200 mb-8">
+      <div className="bg-white dark:bg-slate-800 rounded-lg p-6 border border-gray-200 dark:border-slate-700 mb-8">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div className="relative">
             <input
@@ -107,60 +107,60 @@ const AdminOrders = () => {
       {/* Orders Table */}
       {orders.length > 0 ? (
         <>
-          <div className="bg-white rounded-lg border border-gray-200 overflow-hidden">
+          <div className="bg-white dark:bg-slate-800 rounded-lg border border-gray-200 dark:border-slate-700 overflow-hidden">
             <div className="overflow-x-auto">
-              <table className="min-w-full divide-y divide-gray-200">
-                <thead className="bg-gray-50">
+              <table className="min-w-full divide-y divide-gray-200 dark:divide-slate-700">
+                <thead className="bg-gray-50 dark:bg-slate-900">
                   <tr>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-slate-400 uppercase tracking-wider">
                       Order
                     </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-slate-400 uppercase tracking-wider">
                       Customer
                     </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-slate-400 uppercase tracking-wider">
                       Items
                     </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-slate-400 uppercase tracking-wider">
                       Total
                     </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-slate-400 uppercase tracking-wider">
                       Status
                     </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-slate-400 uppercase tracking-wider">
                       Date
                     </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-slate-400 uppercase tracking-wider">
                       Actions
                     </th>
                   </tr>
                 </thead>
-                <tbody className="bg-white divide-y divide-gray-200">
+                <tbody className="bg-white dark:bg-slate-800 divide-y divide-gray-200 dark:divide-slate-700">
                   {orders.map((order) => (
-                    <tr key={order._id} className="hover:bg-gray-50">
+                    <tr key={order._id} className="hover:bg-gray-50 dark:hover:bg-slate-900">
                       <td className="px-6 py-4 whitespace-nowrap">
-                        <div className="text-sm font-medium text-gray-900">
+                        <div className="text-sm font-medium text-gray-900 dark:text-slate-100">
                           #{order.orderNumber}
                         </div>
-                        <div className="text-sm text-gray-500">
+                        <div className="text-sm text-gray-500 dark:text-slate-400">
                           ID: {order._id.slice(-8)}
                         </div>
                       </td>
                       
                       <td className="px-6 py-4 whitespace-nowrap">
-                        <div className="text-sm text-gray-900">
+                        <div className="text-sm text-gray-900 dark:text-slate-100">
                           {order.customer?.name || 'Guest'}
                         </div>
-                        <div className="text-sm text-gray-500">
+                        <div className="text-sm text-gray-500 dark:text-slate-400">
                           {order.customer?.email || 'N/A'}
                         </div>
                       </td>
                       
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-slate-100">
                         {order.items?.length || 0}
                       </td>
                       
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-slate-100">
                         ${order.total.toFixed(2)}
                       </td>
                       
@@ -171,7 +171,7 @@ const AdminOrders = () => {
                         </span>
                       </td>
                       
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-slate-400">
                         {new Date(order.createdAt).toLocaleDateString()}
                       </td>
                       
@@ -179,7 +179,7 @@ const AdminOrders = () => {
                         <div className="flex items-center space-x-2">
                           <Link
                             to={`/admin/orders/${order._id}`}
-                            className="text-primary-600 hover:text-primary-900"
+                            className="text-primary-600 dark:text-primary-400 hover:text-primary-900 dark:hover:text-primary-300"
                           >
                             <Eye className="w-4 h-4" />
                           </Link>
@@ -204,9 +204,9 @@ const AdminOrders = () => {
         </>
       ) : (
         <div className="text-center py-16">
-          <ShoppingCart className="w-16 h-16 text-gray-400 mx-auto mb-4" />
-          <h3 className="text-xl font-semibold text-gray-900 mb-2">No orders found</h3>
-          <p className="text-gray-600">Try adjusting your filters or search terms.</p>
+          <ShoppingCart className="w-16 h-16 text-gray-400 dark:text-slate-500 mx-auto mb-4" />
+          <h3 className="text-xl font-semibold text-gray-900 dark:text-slate-100 mb-2">No orders found</h3>
+          <p className="text-gray-600 dark:text-slate-400">Try adjusting your filters or search terms.</p>
         </div>
       )}
     </div>

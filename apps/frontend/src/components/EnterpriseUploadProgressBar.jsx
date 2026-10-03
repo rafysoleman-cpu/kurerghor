@@ -88,7 +88,7 @@ const EnterpriseUploadProgressBar = ({
                   {uploadProgress === 100 && (
                     <button
                       onClick={handleDismiss}
-                      className="text-blue-400 hover:text-blue-300 transition-colors"
+                      className="text-blue-400 dark:text-blue-300 hover:text-blue-300 transition-colors"
                       title="Dismiss progress bar"
                     >
                       ✕
@@ -128,7 +128,7 @@ const EnterpriseUploadProgressBar = ({
                   }
                 </span>
                 <div className="flex items-center space-x-2">
-                  <span className="text-gray-400">
+                  <span className="text-gray-400 dark:text-slate-500">
                     {uploadProgress < 30 
                       ? `${Math.floor(uploadProgress / 30 * 2)}s remaining`
                       : uploadProgress < 80
@@ -141,7 +141,7 @@ const EnterpriseUploadProgressBar = ({
                   {uploadProgress === 100 && (
                     <button
                       onClick={handleDismiss}
-                      className="text-blue-400 hover:text-blue-300 transition-colors"
+                      className="text-blue-400 dark:text-blue-300 hover:text-blue-300 transition-colors"
                       title="Dismiss progress bar"
                     >
                       ✕
@@ -215,7 +215,7 @@ const EnterpriseUploadProgressBar = ({
                     {uploadProgress === 100 && (
                       <button
                         onClick={handleDismiss}
-                        className="text-blue-400 hover:text-blue-300 transition-colors text-lg"
+                        className="text-blue-400 dark:text-blue-300 hover:text-blue-300 transition-colors text-lg"
                         title="Dismiss progress bar"
                       >
                         ✕
@@ -259,7 +259,7 @@ const EnterpriseUploadProgressBar = ({
                       <h3 className="text-base font-bold text-white truncate drop-shadow">Creating "{uploadData.productName}"</h3>
                       <div className="flex items-center space-x-2">
                         <div className="w-2 h-2 bg-green-400 rounded-full animate-pulse shadow-xl shadow-green-400/50"></div>
-                        <span className="text-sm font-semibold text-green-400">ACTIVE</span>
+                        <span className="text-sm font-semibold text-green-400 dark:text-green-300">ACTIVE</span>
                       </div>
                     </div>
                     <div className="flex items-center space-x-4">
@@ -300,7 +300,7 @@ const EnterpriseUploadProgressBar = ({
                         }
                       </span>
                       <div className="flex items-center space-x-2">
-                        <span className="text-gray-400">
+                        <span className="text-gray-400 dark:text-slate-500">
                           {uploadProgress < 30 
                             ? `${Math.floor(uploadProgress / 30 * 2)}s remaining`
                             : uploadProgress < 80
@@ -313,7 +313,7 @@ const EnterpriseUploadProgressBar = ({
                         {uploadProgress === 100 && (
                           <button
                             onClick={handleDismiss}
-                            className="text-blue-400 hover:text-blue-300 transition-colors text-lg font-bold"
+                            className="text-blue-400 dark:text-blue-300 hover:text-blue-300 transition-colors text-lg font-bold"
                             title="Dismiss progress bar"
                           >
                             ✕

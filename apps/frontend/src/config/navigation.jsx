@@ -128,7 +128,15 @@ export const getRoleNavItem = ({ user, vendorRequestStatus }) => {
 
 /**
  * Full account section in spec order: Profile, Orders, Wishlist, role panel
- * (omitted for plain users), Settings.
+ * (omitted for plain users), then Settings last.
+ *
+ * Settings is returned separately from `items` on purpose. The theme quick
+ * toggle must sit between the role panel and Settings on both the desktop
+ * popover and the mobile drawer, and exposing the split point as data lets
+ * both surfaces place it identically — rather than each hardcoding an index,
+ * which is how the two menus drifted apart in the first place.
+ *
+ * Callers render: items → theme toggle → settingsItem.
  */
 export const buildAccountNav = ({ user, vendorRequestStatus }) => {
   const items = [...ACCOUNT_NAV]
@@ -136,6 +144,5 @@ export const buildAccountNav = ({ user, vendorRequestStatus }) => {
 
   if (roleItem) items.push(roleItem)
 
-  items.push(SETTINGS_NAV_ITEM)
-  return items
+  return { items, settingsItem: SETTINGS_NAV_ITEM }
 }

@@ -72,12 +72,13 @@ function App() {
 
   return (
     <SocketProvider>
-      <div className="min-h-screen bg-gray-50">
+      <div className="min-h-screen bg-gray-50 dark:bg-slate-900">
         <Routes>
         {/* Public routes */}
         <Route path="/" element={<PublicLayout />}>
           <Route index element={<HomePage />} />
           <Route path="products" element={<ProductsPage />} />
+          {/* Accepts a product slug or its ObjectId — see getProductPath(). */}
           <Route path="products/:slug" element={<ProductDetailPage />} />
           <Route path="cart" element={<CartPage />} />
           <Route path="checkout" element={<CheckoutPage />} />

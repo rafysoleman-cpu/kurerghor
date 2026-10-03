@@ -83,8 +83,8 @@ const BlogPage = () => {
     <div className="container mx-auto px-4 py-8">
       {/* Header */}
       <div className="text-center mb-12">
-        <h1 className="text-4xl font-bold text-gray-900 mb-4">Our Blog</h1>
-        <p className="text-xl text-gray-600 max-w-2xl mx-auto">
+        <h1 className="text-4xl font-bold text-gray-900 dark:text-slate-100 mb-4">Our Blog</h1>
+        <p className="text-xl text-gray-600 dark:text-slate-400 max-w-2xl mx-auto">
           Tips, trends, and insights from our team and community
         </p>
       </div>
@@ -94,7 +94,7 @@ const BlogPage = () => {
         <form onSubmit={handleSearch} className="relative">
           <div className="relative">
             <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-              <Search className="h-5 w-5 text-gray-400" />
+              <Search className="h-5 w-5 text-gray-400 dark:text-slate-500" />
             </div>
             <input
               type="text"
@@ -115,7 +115,7 @@ const BlogPage = () => {
             <div className="flex items-center space-x-4 overflow-x-auto pb-2">
               <button
                 onClick={() => handleCategoryFilter('')}
-                className={`category-pill whitespace-nowrap ${!categoryFilter ? 'border-primary-500 bg-primary-50' : ''}`}
+                className={`category-pill whitespace-nowrap ${!categoryFilter ? 'border-primary-500 bg-primary-50 dark:bg-primary-950/40' : ''}`}
               >
                 All Posts
               </button>
@@ -123,7 +123,7 @@ const BlogPage = () => {
                 <button
                   key={category._id}
                   onClick={() => handleCategoryFilter(category.name)}
-                  className={`category-pill whitespace-nowrap ${categoryFilter === category.name ? 'border-primary-500 bg-primary-50' : ''}`}
+                  className={`category-pill whitespace-nowrap ${categoryFilter === category.name ? 'border-primary-500 bg-primary-50 dark:bg-primary-950/40' : ''}`}
                 >
                   {category.name}
                 </button>
@@ -135,10 +135,10 @@ const BlogPage = () => {
           {posts.length > 0 ? (
             <div className="space-y-8">
               {posts.map((post) => (
-                <article key={post._id} className="bg-white rounded-lg border border-gray-200 overflow-hidden hover:shadow-lg transition-shadow">
+                <article key={post._id} className="bg-white dark:bg-slate-800 rounded-lg border border-gray-200 dark:border-slate-700 overflow-hidden hover:shadow-lg transition-shadow">
                   {/* Featured Image */}
                   {post.featuredImage && (
-                    <div className="aspect-video bg-gray-100 overflow-hidden">
+                    <div className="aspect-video bg-gray-100 dark:bg-slate-800/70 overflow-hidden">
                       <img
                         src={post.featuredImage}
                         alt={post.title}
@@ -149,7 +149,7 @@ const BlogPage = () => {
 
                   <div className="p-6">
                     {/* Post Meta */}
-                    <div className="flex items-center space-x-4 text-sm text-gray-600 mb-4">
+                    <div className="flex items-center space-x-4 text-sm text-gray-600 dark:text-slate-400 mb-4">
                       <div className="flex items-center space-x-1">
                         <Calendar className="w-4 h-4" />
                         <span>{formatDate(post.createdAt)}</span>
@@ -171,14 +171,14 @@ const BlogPage = () => {
                       to={`/blog/${post.slug}`}
                       className="block group"
                     >
-                      <h2 className="text-xl font-semibold text-gray-900 mb-3 group-hover:text-primary-600 transition-colors line-clamp-2">
+                      <h2 className="text-xl font-semibold text-gray-900 dark:text-slate-100 mb-3 group-hover:text-primary-600 dark:group-hover:text-primary-400 transition-colors line-clamp-2">
                         {post.title}
                       </h2>
                     </Link>
 
                     {/* Excerpt */}
                     {post.excerpt && (
-                      <p className="text-gray-600 mb-4 line-clamp-3">
+                      <p className="text-gray-600 dark:text-slate-400 mb-4 line-clamp-3">
                         {post.excerpt}
                       </p>
                     )}
@@ -186,7 +186,7 @@ const BlogPage = () => {
                     {/* Read More */}
                     <Link 
                       to={`/blog/${post.slug}`}
-                      className="inline-flex items-center space-x-2 text-primary-600 hover:text-primary-700 font-medium"
+                      className="inline-flex items-center space-x-2 text-primary-600 dark:text-primary-400 hover:text-primary-700 dark:hover:text-primary-300 font-medium"
                     >
                       <span>Read More</span>
                       <ArrowRight className="w-4 h-4" />
@@ -198,10 +198,10 @@ const BlogPage = () => {
           ) : (
             <div className="text-center py-16">
               <div className="max-w-md mx-auto">
-                <h3 className="text-xl font-semibold text-gray-900 mb-4">
+                <h3 className="text-xl font-semibold text-gray-900 dark:text-slate-100 mb-4">
                   {categoryFilter ? `No posts in ${categoryFilter}` : 'No blog posts found'}
                 </h3>
-                <p className="text-gray-600 mb-8">
+                <p className="text-gray-600 dark:text-slate-400 mb-8">
                   {categoryFilter 
                     ? 'Try selecting a different category or check back later.'
                     : 'Check back later for new content.'
@@ -230,13 +230,13 @@ const BlogPage = () => {
         <div className="space-y-8">
           {/* Popular Posts */}
           {popularPosts.length > 0 && (
-            <div className="bg-white rounded-lg p-6 border border-gray-200">
-              <h3 className="text-lg font-semibold text-gray-900 mb-4">Popular Posts</h3>
+            <div className="bg-white dark:bg-slate-800 rounded-lg p-6 border border-gray-200 dark:border-slate-700">
+              <h3 className="text-lg font-semibold text-gray-900 dark:text-slate-100 mb-4">Popular Posts</h3>
               
               <div className="space-y-4">
                 {popularPosts.map((post, index) => (
                   <div key={post._id} className="flex space-x-3">
-                    <div className="w-16 h-16 bg-gray-100 rounded-lg overflow-hidden flex-shrink-0">
+                    <div className="w-16 h-16 bg-gray-100 dark:bg-slate-800/70 rounded-lg overflow-hidden flex-shrink-0">
                       {post.featuredImage ? (
                         <img
                           src={post.featuredImage}
@@ -244,8 +244,8 @@ const BlogPage = () => {
                           className="w-full h-full object-cover"
                         />
                       ) : (
-                        <div className="w-full h-full flex items-center justify-center bg-primary-100">
-                          <span className="text-primary-600 font-bold text-sm">
+                        <div className="w-full h-full flex items-center justify-center bg-primary-100 dark:bg-primary-900/40">
+                          <span className="text-primary-600 dark:text-primary-400 font-bold text-sm">
                             {post.title.charAt(0)}
                           </span>
                         </div>
@@ -257,10 +257,10 @@ const BlogPage = () => {
                         to={`/blog/${post.slug}`}
                         className="block group"
                       >
-                        <h4 className="font-medium text-gray-900 group-hover:text-primary-600 transition-colors line-clamp-2 mb-1">
+                        <h4 className="font-medium text-gray-900 dark:text-slate-100 group-hover:text-primary-600 dark:group-hover:text-primary-400 transition-colors line-clamp-2 mb-1">
                           {post.title}
                         </h4>
-                        <p className="text-sm text-gray-600">
+                        <p className="text-sm text-gray-600 dark:text-slate-400">
                           {formatDate(post.createdAt)}
                         </p>
                       </Link>
@@ -273,8 +273,8 @@ const BlogPage = () => {
 
           {/* Categories */}
           {categories.length > 0 && (
-            <div className="bg-white rounded-lg p-6 border border-gray-200">
-              <h3 className="text-lg font-semibold text-gray-900 mb-4">Categories</h3>
+            <div className="bg-white dark:bg-slate-800 rounded-lg p-6 border border-gray-200 dark:border-slate-700">
+              <h3 className="text-lg font-semibold text-gray-900 dark:text-slate-100 mb-4">Categories</h3>
               
               <div className="space-y-2">
                 {categories.map((category) => (
@@ -283,13 +283,13 @@ const BlogPage = () => {
                     onClick={() => handleCategoryFilter(category.name)}
                     className={`w-full text-left px-4 py-2 rounded-lg border transition-colors ${
                       categoryFilter === category.name
-                        ? 'border-primary-500 bg-primary-50 text-primary-700'
-                        : 'border-gray-200 hover:border-gray-300 text-gray-700'
+                        ? 'border-primary-500 bg-primary-50 dark:bg-primary-950/40 text-primary-700 dark:text-primary-300'
+                        : 'border-gray-200 dark:border-slate-700 hover:border-gray-300 dark:hover:border-slate-600 text-gray-700 dark:text-slate-300'
                     }`}
                   >
                     <div className="flex items-center justify-between">
                       <span>{category.name}</span>
-                      <span className="text-sm text-gray-500">
+                      <span className="text-sm text-gray-500 dark:text-slate-400">
                         {category.count} posts
                       </span>
                     </div>
@@ -310,11 +310,11 @@ const BlogPage = () => {
               <input
                 type="email"
                 placeholder="Enter your email"
-                className="w-full px-4 py-2 rounded-lg text-gray-900 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-primary-300"
+                className="w-full px-4 py-2 rounded-lg text-gray-900 dark:text-slate-100 placeholder-gray-500 dark:placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-primary-300"
               />
               <button
                 type="submit"
-                className="w-full bg-white text-primary-600 font-medium py-2 rounded-lg hover:bg-gray-100 transition-colors"
+                className="w-full bg-white dark:bg-slate-800 text-primary-600 dark:text-primary-400 font-medium py-2 rounded-lg hover:bg-gray-100 dark:hover:bg-slate-800/70 transition-colors"
               >
                 Subscribe
               </button>
@@ -322,14 +322,14 @@ const BlogPage = () => {
           </div>
 
           {/* Tags */}
-          <div className="bg-white rounded-lg p-6 border border-gray-200">
-            <h3 className="text-lg font-semibold text-gray-900 mb-4">Popular Tags</h3>
+          <div className="bg-white dark:bg-slate-800 rounded-lg p-6 border border-gray-200 dark:border-slate-700">
+            <h3 className="text-lg font-semibold text-gray-900 dark:text-slate-100 mb-4">Popular Tags</h3>
             
             <div className="flex flex-wrap gap-2">
               {['Ecommerce', 'Tips', 'Tutorials', 'News', 'Guides', 'Products', 'Reviews', 'Technology'].map((tag) => (
                 <button
                   key={tag}
-                  className="px-3 py-1 bg-gray-100 text-gray-700 rounded-full text-sm hover:bg-gray-200 transition-colors"
+                  className="px-3 py-1 bg-gray-100 dark:bg-slate-800/70 text-gray-700 dark:text-slate-300 rounded-full text-sm hover:bg-gray-200 dark:hover:bg-slate-700 transition-colors"
                 >
                   {tag}
                 </button>
